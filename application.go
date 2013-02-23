@@ -2,6 +2,7 @@ package gatsby
 
 import "github.com/kylelemons/go-gypsy/yaml"
 import "fmt"
+import "errors"
 import "strconv"
 
 type Application struct {
@@ -15,38 +16,47 @@ type DatabaseHandle struct {
 
 }
 
-func (app * Application) LoadConfig (configFile string) (* yaml.File) {
+func (app * Application) LoadConfig (configFile string) (error) {
 	config, err := yaml.ReadFile(configFile)
 	if err != nil {
-		fmt.Println("YAML Error: %s", err)
+		return err
 	}
-	return config
+
+	app := new(Application)
+	app.Config = config
+
+	// read Config data into application stash.
+	host, err := app.Config.Get("Host")
+	if err != nil {
+		return errors.New("You should provide a host in your config file.")
+	}
+	app.Host = host
+	port, err   := app.Config.Get("Port")
+	if err != nil {
+		return errors.New("Database user is not defined.")
+	}
+	app.Port , err = strconv.ParseInt(port,10,32)
+	if err != nil {
+		return errors.New("Can not read server port config.")
+	}
+	app.PublicDir, err = app.Config.Get("Public")
+	if err != nil {
+		return errors.New("Can not read server public directory config.")
+	}
+	return nil;
 }
 
 func (app * Application) CreateDatabaseHandle() {
 
 }
 
-func NewApplication(configFile string) (*Application) {
+func NewApplication() (*Application) {
 	app := new(Application)
-	app.Config = app.LoadConfig(configFile)
 
-	// read Config data into application stash.
-	host, err := app.Config.Get("Host")
-	if err != nil {
-		fmt.Println("Database user is not defined.")
-	}
-	app.Host = host
-
-	port, err   := app.Config.Get("Port")
-	if err != nil {
-		fmt.Println("Database user is not defined.")
-	}
-	app.Port , err = strconv.ParseInt(port,10,32)
-
-	app.PublicDir, err = app.Config.Get("Public")
-	_ = err
 	return app
+}
+
+func (app * App ) LoadConfigFile(configFile string) (*Application) {
 }
 
 func init() {
