@@ -44,8 +44,8 @@ func NewApplication(configFile string) (*Application) {
 	}
 	app.Port , err = strconv.ParseInt(port,10,32)
 
-	app.PublicDir, err := app.Config.Get("Public")
-
+	app.PublicDir, err = app.Config.Get("Public")
+	_ = err
 	return app
 }
 
