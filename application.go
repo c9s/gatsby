@@ -1,7 +1,8 @@
 package gatsby
 
 import "github.com/kylelemons/go-gypsy/yaml"
-import "fmt"
+// import "encoding/json"
+// import "bitbucket.org/zombiezen/yaml"
 import "errors"
 import "strconv"
 
@@ -16,13 +17,23 @@ type DatabaseHandle struct {
 
 }
 
+type ApplicationConfig struct {
+	ApplicationName string
+	Port string
+	Host string
+	Public string
+}
+
+func init() {
+
+}
+
 func (app * Application) LoadConfig (configFile string) (error) {
 	config, err := yaml.ReadFile(configFile)
 	if err != nil {
 		return err
 	}
 
-	app := new(Application)
 	app.Config = config
 
 	// read Config data into application stash.
@@ -52,14 +63,7 @@ func (app * Application) CreateDatabaseHandle() {
 
 func NewApplication() (*Application) {
 	app := new(Application)
-
 	return app
 }
 
-func (app * App ) LoadConfigFile(configFile string) (*Application) {
-}
-
-func init() {
-
-}
 
