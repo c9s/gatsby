@@ -10,7 +10,13 @@ type FooRecord struct {
 }
 
 func TestColumnNameMap(t *testing.T) {
+	columns := GetColumnMap( FooRecord{ Id: 3, Name: "Mary" } )
 
+	t.Log(columns)
+
+	if len(columns) == 0 {
+		t.Fail()
+	}
 }
 
 
