@@ -1,6 +1,6 @@
 package sqlutils
 
-// import "fmt"
+import "fmt"
 import "reflect"
 import "strings"
 
@@ -30,14 +30,12 @@ func ParseColumnNames(val interface{}) ([]string) {
 		var columnName string
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 
-		// var field reflect.Value = t.Field(i)
-		/*
+		var field reflect.Value = t.Field(i)
 		fmt.Printf("%d: %s %s %s = %v\n", i,
 			typeOfT.Field(i).Name,
 			tag.Get("json"),
 			field.Type(),
 			field.Interface())
-		*/
 
 		tagString := tag.Get("json")
 
@@ -65,5 +63,6 @@ func GenerateSelectColumns(val interface{}) (string) {
 	columns := ParseColumnNames(val)
 	return strings.Join(columns,",")
 }
+
 
 
