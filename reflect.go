@@ -1,5 +1,5 @@
 package gatsby
-import "fmt"
+// import "fmt"
 import "reflect"
 import "strings"
 
@@ -20,13 +20,16 @@ func ParseSQLColumns(val interface{}) ([]string) {
 	columns := []string{}
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
-		var field reflect.Value = t.Field(i)
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
+
+		// var field reflect.Value = t.Field(i)
+		/*
 		fmt.Printf("%d: %s %s %s = %v\n", i,
 			typeOfT.Field(i).Name,
 			tag.Get("json"),
 			field.Type(),
 			field.Interface())
+		*/
 
 		columnName = tag.Get("json")
 		if len(columnName) == 0 {
