@@ -3,6 +3,7 @@ import "fmt"
 import "reflect"
 import "strings"
 
+var columnNameCache = map[string] []string {};
 
 // Parse SQL columns from struct
 // TODO: reduce runtime cost here.
@@ -11,6 +12,11 @@ func ParseSQLColumns(val interface{}) ([]string) {
 	typeOfT := t.Type()
 
 	var structName string = typeOfT.String()
+
+	if cache, ok := columnNameCache[structName] ; ok {
+		return cache
+	}
+
 	fmt.Println(structName)
 
 	columns := []string{}
@@ -30,6 +36,7 @@ func ParseSQLColumns(val interface{}) ([]string) {
 		}
 		columns = append(columns,columnName)
 	}
+	columnNameCache[structName] = columns
 	return columns
 }
 
