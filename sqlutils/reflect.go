@@ -1,9 +1,9 @@
 package sqlutils
-
 import "fmt"
 import "reflect"
 import "strings"
 import "database/sql"
+import _ "github.com/bmizerany/pq"
 
 var columnNameCache = map[string] []string {};
 
@@ -87,7 +87,9 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 
 	var args []interface{}
 
+
 	for i := 0; i < t.NumField(); i++ {
+
 		var columnName string
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
@@ -99,19 +101,36 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
 
-		if ! field.CanAddr() || len(columnName) == 0 {
+		if len(columnName) == 0 {
 			continue
 		}
 
+		// strt := reflect.ValueOf(&staff).Elem()
 		// args = append(args, field.Interface())
-		args = append(args, field.Addr())
+		// args = append(args, field.Addr())
+		// args = append(args, field.Elem())
+		// args = append(args, reflect.New(field.Type()).Elem() )
+		_ = field
 	}
 
-	fmt.Println( "Args", args )
-	fmt.Println( "Len",  len(args) )
+	_ = args
+	// fmt.Println( "Args", args )
+	// fmt.Println( "Len",  len(args) )
 
 	// rows.Scan(output.Args()...); from modsql
-	return rows.Scan(args...)
+	// err := rows.Scan(args...)
+	var id int
+	var name string
+	var gender string
+	var phone string
+	var cellphone string
+	var stafftype string
+
+	err := rows.Scan(&id, &name, &gender, &phone, &cellphone, &stafftype)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return err
 }
 
 
