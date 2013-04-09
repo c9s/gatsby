@@ -7,7 +7,7 @@ import "strings"
 var columnNameCache = map[string] []string {};
 
 // Parse SQL columns from struct
-func ParseColumns(val interface{}) ([]string) {
+func ParseColumnNames(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
 
@@ -43,7 +43,7 @@ func ParseColumns(val interface{}) ([]string) {
 
 // Generate SQL columns string for selecting.
 func GenerateSelectColumns(val interface{}) (string) {
-	columns := ParseColumns(val)
+	columns := ParseColumnNames(val)
 	return strings.Join(columns,",")
 }
 
