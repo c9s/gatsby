@@ -81,10 +81,33 @@ func BuildSelectColumnClause(val interface{}) (string) {
 	return strings.Join(columns,",")
 }
 
+func FillFromRow(val interface{}, rows * sql.Rows) (error) {
+	t := reflect.ValueOf(val)
+	typeOfT := t.Type()
 
-func FillFromRow(val interface{}, rows * sql.Rows) {
+	var args []interface{}
 
-	// err = rows.Scan(&id, &name)
+	for i := 0; i < t.NumField(); i++ {
+		var columnName string
+		var tag reflect.StructTag = typeOfT.Field(i).Tag
+		var field reflect.Value = t.Field(i)
+		tagString := tag.Get("json")
+		if len(tagString) > 0 {
+			columnName = strings.SplitN(tagString,",",1)[0]
+		}
+		if len(columnName) == 0 {
+			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
+		}
+		if len(columnName) > 0 {
+			args = append(args, field.Interface())
+		}
+	}
+
+	fmt.Println( "Args", args )
+	fmt.Println( "Len",  len(args) )
+
+	// rows.Scan(output.Args()...); from modsql
+	return rows.Scan(args...)
 }
 
 

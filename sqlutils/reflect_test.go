@@ -1,6 +1,7 @@
 package sqlutils
 import "testing"
 import "sort"
+import "drshine"
 
 type FooRecord struct {
 	Id int `json:"id"`
@@ -49,6 +50,9 @@ func TestBuildSelectColumns(t * testing.T) {
 	if len(str) == 0 {
 		t.Fail()
 	}
+}
+
+func TestFillRecord(t * testing.T) {
 }
 
 
