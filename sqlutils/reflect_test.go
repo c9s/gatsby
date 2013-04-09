@@ -1,6 +1,6 @@
 package sqlutils
 import "testing"
-import "fmt"
+// import "fmt"
 
 type FooRecord struct {
 	Id int `json:"id"`
