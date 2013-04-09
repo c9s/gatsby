@@ -3,7 +3,9 @@ import "fmt"
 import "reflect"
 // import "strings"
 
-func GenerateSQLColumns(val interface{}) ([]string) {
+
+// Parse SQL columns from struct
+func ParseSQLColumns(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
 	columns := []string{}
@@ -25,3 +27,10 @@ func GenerateSQLColumns(val interface{}) ([]string) {
 	}
 	return columns
 }
+
+// Generate SQL columns string for selecting.
+func GenerateSQLColumns(columns []string) (string) {
+	columns := gatsby.ParseSQLColumns( drshine.Staff{Id:3} )
+	return strings.Join(columns,",")
+}
+
