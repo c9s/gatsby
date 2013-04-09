@@ -6,13 +6,21 @@ import "strings"
 
 var columnNameCache = map[string] []string {};
 
+func GetColumnMap(val interface{}) (map[string] interface{}) {
+	// t := reflect.ValueOf(val)
+	// typeOfT := t.Type()
+	// var structName string = typeOfT.String()
+	var columns = map[string] interface{} {};
+
+	return columns
+}
+
 // Parse SQL columns from struct
 func ParseColumnNames(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
 
 	var structName string = typeOfT.String()
-
 	if cache, ok := columnNameCache[structName] ; ok {
 		return cache
 	}

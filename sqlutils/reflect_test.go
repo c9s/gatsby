@@ -8,16 +8,21 @@ type FooRecord struct {
 	Internal int `json:-`
 }
 
+func TestColumnNameMap(t *testing.T) {
+
+}
+
+
 func TestColumnNamesParsing(t * testing.T) {
 	var columns []string
 	columns = ParseColumnNames( FooRecord{Id:3, Name: "Mary"} )
 
-	if len(columns) == 0 {
+	if len(columns) != 3 {
 		t.Fail()
 	}
 
 	columns = ParseColumnNames( FooRecord{Id:4, Name: "John"} )
-	if len(columns) == 0 {
+	if len(columns) != 3 {
 		t.Fail()
 	}
 }
