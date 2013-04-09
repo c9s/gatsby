@@ -1,10 +1,11 @@
 package gatsby
 import "fmt"
 import "reflect"
-// import "strings"
+import "strings"
 
 
 // Parse SQL columns from struct
+// TODO: reduce runtime cost here.
 func ParseSQLColumns(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
@@ -29,8 +30,8 @@ func ParseSQLColumns(val interface{}) ([]string) {
 }
 
 // Generate SQL columns string for selecting.
-func GenerateSQLColumns(columns []string) (string) {
-	columns := gatsby.ParseSQLColumns( drshine.Staff{Id:3} )
+func GenerateSQLColumns(val interface{}) (string) {
+	columns := ParseSQLColumns(val)
 	return strings.Join(columns,",")
 }
 
