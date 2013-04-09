@@ -1,4 +1,5 @@
-package gatsby
+package sqlutils
+
 // import "fmt"
 import "reflect"
 import "strings"
@@ -6,8 +7,7 @@ import "strings"
 var columnNameCache = map[string] []string {};
 
 // Parse SQL columns from struct
-// TODO: reduce runtime cost here.
-func ParseSQLColumns(val interface{}) ([]string) {
+func ParseColumns(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
 
@@ -42,8 +42,9 @@ func ParseSQLColumns(val interface{}) ([]string) {
 }
 
 // Generate SQL columns string for selecting.
-func GenerateSQLColumns(val interface{}) (string) {
-	columns := ParseSQLColumns(val)
+func GenerateSelectColumns(val interface{}) (string) {
+	columns := ParseColumns(val)
 	return strings.Join(columns,",")
 }
+
 
