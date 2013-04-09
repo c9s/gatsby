@@ -39,9 +39,15 @@ func ParseColumnNames(val interface{}) ([]string) {
 			field.Interface())
 		*/
 
-		columnName = tag.Get("json")
+		tagString := tag.Get("json")
+
+		if len(tagString) > 0 {
+			columnName = strings.SplitN(tagString,",",1)[0]
+		}
+
+
 		if len(columnName) == 0 {
-			columnName = tag.Get("field")
+			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
 
 		// XXX: use inflector to convert field name with underscore, maybe
