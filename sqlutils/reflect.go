@@ -17,14 +17,6 @@ func GetColumnMap(val interface{}) (map[string] interface{}) {
 		var columnName string
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
-
-		/*
-		fmt.Printf("%d: %s %s %s = %v\n", i,
-			typeOfT.Field(i).Name,
-			tag.Get("json"),
-			field.Type(),
-			field.Interface())
-		*/
 		tagString := tag.Get("json")
 		if len(tagString) > 0 {
 			columnName = strings.SplitN(tagString,",",1)[0]
@@ -83,7 +75,7 @@ func ParseColumnNames(val interface{}) ([]string) {
 }
 
 // Generate SQL columns string for selecting.
-func BuildSelectColumns(val interface{}) (string) {
+func BuildSelectColumnClause(val interface{}) (string) {
 	columns := ParseColumnNames(val)
 	return strings.Join(columns,",")
 }
