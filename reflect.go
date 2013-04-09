@@ -17,8 +17,6 @@ func ParseSQLColumns(val interface{}) ([]string) {
 		return cache
 	}
 
-	fmt.Println(structName)
-
 	columns := []string{}
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
