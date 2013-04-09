@@ -42,3 +42,13 @@ func TestColumnNamesParsing(t * testing.T) {
 	}
 }
 
+
+func TestBuildSelectColumns(t * testing.T) {
+	str := BuildSelectColumns( FooRecord{Id:4, Name: "John"} )
+	t.Log(str)
+	if len(str) == 0 {
+		t.Fail()
+	}
+}
+
+

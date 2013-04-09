@@ -83,7 +83,7 @@ func ParseColumnNames(val interface{}) ([]string) {
 }
 
 // Generate SQL columns string for selecting.
-func GenerateSelectColumns(val interface{}) (string) {
+func BuildSelectColumns(val interface{}) (string) {
 	columns := ParseColumnNames(val)
 	return strings.Join(columns,",")
 }
