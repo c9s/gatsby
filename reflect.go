@@ -9,6 +9,10 @@ import "strings"
 func ParseSQLColumns(val interface{}) ([]string) {
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
+
+	var structName string = typeOfT.String()
+	fmt.Println(structName)
+
 	columns := []string{}
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
