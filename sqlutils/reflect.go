@@ -3,6 +3,7 @@ package sqlutils
 import "fmt"
 import "reflect"
 import "strings"
+import "database/sql"
 
 var columnNameCache = map[string] []string {};
 
@@ -80,5 +81,10 @@ func BuildSelectColumnClause(val interface{}) (string) {
 	return strings.Join(columns,",")
 }
 
+
+func FillFromRow(val interface{}, rows * sql.Rows) {
+
+	// err = rows.Scan(&id, &name)
+}
 
 
