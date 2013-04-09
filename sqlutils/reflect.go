@@ -98,9 +98,13 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		if len(columnName) == 0 {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
-		if len(columnName) > 0 {
-			args = append(args, field.Interface())
+
+		if ! field.CanAddr() || len(columnName) == 0 {
+			continue
 		}
+
+		// args = append(args, field.Interface())
+		args = append(args, field.Addr())
 	}
 
 	fmt.Println( "Args", args )
