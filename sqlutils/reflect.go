@@ -33,9 +33,14 @@ func ParseColumnNames(val interface{}) ([]string) {
 
 		columnName = tag.Get("json")
 		if len(columnName) == 0 {
-			columnName = typeOfT.Field(i).Name
+			columnName = tag.Get("field")
 		}
-		columns = append(columns,columnName)
+
+		// XXX: use inflector to convert field name with underscore, maybe
+		// columnName = typeOfT.Field(i).Name
+		if len(columnName) > 0 {
+			columns = append(columns,columnName)
+		}
 	}
 	columnNameCache[structName] = columns
 	return columns
