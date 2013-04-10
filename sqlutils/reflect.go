@@ -132,29 +132,29 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var fieldIdx int = fieldNum[i]
 		var val reflect.Value = t.Field(fieldIdx)
 		var t reflect.Type = val.Type()
+		var typeStr string = t.String()
 
 		if ! val.CanSet() {
-			panic("can not set value " + typeOfT.Field(fieldIdx).Name)
+			panic("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
 		}
 
 
-		if t.String() == "string" {
+		if typeStr == "string" {
 			if arg.(*sql.NullString).Valid {
 				val.SetString( arg.(*sql.NullString).String)
 			}
-		} else if t.String() == "int" {
+		} else if typeStr == "int" {
 			if arg.(*sql.NullInt64).Valid {
 				val.SetInt( arg.(*sql.NullInt64).Int64 )
 			}
-		} else if t.String() == "bool" {
+		} else if typeStr == "bool" {
 			if arg.(*sql.NullBool).Valid {
 				val.SetBool( arg.(*sql.NullBool).Bool)
 			}
-		} else if t.String() == "float" {
+		} else if typeStr == "float" {
 			if arg.(*sql.NullFloat64).Valid {
 				val.SetFloat( arg.(*sql.NullFloat64).Float64)
 			}
-			// args = append(args, new(sql.NullFloat64))
 		} else {
 			panic("unsupported type" + t.String() )
 		}
