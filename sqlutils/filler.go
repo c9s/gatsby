@@ -75,6 +75,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			return errors.New("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
 		}
 
+		// if arg.(*sql.NullString) == *sql.NullString {
 		if typeStr == "string" {
 			if arg.(*sql.NullString).Valid {
 				val.SetString( arg.(*sql.NullString).String)
