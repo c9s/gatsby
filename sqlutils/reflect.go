@@ -157,7 +157,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			if arg.(*sql.NullString).Valid {
 				val.SetString( arg.(*sql.NullString).String)
 			} else if isRequired {
-				panic("required field")
+				return errors.New("required field")
 			}
 		} else if typeStr == "int" {
 			if arg.(*sql.NullInt64).Valid {
