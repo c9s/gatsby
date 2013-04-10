@@ -14,28 +14,20 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	var fieldAttrList []map[string] bool
 
 	for i := 0; i < t.NumField(); i++ {
-		var columnName string
 		var tag        reflect.StructTag = typeOfT.Field(i).Tag
 		var field      reflect.Value = t.Field(i)
 		var fieldType  reflect.Type = field.Type()
 
 
-		tagString  := strings.Split(tag.Get("json"),",")
+		var columnName *string = GetColumnNameFromTag(tag)
+		if columnName == nil {
+			continue
+		}
+
 		fieldList := strings.Split(tag.Get("field"),",")
 		fieldAttrs := map[string] bool {}
-
 		for _, attrName := range fieldList {
 			fieldAttrs[ attrName ] = true
-		}
-
-		if len(fieldList) == 0 && len(fieldList[0]) > 0 {
-			columnName = fieldList[0]
-		}
-		if len(columnName) == 0 {
-			columnName = tagString[0]
-		}
-		if len(columnName) == 0 {
-			continue
 		}
 
 		// args = append(args, field.Interface())
