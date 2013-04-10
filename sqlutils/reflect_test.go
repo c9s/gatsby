@@ -4,15 +4,15 @@ import "sort"
 import "database/sql"
 import _ "github.com/bmizerany/pq"
 
-type FooRecord struct {
-	Id int `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
-	Internal int `json:-`
+type fooRecord struct {
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Internal int    `json:-`
 }
 
 func TestColumnNameMap(t *testing.T) {
-	columns := GetColumnMap( FooRecord{ Id: 3, Name: "Mary" } )
+	columns := GetColumnMap( fooRecord{ Id: 3, Name: "Mary" } )
 
 	t.Log(columns)
 
@@ -23,11 +23,11 @@ func TestColumnNameMap(t *testing.T) {
 
 
 func TestColumnNamesParsing(t * testing.T) {
-	var columns []string
-	columns = ParseColumnNames( FooRecord{Id:3, Name: "Mary"} )
+	columns := ParseColumnNames( fooRecord{Id:3, Name: "Mary"} )
 
 	// sort.Strings(columns)
 	t.Log(columns)
+
 	i := sort.SearchStrings(columns, "Internal")
 	if columns[i] == "Internal" {
 		t.Fail()
@@ -37,7 +37,7 @@ func TestColumnNamesParsing(t * testing.T) {
 		t.Fail()
 	}
 
-	columns = ParseColumnNames( FooRecord{Id:4, Name: "John"} )
+	columns = ParseColumnNames( fooRecord{Id:4, Name: "John"} )
 	t.Log(columns)
 	if len(columns) != 3 {
 		t.Fail()
@@ -46,7 +46,7 @@ func TestColumnNamesParsing(t * testing.T) {
 
 
 func TestBuildSelectColumns(t * testing.T) {
-	str := BuildSelectColumnClause( FooRecord{Id:4, Name: "John"} )
+	str := BuildSelectColumnClause( fooRecord{Id:4, Name: "John"} )
 	if len(str) == 0 {
 		t.Fail()
 	}
@@ -59,7 +59,7 @@ func TestBuildSelectColumns(t * testing.T) {
 
 type Staff struct {
 	Id        int `json:"id"`
-	Name      string `json:"name" field:"required"`
+	Name      string `json:"name" field:",required"`
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`

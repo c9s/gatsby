@@ -19,7 +19,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var fieldType  reflect.Type = field.Type()
 
 
-		var columnName *string = GetColumnNameFromTag(tag)
+		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
@@ -42,7 +42,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		} else if fieldType.String() == "float" {
 			args = append(args, new(sql.NullFloat64))
 		} else {
-			// not sure if this work
+			// Not sure if this work
 			args = append(args, reflect.New(fieldType).Elem().Interface() )
 		}
 		fieldNums = append(fieldNums,i)
