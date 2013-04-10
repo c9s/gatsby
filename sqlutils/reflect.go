@@ -83,6 +83,8 @@ func BuildSelectColumnClause(val interface{}) (string) {
 	return strings.Join(columns,",")
 }
 
+
+
 func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
