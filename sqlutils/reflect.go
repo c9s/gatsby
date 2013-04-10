@@ -4,6 +4,7 @@ import "reflect"
 import "strings"
 import "database/sql"
 import "errors"
+import "github.com/c9s/inflect"
 import _ "github.com/bmizerany/pq"
 
 var columnNameCache = map[string] []string {};
@@ -67,7 +68,7 @@ func ParseColumnNames(val interface{}) ([]string) {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
 
-		// XXX: use inflector to convert field name with underscore, maybe
+		// XXX: use inflect to convert field name with underscore, maybe
 		// columnName = typeOfT.Field(i).Name
 		if len(columnName) > 0 {
 			columns = append(columns,columnName)
@@ -81,6 +82,15 @@ func ParseColumnNames(val interface{}) ([]string) {
 func BuildSelectColumnClause(val interface{}) (string) {
 	columns := ParseColumnNames(val)
 	return strings.Join(columns,",")
+}
+
+func BuildSelectClause(val interface{}) (string) {
+	// get table name
+	// inflect.Underscore()
+	t := reflect.ValueOf(val)
+	typeOfT := t.Type()
+	tableName := inflect.Pluralize( inflect.Underscore(typeOfT.Name()))
+	return "SELECT " + BuildSelectColumnClause(val) + " FROM " + tableName;
 }
 
 

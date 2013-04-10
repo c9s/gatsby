@@ -47,11 +47,15 @@ func TestColumnNamesParsing(t * testing.T) {
 
 func TestBuildSelectColumns(t * testing.T) {
 	str := BuildSelectColumnClause( FooRecord{Id:4, Name: "John"} )
-	t.Log(str)
 	if len(str) == 0 {
 		t.Fail()
 	}
+	if str != "id,name,type" {
+		t.Fatal(str)
+	}
 }
+
+
 
 type Staff struct {
 	Id        int `json:"id"`
@@ -61,17 +65,27 @@ type Staff struct {
 	Phone     string `json:"phone"`
 }
 
+func TestBuildSelectClause(t * testing.T) {
+	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
+	sql := BuildSelectClause(staff)
+	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs" {
+		t.Fatal(sql)
+	}
+}
+
+
+
 func TestFillRecord(t * testing.T) {
-
 	staff := Staff{}
-
     db, err := sql.Open("postgres", "user=postgres password=postgres dbname=drshine_itsystem sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	sql := "SELECT " + BuildSelectColumnClause(staff) + " FROM staffs WHERE id = $1"
-	t.Log(sql)
+	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs WHERE id = $1" {
+		t.Fatal(sql)
+	}
 
 	_ = db
 
