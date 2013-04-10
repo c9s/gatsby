@@ -82,7 +82,7 @@ func TestFillRecord(t * testing.T) {
 		t.Fatal(err)
 	}
 
-	sql := "SELECT " + BuildSelectColumnClause(staff) + " FROM staffs WHERE id = $1"
+	sql := BuildSelectClause(staff) + " WHERE id = $1"
 	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs WHERE id = $1" {
 		t.Fatal(sql)
 	}
