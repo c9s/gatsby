@@ -92,7 +92,7 @@ func TestFillRecord(t * testing.T) {
 	stmt , err := db.Prepare(sql)
 	rows, err := stmt.Query(1)
 	rows.Next()
-	err = FillFromRow(&staff,rows)
+	err = FillFromRows(&staff,rows)
 	if err != nil {
 		t.Fatal(err)
 	}

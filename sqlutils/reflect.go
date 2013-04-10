@@ -67,9 +67,9 @@ func ParseColumnNames(val interface{}) ([]string) {
 		if len(columnName) == 0 {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
-
-		// XXX: use inflect to convert field name with underscore, maybe
-		// columnName = typeOfT.Field(i).Name
+		if len(columnName) == 0 {
+			columnName = inflect.Tableize(typeOfT.Field(i).Name)
+		}
 		if len(columnName) > 0 {
 			columns = append(columns,columnName)
 		}
@@ -95,7 +95,7 @@ func BuildSelectClause(val interface{}) (string) {
 
 
 
-func FillFromRow(val interface{}, rows * sql.Rows) (error) {
+func FillFromRows(val interface{}, rows * sql.Rows) (error) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
