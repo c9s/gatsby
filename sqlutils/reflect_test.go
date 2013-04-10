@@ -55,7 +55,7 @@ func TestBuildSelectColumns(t * testing.T) {
 
 type Staff struct {
 	Id        int `json:"id"`
-	Name      string `json:"name"`
+	Name      string `json:"name" field:"required"`
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`

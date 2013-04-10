@@ -19,6 +19,7 @@ func GetColumnMap(val interface{}) (map[string] interface{}) {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
 		tagString := tag.Get("json")
+
 		if len(tagString) > 0 {
 			columnName = strings.SplitN(tagString,",",1)[0]
 		}
@@ -86,7 +87,8 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	typeOfT := t.Type()
 
 	var args []interface{}
-	var fieldNum []int
+	var fieldNums []int
+	var fieldAttrList []map[string] bool
 
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
@@ -94,12 +96,20 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var field     reflect.Value = t.Field(i)
 		var fieldType reflect.Type = field.Type()
 
-		tagString := tag.Get("json")
-		if len(tagString) > 0 {
-			columnName = strings.SplitN(tagString,",",1)[0]
+
+		tagString  := strings.Split(tag.Get("json"),",")
+		fieldList := strings.Split(tag.Get("field"),",")
+		fieldAttrs := map[string] bool {}
+
+		for _, attrName := range fieldList {
+			fieldAttrs[ attrName ] = true
+		}
+
+		if len(fieldList) == 0 && len(fieldList[0]) > 0 {
+			columnName = fieldList[0]
 		}
 		if len(columnName) == 0 {
-			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
+			columnName = tagString[0]
 		}
 		if len(columnName) == 0 {
 			continue
@@ -120,7 +130,8 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			// not sure if this work
 			args = append(args, reflect.New(fieldType).Elem().Interface() )
 		}
-		fieldNum = append(fieldNum,i)
+		fieldNums = append(fieldNums,i)
+		fieldAttrList = append(fieldAttrList, fieldAttrs)
 	}
 
 	err := rows.Scan(args...)
@@ -129,7 +140,10 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	}
 
 	for i, arg := range args {
-		var fieldIdx int = fieldNum[i]
+		var fieldIdx int = fieldNums[i]
+		fieldAttrs := fieldAttrList[i]
+
+		var isRequired = fieldAttrs["required"]
 		var val reflect.Value = t.Field(fieldIdx)
 		var t reflect.Type = val.Type()
 		var typeStr string = t.String()
@@ -138,10 +152,11 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			panic("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
 		}
 
-
 		if typeStr == "string" {
 			if arg.(*sql.NullString).Valid {
 				val.SetString( arg.(*sql.NullString).String)
+			} else if isRequired {
+				panic("required field")
 			}
 		} else if typeStr == "int" {
 			if arg.(*sql.NullInt64).Valid {
@@ -160,12 +175,6 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		}
 	}
 	return err
-	// var id int
-	// var name string
-	// var stafftype string
-	// var phone sql.NullString
-	// var gender sql.NullString
-	// return rows.Scan(&id, &name,  &gender, &stafftype, &phone)
 }
 
 
