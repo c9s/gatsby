@@ -67,9 +67,11 @@ func ParseColumnNames(val interface{}) ([]string) {
 		if len(columnName) == 0 {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
+		/*
 		if len(columnName) == 0 {
 			columnName = inflect.Tableize(typeOfT.Field(i).Name)
 		}
+		*/
 		if len(columnName) > 0 {
 			columns = append(columns,columnName)
 		}
@@ -94,20 +96,27 @@ func BuildSelectClause(val interface{}) (string) {
 }
 
 
+/*
+func FillFromRow(val interface{}, rows* sql.Rows, rowLength int) (error) {
+	for r := 0 ; r < rowLength ; r++ {
+		return FillFromRow(val, rows)
+	}
+}
+*/
 
-func FillFromRows(val interface{}, rows * sql.Rows) (error) {
+func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
-	var args []interface{}
+	var args      []interface{}
 	var fieldNums []int
 	var fieldAttrList []map[string] bool
 
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
-		var tag       reflect.StructTag = typeOfT.Field(i).Tag
-		var field     reflect.Value = t.Field(i)
-		var fieldType reflect.Type = field.Type()
+		var tag        reflect.StructTag = typeOfT.Field(i).Tag
+		var field      reflect.Value = t.Field(i)
+		var fieldType  reflect.Type = field.Type()
 
 
 		tagString  := strings.Split(tag.Get("json"),",")
