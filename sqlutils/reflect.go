@@ -96,14 +96,6 @@ func BuildSelectClause(val interface{}) (string) {
 }
 
 
-/*
-func FillFromRow(val interface{}, rows* sql.Rows, rowLength int) (error) {
-	for r := 0 ; r < rowLength ; r++ {
-		return FillFromRow(val, rows)
-	}
-}
-*/
-
 func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
