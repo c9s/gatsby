@@ -6,7 +6,7 @@ import "database/sql"
 
 
 func FillFromRow(val interface{}, rows * sql.Rows) (error) {
-	t := reflect.ValueOf(val).Elem()
+	t       := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	var args      []interface{}
