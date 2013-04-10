@@ -86,10 +86,9 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	typeOfT := t.Type()
 
 	var args []interface{}
-
+	var fieldNum []int
 
 	for i := 0; i < t.NumField(); i++ {
-
 		var columnName string
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
@@ -100,37 +99,40 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		if len(columnName) == 0 {
 			columnName = strings.SplitN(tag.Get("field"),",",1)[0]
 		}
-
 		if len(columnName) == 0 {
 			continue
 		}
 
-		// strt := reflect.ValueOf(&staff).Elem()
 		// args = append(args, field.Interface())
 		// args = append(args, field.Addr())
-		// args = append(args, field.Elem())
-		// args = append(args, reflect.New(field.Type()).Elem() )
-		_ = field
+		// args = append(args, field.Elem() )
+		if field.Type().String() == "string" {
+			args = append(args, new(sql.NullString) )
+		} else if field.Type().String() == "int" {
+			args = append(args, new(sql.NullInt64) )
+		} else {
+			args = append(args, reflect.New(field.Type()).Interface() )
+		}
+		fieldNum = append(fieldNum,i)
 	}
-
-	_ = args
+	// _ = args
 	// fmt.Println( "Args", args )
 	// fmt.Println( "Len",  len(args) )
-
 	// rows.Scan(output.Args()...); from modsql
-	// err := rows.Scan(args...)
-	var id int
-	var name string
-	var gender string
-	var phone string
-	var cellphone string
-	var stafftype string
+	err := rows.Scan(args...)
 
-	err := rows.Scan(&id, &name, &gender, &phone, &cellphone, &stafftype)
-	if err != nil {
-		fmt.Println(err)
+	for _, a := range args {
+		fmt.Println(a)
 	}
+
+
 	return err
+	// var id int
+	// var name string
+	// var stafftype string
+	// var phone sql.NullString
+	// var gender sql.NullString
+	// return rows.Scan(&id, &name,  &gender, &stafftype, &phone)
 }
 
 
