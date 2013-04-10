@@ -82,7 +82,7 @@ func BuildSelectColumnClause(val interface{}) (string) {
 }
 
 func FillFromRow(val interface{}, rows * sql.Rows) (error) {
-	t := reflect.ValueOf(val)
+	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	var args []interface{}
@@ -90,8 +90,10 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 
 	for i := 0; i < t.NumField(); i++ {
 		var columnName string
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var field reflect.Value = t.Field(i)
+		var tag       reflect.StructTag = typeOfT.Field(i).Tag
+		var field     reflect.Value = t.Field(i)
+		var fieldType reflect.Type = field.Type()
+
 		tagString := tag.Get("json")
 		if len(tagString) > 0 {
 			columnName = strings.SplitN(tagString,",",1)[0]
@@ -106,26 +108,57 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		// args = append(args, field.Interface())
 		// args = append(args, field.Addr())
 		// args = append(args, field.Elem() )
-		if field.Type().String() == "string" {
+		if fieldType.String() == "string" {
 			args = append(args, new(sql.NullString) )
-		} else if field.Type().String() == "int" {
+		} else if fieldType.String() == "int" {
 			args = append(args, new(sql.NullInt64) )
+		} else if fieldType.String() == "bool" {
+			args = append(args, new(sql.NullBool))
+		} else if fieldType.String() == "float" {
+			args = append(args, new(sql.NullFloat64))
 		} else {
-			args = append(args, reflect.New(field.Type()).Interface() )
+			// not sure if this work
+			args = append(args, reflect.New(fieldType).Elem().Interface() )
 		}
 		fieldNum = append(fieldNum,i)
 	}
-	// _ = args
-	// fmt.Println( "Args", args )
-	// fmt.Println( "Len",  len(args) )
-	// rows.Scan(output.Args()...); from modsql
-	err := rows.Scan(args...)
 
-	for _, a := range args {
-		fmt.Println(a)
+	err := rows.Scan(args...)
+	if err != nil {
+		return err
 	}
 
+	for i, arg := range args {
+		var fieldIdx int = fieldNum[i]
+		var val reflect.Value = t.Field(fieldIdx)
+		var t reflect.Type = val.Type()
 
+		if ! val.CanSet() {
+			panic("can not set value " + typeOfT.Field(fieldIdx).Name)
+		}
+
+
+		if t.String() == "string" {
+			if arg.(*sql.NullString).Valid {
+				val.SetString( arg.(*sql.NullString).String)
+			}
+		} else if t.String() == "int" {
+			if arg.(*sql.NullInt64).Valid {
+				val.SetInt( arg.(*sql.NullInt64).Int64 )
+			}
+		} else if t.String() == "bool" {
+			if arg.(*sql.NullBool).Valid {
+				val.SetBool( arg.(*sql.NullBool).Bool)
+			}
+		} else if t.String() == "float" {
+			if arg.(*sql.NullFloat64).Valid {
+				val.SetFloat( arg.(*sql.NullFloat64).Float64)
+			}
+			// args = append(args, new(sql.NullFloat64))
+		} else {
+			panic("unsupported type" + t.String() )
+		}
+	}
 	return err
 	// var id int
 	// var name string
