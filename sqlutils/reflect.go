@@ -3,6 +3,7 @@ import "fmt"
 import "reflect"
 import "strings"
 import "database/sql"
+import "errors"
 import _ "github.com/bmizerany/pq"
 
 var columnNameCache = map[string] []string {};
@@ -149,7 +150,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var typeStr string = t.String()
 
 		if ! val.CanSet() {
-			panic("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
+			return errors.New("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
 		}
 
 		if typeStr == "string" {
@@ -171,7 +172,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 				val.SetFloat( arg.(*sql.NullFloat64).Float64)
 			}
 		} else {
-			panic("unsupported type" + t.String() )
+			return errors.New("unsupported type" + t.String() )
 		}
 	}
 	return err
