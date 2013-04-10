@@ -89,7 +89,7 @@ func BuildSelectClause(val interface{}) (string) {
 	// inflect.Underscore()
 	t := reflect.ValueOf(val)
 	typeOfT := t.Type()
-	tableName := inflect.Pluralize( inflect.Underscore(typeOfT.Name()))
+	tableName := inflect.Tableize(typeOfT.Name())
 	return "SELECT " + BuildSelectColumnClause(val) + " FROM " + tableName;
 }
 
