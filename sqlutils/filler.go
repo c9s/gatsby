@@ -1,6 +1,5 @@
 package sqlutils
 import "reflect"
-import "strings"
 import "errors"
 import "database/sql"
 
@@ -24,11 +23,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			continue
 		}
 
-		fieldList := strings.Split(tag.Get("field"),",")
-		fieldAttrs := map[string] bool {}
-		for _, attrName := range fieldList {
-			fieldAttrs[ attrName ] = true
-		}
+		fieldAttrs := GetColumnAttributesFromTag(&tag)
 
 		// args = append(args, field.Interface())
 		// args = append(args, field.Addr())
