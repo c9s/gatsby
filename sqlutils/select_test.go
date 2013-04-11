@@ -8,6 +8,9 @@ type Staff struct {
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`
 }
+func (self *Staff) GetPkId() int {
+	return self.Id
+}
 
 func TestBuildSelectColumns(t * testing.T) {
 	str := BuildSelectColumnClause( &fooRecord{Id:4, Name: "John"} )

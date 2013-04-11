@@ -32,6 +32,7 @@ func TestFillRecord(t * testing.T) {
 	if id == -1 {
 		t.Fatal("Primary key failed")
 	}
+	staff.Id = id
 
 
 	sql := BuildSelectClause(&staff) + " WHERE id = $1"
@@ -46,6 +47,12 @@ func TestFillRecord(t * testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	_, err = Delete(db,&staff)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 }
 
 
