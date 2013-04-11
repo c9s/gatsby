@@ -15,7 +15,9 @@ func TestBuildWhereClause(t *testing.T) {
 	if strings.Index(sql, "id = $") == -1 {
 		t.Fatal(sql)
 	}
-	_ = args
+	if len(args) != 2 {
+		t.Fatal("lenght is not 2")
+	}
 }
 
 
