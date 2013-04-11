@@ -16,15 +16,6 @@ func TestBuildWhereClause(t *testing.T) {
 		t.Fatal(sql)
 	}
 	_ = args
-
-	/*
-	if args[0] != "foo" {
-		t.Fatal("not foo")
-	}
-	if args[1] != 123 {
-		t.Fatal("not 123")
-	}
-	*/
 }
 
 
