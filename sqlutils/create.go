@@ -1,5 +1,6 @@
 package sqlutils
 import "database/sql"
+import "fmt"
 
 // id, err := sqlutils.Create(struct pointer)
 func Create(db *sql.DB, val interface{}) (int,error) {
