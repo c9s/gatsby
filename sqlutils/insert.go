@@ -16,6 +16,8 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 	var valueFields []string
 	var values      []interface{}
 
+	var fieldId int = 1
+
 	for i := 0; i < t.NumField(); i++ {
 		var tag        reflect.StructTag = typeOfT.Field(i).Tag
 		var field      reflect.Value = t.Field(i)
@@ -24,12 +26,16 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 		if columnName == nil {
 			continue
 		}
+		if *columnName == "id" {
+			continue
+		}
 
-		// TODO: see if we can skip null columns
+		// TODO: see if we can skip null columns, or simply skip Id column
 
 		columnNames = append(columnNames, *columnName)
-		valueFields = append(valueFields, "$" + strconv.Itoa(i + 1) )
+		valueFields = append(valueFields, "$" + strconv.Itoa(fieldId) )
 		values      = append(values, field.Interface() )
+		fieldId++
 	}
 	return "INSERT INTO " + tableName + " (" + strings.Join(columnNames,",") + ") " +
 		" VALUES (" + strings.Join(valueFields,",") + ")", values
