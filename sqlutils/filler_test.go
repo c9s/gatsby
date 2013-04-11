@@ -41,7 +41,7 @@ func TestFillRecord(t * testing.T) {
 	}
 
 	stmt , err := db.Prepare(sql)
-	rows, err := stmt.Query(1)
+	rows, err := stmt.Query(id)
 	rows.Next()
 	err = FillFromRow(&staff,rows)
 	if err != nil {

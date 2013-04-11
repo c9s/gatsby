@@ -29,5 +29,5 @@ func TestLoad(t *testing.T) {
 		t.Fatal("Can not load record")
 	}
 
-
+	Delete(db,&staff)
 }

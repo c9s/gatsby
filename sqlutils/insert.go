@@ -41,7 +41,6 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 		" VALUES (" + strings.Join(valueFields,",") + ")", values
 }
 
-
 func GetReturningIdFromRows(rows * sql.Rows) (int, error) {
     var id int
     var err error
