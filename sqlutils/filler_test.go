@@ -3,19 +3,41 @@ import "testing"
 import "database/sql"
 import _ "github.com/bmizerany/pq"
 
+func openDB() (*sql.DB, error) {
+    db, err := sql.Open("postgres", "user=postgres password=postgres dbname=test sslmode=disable")
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+
 func TestFillRecord(t * testing.T) {
 	staff := Staff{}
-    db, err := sql.Open("postgres", "user=postgres password=postgres dbname=drshine_itsystem sslmode=disable")
+    db, err := openDB()
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// Create Staff
+	staff.Id = 1
+	staff.Name = "Mary"
+	staff.Phone = "1234567"
+
+	id, err := Create(db,&staff)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if id == -1 {
+		t.Fatal("Primary key failed")
+	}
+
 
 	sql := BuildSelectClause(&staff) + " WHERE id = $1"
 	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs WHERE id = $1" {
 		t.Fatal(sql)
 	}
-
-	_ = db
 
 	stmt , err := db.Prepare(sql)
 	rows, err := stmt.Query(1)

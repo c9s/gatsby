@@ -2,6 +2,7 @@ package sqlutils
 import "fmt"
 import "reflect"
 import "strings"
+import "database/sql"
 
 
 // Generate "UPDATE {table} SET name = $1, name2 = $2"
@@ -44,7 +45,7 @@ func Update(db *sql.DB, val interface{}) (sql.Result, error) {
 	id := val.(PrimaryKey).GetPkId()
 	values = append(values, id)
 
-	sql := fmt.Sprintf(" WHERE id = $%d", len(values))
+	sql = sql + fmt.Sprintf(" WHERE id = $%d", len(values))
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {
