@@ -2,12 +2,14 @@ package sqlutils
 import "testing"
 
 type Staff struct {
-	Id        int64 `json:"id"`
+	Id        int64 `json:"id" field:",serial"`
 	Name      string `json:"name" field:",required"`
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`
 }
+
+// Implement the GetPkId interface
 func (self *Staff) GetPkId() int64 {
 	return self.Id
 }
@@ -22,7 +24,6 @@ func TestBuildSelectColumns(t * testing.T) {
 	}
 }
 
-
 func TestBuildSelectClause(t * testing.T) {
 	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
 	sql := BuildSelectClause(&staff)
@@ -30,3 +31,4 @@ func TestBuildSelectClause(t * testing.T) {
 		t.Fatal(sql)
 	}
 }
+

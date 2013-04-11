@@ -25,7 +25,12 @@ func BuildInsertClause(val interface{}) (string, []interface{}) {
 		if columnName == nil {
 			continue
 		}
-		if *columnName == "id" {
+
+
+		var attributes = GetColumnAttributesFromTag(&tag)
+
+		// if it's a serial column (with auto-increment, we can simply skip)
+		if _, ok := attributes["serial"] ; ok {
 			continue
 		}
 
