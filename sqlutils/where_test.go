@@ -6,7 +6,7 @@ func TestBuildWhereClause(t *testing.T) {
 		"name": "foo",
 		"id": 123,
 	}
-	sql, args := BuildWhereClauseFromMap(argMap)
+	sql, args := BuildWhereClauseWithAndOp(argMap)
 	if sql != " WHERE name = $1 AND id = $2" {
 		t.Fatal(sql)
 	}
@@ -17,3 +17,5 @@ func TestBuildWhereClause(t *testing.T) {
 		t.Fail()
 	}
 }
+
+

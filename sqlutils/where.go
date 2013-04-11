@@ -3,7 +3,22 @@ import "fmt"
 import "strings"
 
 
-func BuildWhereClauseFromMap(argMap map[string]interface{}) (string, []interface{}) {
+func BuildWhereClauseWithAndOp(argMap map[string]interface{}) (string, []interface{}) {
+	sql, args := BuildWhereInnerClause(argMap, "AND")
+	return " WHERE " + sql, args
+}
+
+func BuildWhereClauseWithOrOp(argMap map[string]interface{}) (string, []interface{}) {
+	sql, args := BuildWhereInnerClause(argMap, "OR")
+	return " WHERE " + sql, args
+}
+
+func BuildWhereClauseWithOp(argMap map[string]interface{}, op string) (string, []interface{}) {
+	sql, args := BuildWhereInnerClause(argMap, op)
+	return " WHERE " + sql, args
+}
+
+func BuildWhereInnerClause(argMap map[string]interface{}, op string) (string, []interface{}) {
 	var fields []string
 	var args   []interface{}
 	var i int = 1
@@ -12,6 +27,5 @@ func BuildWhereClauseFromMap(argMap map[string]interface{}) (string, []interface
 		args   = append(args, val)
 		i++
 	}
-	return " WHERE " + strings.Join(fields, " AND "), args
+	return strings.Join(fields, fmt.Sprintf(" %s ", op) ), args
 }
-
