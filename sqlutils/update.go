@@ -62,4 +62,3 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 	return result
 }
 
-
