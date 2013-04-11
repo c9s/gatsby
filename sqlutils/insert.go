@@ -19,13 +19,14 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 	for i := 0; i < t.NumField(); i++ {
 		var tag        reflect.StructTag = typeOfT.Field(i).Tag
 		var field      reflect.Value = t.Field(i)
-		// var fieldType  reflect.Type = field.Type()
 
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
-		// fieldAttrs := GetColumnAttributesFromTag(&tag)
+
+		// TODO: see if we can skip null columns
+
 		columnNames = append(columnNames, *columnName)
 		valueFields = append(valueFields, "$" + strconv.Itoa(i + 1) )
 		values      = append(values, field.Interface() )

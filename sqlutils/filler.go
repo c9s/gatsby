@@ -17,17 +17,11 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var field      reflect.Value = t.Field(i)
 		var fieldType  reflect.Type = field.Type()
 
-
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
 
-		fieldAttrs := GetColumnAttributesFromTag(&tag)
-
-		// args = append(args, field.Interface())
-		// args = append(args, field.Addr())
-		// args = append(args, field.Elem() )
 		if fieldType.String() == "string" {
 			args = append(args, new(sql.NullString) )
 		} else if fieldType.String() == "int" {
@@ -40,6 +34,9 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			// Not sure if this work
 			args = append(args, reflect.New(fieldType).Elem().Interface() )
 		}
+
+		fieldAttrs := GetColumnAttributesFromTag(&tag)
+
 		fieldNums = append(fieldNums,i)
 		fieldAttrList = append(fieldAttrList, fieldAttrs)
 	}
