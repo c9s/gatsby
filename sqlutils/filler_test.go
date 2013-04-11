@@ -48,9 +48,9 @@ func TestFillRecord(t * testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = Delete(db,&staff)
-	if err != nil {
-		t.Fatal(err)
+	r = Delete(db,&staff)
+	if r.Error != nil {
+		t.Fatal(r.Error)
 	}
 }
 

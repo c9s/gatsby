@@ -1,24 +1,26 @@
 package sqlutils
 import "database/sql"
+import "errors"
 
-func Delete(db *sql.DB, val interface{}) (sql.Result, error) {
+func Delete(db *sql.DB, val interface{}) (*Result) {
 	sql := "DELETE FROM " + GetTableName(val) + " WHERE id = $1"
 
 	if val.(PrimaryKey) == nil {
-		panic("PrimaryKey interface is required.")
+		return NewErrorResult(errors.New("PrimaryKey interface is required."),sql)
 	}
 
-
 	id := val.(PrimaryKey).GetPkId()
-
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return nil, err
+		return NewErrorResult(err,sql)
 	}
 	res, err := stmt.Exec(id)
 	if err != nil {
-		return nil, err
+		return NewErrorResult(err,sql)
 	}
-	return res, nil
+
+	r := NewResult(sql)
+	r.Result = res
+	return r
 }
 

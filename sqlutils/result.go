@@ -1,9 +1,11 @@
 package sqlutils
+import "database/sql"
 
 type Result struct {
 	Sql string
 	Id  int
 	Error error
+	Result sql.Result
 }
 
 func NewErrorResult(err error,sql string) (*Result) {
