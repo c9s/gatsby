@@ -31,25 +31,30 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 	return strings.Join(setFields,", "), values
 }
 
-// id, err := sqlutils.Create(struct pointer)
-/*
-func Update(db *sql.DB, val interface{}) (int,error) {
-	sql , args := BuildUpdateClause(val)
 
-	// for pgsql only
-	sql += " RETURNING id"
 
-	err := CheckRequired(val)
-	if err != nil {
-		return -1, err
+func Update(db *sql.DB, val interface{}) (sql.Result, error) {
+	sql, values := BuildUpdateClause(val)
+
+	if val.(PrimaryKey) == nil {
+		panic("PrimaryKey interface is required.")
 	}
 
-	rows, err := PrepareAndQuery(db,sql,args...)
+
+	id := val.(PrimaryKey).GetPkId()
+	values = append(values, id)
+
+	sql := fmt.Sprintf(" WHERE id = $%d", len(values))
+
+	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return -1, err
+		return nil, err
 	}
-	return GetReturningIdFromRows(rows)
+	res, err := stmt.Exec(values...)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
-*/
 
 
