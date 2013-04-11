@@ -1,32 +1,50 @@
 package sqlutils
 import "database/sql"
+// import "fmt"
+
+const (
+	DriverPg = 1
+	DriverMysql = 2
+	DriverSqlite = 3
+)
 
 // id, err := sqlutils.Create(struct pointer)
-func Create(db *sql.DB, val interface{}) (*Result) {
+func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 	sql , args := BuildInsertClause(val)
 
-	// for pgsql only
-	sql += " RETURNING id"
 
 	err := CheckRequired(val)
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
 
-	rows, err := PrepareAndQuery(db,sql,args...)
-	if err != nil {
-		return NewErrorResult(err,sql)
+	result := NewResult(sql)
+
+	// for pgsql only
+	if driver == DriverPg {
+		sql += " RETURNING id"
+		rows, err := PrepareAndQuery(db,sql,args...)
+		if err != nil {
+			return NewErrorResult(err,sql)
+		}
+		id, err := GetReturningIdFromRows(rows)
+		if err != nil {
+			return NewErrorResult(err,sql)
+		}
+		result.Id = id
+	} else if driver == DriverMysql {
+		res, err := db.Exec(sql,args...)
+		if err != nil {
+			return NewErrorResult(err,sql)
+		}
+		result.Id, err = res.LastInsertId()
+		if err != nil {
+			return NewErrorResult(err,sql)
+		}
+	} else {
+		panic("Unsupported driver type")
 	}
-
-	id, err := GetReturningIdFromRows(rows)
-
-	if err != nil {
-		return NewErrorResult(err,sql)
-	}
-
-	r := NewResult(sql)
-	r.Id = id
-	return r
+	return result
 }
 
 

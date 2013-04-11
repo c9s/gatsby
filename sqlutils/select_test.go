@@ -2,13 +2,13 @@ package sqlutils
 import "testing"
 
 type Staff struct {
-	Id        int `json:"id"`
+	Id        int64 `json:"id"`
 	Name      string `json:"name" field:",required"`
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`
 }
-func (self *Staff) GetPkId() int {
+func (self *Staff) GetPkId() int64 {
 	return self.Id
 }
 

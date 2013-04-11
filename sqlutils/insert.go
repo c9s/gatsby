@@ -40,8 +40,8 @@ func BuildInsertClause(val interface{}) (string, []interface{}) {
 		" VALUES ( " + strings.Join(valueFields,", ") + " )", values
 }
 
-func GetReturningIdFromRows(rows * sql.Rows) (int, error) {
-    var id int
+func GetReturningIdFromRows(rows * sql.Rows) (int64, error) {
+    var id int64
     var err error
     rows.Next()
     err = rows.Scan(&id)

@@ -22,13 +22,15 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			continue
 		}
 
-		if fieldType.String() == "string" {
+		var typeStr string = fieldType.String()
+
+		if typeStr == "string" {
 			args = append(args, new(sql.NullString) )
-		} else if fieldType.String() == "int" {
+		} else if typeStr == "int" || typeStr == "int64" {
 			args = append(args, new(sql.NullInt64) )
-		} else if fieldType.String() == "bool" {
+		} else if typeStr == "bool" {
 			args = append(args, new(sql.NullBool))
-		} else if fieldType.String() == "float" {
+		} else if typeStr == "float" || typeStr == "float64" {
 			args = append(args, new(sql.NullFloat64))
 		} else {
 			// Not sure if this work
@@ -66,7 +68,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			} else if isRequired {
 				return errors.New("required field")
 			}
-		} else if typeStr == "int" {
+		} else if typeStr == "int" || typeStr == "int64" {
 			if arg.(*sql.NullInt64).Valid {
 				val.SetInt( arg.(*sql.NullInt64).Int64 )
 			}
@@ -74,7 +76,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			if arg.(*sql.NullBool).Valid {
 				val.SetBool( arg.(*sql.NullBool).Bool)
 			}
-		} else if typeStr == "float" {
+		} else if typeStr == "float" || typeStr == "float64" {
 			if arg.(*sql.NullFloat64).Valid {
 				val.SetFloat( arg.(*sql.NullFloat64).Float64)
 			}

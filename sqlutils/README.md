@@ -1,7 +1,7 @@
 Gatsby SQLUtils
 =================
 
-SQLUtils package helps you build SQL.
+Gatsby SQLUtils package helps you build SQL.
 
 
 Usage
@@ -22,6 +22,11 @@ type Staff struct {
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`
+}
+
+// Implement the PrimaryKey interface
+func (self *Staff) GetPkId() int64 {
+    return self.Id
 }
 ```
 
@@ -45,7 +50,14 @@ To create new record:
 
 ```go
 staff := Staff{Name:"Mary"}
-Create(db,&staff)
+result := sqlutils.Create(db,&staff, sqlutils.DriverPg)
+
+if result.Error {
+    // handle error
+}
+if result.Id != 0 {
+    // handle primary key id
+}
 ```
 
 To update struct object:
@@ -54,6 +66,10 @@ To update struct object:
 staff.Name = "NewName"
 rows, err := Update(db,&staff)
 ```
+
+
+
+
 
 
 

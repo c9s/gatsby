@@ -9,7 +9,7 @@ func TestLoad(t *testing.T) {
 
 	staff := Staff{Name: "John", Gender: "m", Phone: "1234567"}
 
-	r := Create(db,&staff)
+	r := Create(db, &staff, DriverPg)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}

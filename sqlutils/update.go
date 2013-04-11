@@ -43,8 +43,12 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 
 	sql, values := BuildUpdateClause(val)
 
-	id := val.(PrimaryKey).GetPkId()
-	values = append(values, id)
+	if val.(PrimaryKey) != nil {
+		id := val.(PrimaryKey).GetPkId()
+		values = append(values, id)
+	} else if name := GetPrimaryKeyColumnName(&val) ; name != nil {
+
+	}
 
 	sql += fmt.Sprintf(" WHERE id = $%d", len(values))
 
