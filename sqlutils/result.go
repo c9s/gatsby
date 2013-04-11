@@ -6,3 +6,13 @@ type Result struct {
 	Error error
 }
 
+func NewErrorResult(err error) (*Result) {
+	r := Result{Error: err}
+	return &r
+}
+
+func NewResult(sql string) (*Result) {
+	r := Result{Sql: sql}
+	return &r
+}
+

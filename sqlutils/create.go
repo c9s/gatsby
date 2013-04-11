@@ -17,6 +17,7 @@ func Create(db *sql.DB, val interface{}) (int,error) {
 	if err != nil {
 		return -1, err
 	}
+
 	return GetReturningIdFromRows(rows)
 }
 
