@@ -9,17 +9,17 @@ func TestLoad(t *testing.T) {
 
 	staff := Staff{Name: "John", Gender: "m", Phone: "1234567"}
 
-	id, err := Create(db,&staff)
-	if err != nil {
-		t.Fatal(err)
+	r := Create(db,&staff)
+	if r.Error != nil {
+		t.Fatal(r.Error)
 	}
-	if id == -1 {
+	if r.Id == -1 {
 		t.Fatal("Can not create record")
 	}
-	t.Logf("staff id: %d", id)
+	t.Logf("staff id: %d", r.Id)
 
 	staff2 := Staff{}
-	err = Load(db,&staff2, id)
+	err = Load(db,&staff2, r.Id)
 
 	if err != nil {
 		t.Fatal(err)

@@ -2,23 +2,31 @@ package sqlutils
 import "database/sql"
 
 // id, err := sqlutils.Create(struct pointer)
-func Create(db *sql.DB, val interface{}) (int,error) {
-	sql , args := BuildInsertColumnClause(val)
+func Create(db *sql.DB, val interface{}) (*Result) {
+	sql , args := BuildInsertClause(val)
 
 	// for pgsql only
 	sql += " RETURNING id"
 
 	err := CheckRequired(val)
 	if err != nil {
-		return -1, err
+		return NewErrorResult(err,sql)
 	}
 
 	rows, err := PrepareAndQuery(db,sql,args...)
 	if err != nil {
-		return -1, err
+		return NewErrorResult(err,sql)
 	}
 
-	return GetReturningIdFromRows(rows)
+	id, err := GetReturningIdFromRows(rows)
+
+	if err != nil {
+		return NewErrorResult(err,sql)
+	}
+
+	r := NewResult(sql)
+	r.Id = id
+	return r
 }
 
 

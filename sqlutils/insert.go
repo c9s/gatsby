@@ -6,8 +6,7 @@ import "strings"
 import "strconv"
 import "database/sql"
 
-
-func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
+func BuildInsertClause(val interface{}) (string, []interface{}) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 	tableName := GetTableName(val)
@@ -37,8 +36,8 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 		values      = append(values, field.Interface() )
 		fieldId++
 	}
-	return "INSERT INTO " + tableName + " (" + strings.Join(columnNames,",") + ") " +
-		" VALUES (" + strings.Join(valueFields,",") + ")", values
+	return "INSERT INTO " + tableName + " ( " + strings.Join(columnNames,", ") + " ) " +
+		" VALUES ( " + strings.Join(valueFields,", ") + " )", values
 }
 
 func GetReturningIdFromRows(rows * sql.Rows) (int, error) {

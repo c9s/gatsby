@@ -24,15 +24,15 @@ func TestFillRecord(t * testing.T) {
 	staff.Name = "Mary"
 	staff.Phone = "1234567"
 
-	id, err := Create(db,&staff)
-	if err != nil {
-		t.Fatal(err)
+	r := Create(db,&staff)
+	if r.Error != nil {
+		t.Fatal(r.Error)
 	}
 
-	if id == -1 {
+	if r.Id == -1 {
 		t.Fatal("Primary key failed")
 	}
-	staff.Id = id
+	staff.Id = r.Id
 
 
 	sql := BuildSelectClause(&staff) + " WHERE id = $1"
@@ -41,7 +41,7 @@ func TestFillRecord(t * testing.T) {
 	}
 
 	stmt , err := db.Prepare(sql)
-	rows, err := stmt.Query(id)
+	rows, err := stmt.Query( r.Id)
 	rows.Next()
 	err = FillFromRow(&staff,rows)
 	if err != nil {

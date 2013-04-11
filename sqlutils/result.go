@@ -6,8 +6,8 @@ type Result struct {
 	Error error
 }
 
-func NewErrorResult(err error) (*Result) {
-	r := Result{Error: err}
+func NewErrorResult(err error,sql string) (*Result) {
+	r := Result{Error: err, Sql: sql}
 	return &r
 }
 
