@@ -4,12 +4,13 @@ package sqlutils
 import "reflect"
 import "strings"
 import "strconv"
-import "github.com/c9s/inflect"
+import "database/sql"
+
 
 func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
-	t := reflect.ValueOf(val)
+	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
-	tableName := inflect.Tableize(typeOfT.Name())
+	tableName := GetTableName(val)
 
 	var columnNames []string
 	var valueFields []string
@@ -32,4 +33,17 @@ func BuildInsertColumnClause(val interface{}) (string, []interface{}) {
 	return "INSERT INTO " + tableName + " (" + strings.Join(columnNames,",") + ") " +
 		" VALUES (" + strings.Join(valueFields,",") + ")", values
 }
+
+
+func GetReturningIdFromRows(rows * sql.Rows) (int, error) {
+    var id int
+    var err error
+    rows.Next()
+    err = rows.Scan(&id)
+	if err != nil {
+		return -1, err
+	}
+    return id, err
+}
+
 

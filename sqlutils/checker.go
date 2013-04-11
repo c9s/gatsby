@@ -2,7 +2,6 @@ package sqlutils
 import "errors"
 import "reflect"
 
-
 // struct pointer 
 func CheckRequired(val interface{}) (error) {
 	t       := reflect.ValueOf(val).Elem()

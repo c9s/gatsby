@@ -2,11 +2,28 @@ package sqlutils
 import "reflect"
 import "strings"
 // import "fmt"
-// import "github.com/c9s/inflect"
+import "github.com/c9s/inflect"
 import _ "github.com/bmizerany/pq"
 
 var columnNameCache = map[string] []string {};
+var tableNameCache = map[string] string {};
 
+type PrimaryKey interface {
+	GetPkId() int
+}
+
+func GetTableName(val interface{}) (string) {
+	typeName := reflect.ValueOf(val).Elem().Type().Name()
+	return GetTableNameFromTypeName(typeName)
+}
+
+func GetTableNameFromTypeName(typeName string) (string) {
+	if cache, ok := tableNameCache[ typeName ] ; ok {
+		return cache
+	}
+	tableNameCache[typeName] = inflect.Tableize(typeName)
+	return tableNameCache[typeName]
+}
 
 func GetColumnAttributesFromTag(tag *reflect.StructTag) (map[string]bool) {
 	fieldTags := strings.Split(tag.Get("field"),",")
@@ -29,8 +46,8 @@ func GetColumnNameFromTag(tag *reflect.StructTag) (*string) {
 	return nil
 }
 
-func GetColumnMap(val interface{}) (map[string] interface{}) {
-	t := reflect.ValueOf(val)
+func GetColumnValueMap(val interface{}) (map[string] interface{}) {
+	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	// var structName string = typeOfT.String()
@@ -39,7 +56,6 @@ func GetColumnMap(val interface{}) (map[string] interface{}) {
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
-
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName != nil {
 			columns[ *columnName ] = field.Interface()
@@ -50,7 +66,7 @@ func GetColumnMap(val interface{}) (map[string] interface{}) {
 
 // Parse SQL columns from struct
 func ParseColumnNames(val interface{}) ([]string) {
-	t := reflect.ValueOf(val)
+	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	var structName string = typeOfT.String()
@@ -69,4 +85,5 @@ func ParseColumnNames(val interface{}) ([]string) {
 	columnNameCache[structName] = columns
 	return columns
 }
+
 
