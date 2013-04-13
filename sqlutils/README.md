@@ -1,17 +1,20 @@
 Gatsby SQLUtils
 =================
 
-Gatsby SQLUtils package helps you build SQL.
+Gatsby SQLUtils package helps you build SQL through the struct object.
 
-
-Usage
------
+Importing
+---------
 
 Import from GitHub:
 
 ```go
-import "github.com/c9s/go-sqlutils" sqlutils
+import sqlutils "github.com/c9s/go-sqlutils"
 ```
+
+
+Defining Struct Tag
+-------------------
 
 Define your struct with json spec or with field tag:
 
@@ -33,20 +36,68 @@ type Staff struct {
 	StaffType string `json:"staff_type"`
 	Phone     string `json:"phone"`
 }
+```
 
+PrimaryKey interface
+--------------------
 
+```go
 // Implement the PrimaryKey interface
 func (self *Staff) GetPkId() int64 {
     return self.Id
 }
 ```
 
+
+
+Buliding Select SQL statement
+-----------------------------
+
 To build select clause depends on the struct fields:
 
 ```go
-sql := sqlutils.BuildSelectClause(Staff{})
-// sql = " SELECT id, name, gender, staff_type, phone FROM staffs"
+sql := sqlutils.BuildSelectClause(&Staff{})
 ```
+
+Which returns:
+
+```sql
+SELECT id, name, gender, staff_type, phone FROM staffs
+```
+
+
+```go
+sql := sqlutils.BuildSelectColumnClause(&Staff{})
+```
+
+Which returns:
+
+    id, name, gender, staff_type, phone
+
+
+Building Update SQL statement
+------------------------------
+
+```go
+sql, args := sqlutils.BuildUpdateClause(&Staff{})
+```
+
+Which returns:
+
+```sql
+UPDATE staffs SET name = $1, phone = $2, cellphone = $3
+```
+
+```go
+sql, args := sqlutils.BuildUpdateColumns(&Staff{})
+```
+
+Which returns:
+
+    name = $1, phone = $2, cellphone = $3
+
+Building Where SQL statement
+-----------------------------
 
 To build where clause from map:
 
@@ -54,8 +105,16 @@ To build where clause from map:
 sql, args := sqlutils.BuildWhereClauseWithAndOp(map[string]interface{} {
     "name": "John"
 })
-// sql = " WHERE name = $1 AND id = $2"
 ```
+
+Which returns:
+
+```sql
+WHERE name = $1 AND id = $2
+```
+
+Creating Record Through Database Connection
+-------------------------------------------
 
 To create new record:
 
