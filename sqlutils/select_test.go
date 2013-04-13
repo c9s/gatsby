@@ -2,7 +2,7 @@ package sqlutils
 import "testing"
 
 type Staff struct {
-	Id        int64 `json:"id" field:",serial"`
+	Id        int64 `json:"id" field:",primary,serial"`
 	Name      string `json:"name" field:",required"`
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc

@@ -1,9 +1,14 @@
 package sqlutils
 import "database/sql"
+import "fmt"
 
-// Load one record
+// Load record by primary key value.
 func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
-	sql := BuildSelectClause(val) + " WHERE id = $1 LIMIT 1"
+	pName := GetPrimaryKeyColumnName(val)
+	if pName == nil {
+		panic("primary key is required.")
+	}
+	sql := BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
 	rows, err := PrepareAndQuery(db, sql, pkId)
 	rows.Next()
 	err = FillFromRow(val,rows)
