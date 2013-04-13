@@ -32,6 +32,9 @@ func (self *BaseRecord) LoadWithInstance(o interface{}, id int64) (*sqlutils.Res
 
 
 
+func Load(val interface{}, pkId int64) (*sqlutils.Result) {
+	return sqlutils.Load(conn, val, pkId)
+}
 
 func Create(val interface{}, driver int) (*sqlutils.Result) {
 	return sqlutils.Create(conn, val, driver)
