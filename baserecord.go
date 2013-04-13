@@ -1,25 +1,32 @@
 package gatsby
 import "gatsby/sqlutils"
-// import "database/sql"
+import "database/sql"
 
 type BaseRecord struct {
 
 }
 
+var conn *sql.DB
+
+func SetupConnection(c *sql.DB) {
+	conn = c
+}
+
 func (self *BaseRecord) CreateWithInstance(o interface{}) (*sqlutils.Result) {
-	return sqlutils.Create(appHandle.DbHandle, o, sqlutils.DriverPg)
+	return sqlutils.Create(conn, o, sqlutils.DriverPg)
 }
 
 func (self *BaseRecord) DeleteWithInstance(o interface{}) (*sqlutils.Result) {
-	return sqlutils.Delete(appHandle.DbHandle, o)
+	return sqlutils.Delete(conn, o)
 }
 
 func (self *BaseRecord) UpdateWithInstance(o interface{}) (*sqlutils.Result) {
-	return sqlutils.Update(appHandle.DbHandle, o)
+	return sqlutils.Update(conn, o)
 }
 
 func (self *BaseRecord) LoadWithInstance(o interface{}, id int64) (*sqlutils.Result) {
-	return sqlutils.Load(appHandle.DbHandle, o, id)
+	return sqlutils.Load(conn, o, id)
 }
+
 
 
