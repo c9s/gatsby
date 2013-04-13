@@ -45,17 +45,37 @@ To build select clause depends on the struct fields:
 
 ```go
 sql := sqlutils.BuildSelectClause(Staff{})
-// sql = " SELECT id, name, gender, staff_type, phone FROM staffs"
 ```
 
-To build where clause from map:
+Which outputs:
+
+    SELECT id, name, gender, staff_type, phone FROM staffs
+
+
+To build update clause:
+
+
+```go
+staff := Staff{ Id: 3, Name: "John" }
+sql, args := sqlutils.BuildUpdateClause(&staff)
+```
+
+Which outputs:
+
+    UPDATE staffs SET name = $1, id = $2
+
+
+
+To build where clause from map
 
 ```
 sql, args := sqlutils.BuildWhereClauseWithAndOp(map[string]interface{} {
     "name": "John"
 })
-// sql = " WHERE name = $1 AND id = $2"
 ```
+which outputs:
+
+    WHERE name = $1 AND id = $2
 
 To create new record:
 
@@ -75,7 +95,7 @@ To update struct object:
 
 ```go
 staff.Name = "NewName"
-rows, err := Update(db,&staff)
+rows, err := sqlutils.Update(db,&staff)
 ```
 
 
