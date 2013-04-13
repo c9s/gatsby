@@ -3,7 +3,6 @@ import "fmt"
 import "reflect"
 import "strings"
 import "database/sql"
-import "errors"
 
 
 // Generate "UPDATE {table} SET name = $1, name2 = $2"
@@ -37,8 +36,9 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 
 func Update(db *sql.DB, val interface{}) (*Result) {
 
-	if val.(PrimaryKey) == nil {
-		return NewErrorResult(errors.New("PrimaryKey interface is required."),"")
+	pkName := GetPrimaryKeyColumnName(&val)
+	if pkName == nil {
+		panic("primary key column is not defined.")
 	}
 
 	sql, values := BuildUpdateClause(val)
@@ -46,11 +46,9 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 	if val.(PrimaryKey) != nil {
 		id := val.(PrimaryKey).GetPkId()
 		values = append(values, id)
-	} else if name := GetPrimaryKeyColumnName(&val) ; name != nil {
-
 	}
 
-	sql += fmt.Sprintf(" WHERE id = $%d", len(values))
+	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {
