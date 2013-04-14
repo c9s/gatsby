@@ -36,7 +36,7 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 		}
 		var columnAttributes = GetColumnAttributesFromTag(&tag)
 		if _, ok := columnAttributes["primary"] ; ok {
-			val := t.Field(i).field.Interface().(int64)
+			val := t.Field(i).Interface().(int64)
 			return &val
 		}
 	}
