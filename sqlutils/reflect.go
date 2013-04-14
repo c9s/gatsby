@@ -29,7 +29,6 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 	typeOfT := t.Type()
 
 	for i := 0; i < t.NumField(); i++ {
-		var field reflect.Value = t.Field(i)
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
@@ -37,7 +36,7 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 		}
 		var columnAttributes = GetColumnAttributesFromTag(&tag)
 		if _, ok := columnAttributes["primary"] ; ok {
-			val := field.Interface().(int64)
+			val := t.Field(i).field.Interface().(int64)
 			return &val
 		}
 	}
@@ -112,12 +111,11 @@ func GetColumnValueMap(val interface{}) (map[string] interface{}) {
 
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var field reflect.Value = t.Field(i)
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
-		columns[ *columnName ] = field.Interface()
+		columns[ *columnName ] = t.Field(i).Interface()
 	}
 	return columns
 }
