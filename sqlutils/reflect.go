@@ -8,8 +8,10 @@ import _ "github.com/bmizerany/pq"
 var columnNameCache = map[string] []string {};
 var tableNameCache = map[string] string {};
 
+// provide PrimaryKey interface for faster column name accessing 
 type PrimaryKey interface {
 	GetPkId() int64
+	SetPkId(int64)
 }
 
 func GetTableName(val interface{}) (string) {

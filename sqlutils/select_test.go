@@ -14,6 +14,10 @@ func (self *Staff) GetPkId() int64 {
 	return self.Id
 }
 
+func (self *Staff) SetPkId(id int64) {
+	self.Id = id
+}
+
 func TestBuildSelectColumns(t * testing.T) {
 	str := BuildSelectColumnClause( &fooRecord{Id:4, Name: "John"} )
 	if len(str) == 0 {

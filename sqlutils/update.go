@@ -5,7 +5,7 @@ import "strings"
 import "database/sql"
 
 
-// Generate "UPDATE {table} SET name = $1, name2 = $2"
+// This function generates "UPDATE {table} SET name = $1, name2 = $2"
 func BuildUpdateClause(val interface{}) (string, []interface{}) {
 	tableName := GetTableName(val)
 	sql, values := BuildUpdateColumns(val)
@@ -13,8 +13,8 @@ func BuildUpdateClause(val interface{}) (string, []interface{}) {
 }
 
 
-// Build update columns from a map
-// This function generates SQL like "name = $1, phone = $2".
+// This function builds update columns from a map
+// which generates SQL like "name = $1, phone = $2".
 func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
 	var setFields []string
 	var values      []interface{}
@@ -28,6 +28,7 @@ func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface
 }
 
 
+// This function generate update columns from a struct object.
 func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()

@@ -2,11 +2,6 @@ package sqlutils
 import "database/sql"
 // import "fmt"
 
-const (
-	DriverPg = 1
-	DriverMysql = 2
-	DriverSqlite = 3
-)
 
 // id, err := sqlutils.Create(struct pointer)
 func Create(db *sql.DB, val interface{}, driver int) (*Result) {
@@ -20,9 +15,10 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 
 	result := NewResult(sql)
 
-	// for pgsql only
+	// get the autoincrement id from result
 	if driver == DriverPg {
-		sql += " RETURNING id"
+		col := GetPrimaryKeyColumnName(val)
+		sql = sql + " RETURNING " + *col
 		rows, err := PrepareAndQuery(db,sql,args...)
 		if err != nil {
 			return NewErrorResult(err,sql)

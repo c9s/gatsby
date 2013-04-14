@@ -1,6 +1,7 @@
 package sqlutils
 import "database/sql"
 
+// This function fetch the returning ID from result rows
 func GetReturningIdFromRows(rows * sql.Rows) (int64, error) {
 	var id int64
 	var err error
