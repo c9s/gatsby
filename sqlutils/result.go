@@ -14,7 +14,6 @@ func NewErrorResult(err error,sql string) (*Result) {
 	return &r
 }
 
-
 // Create new result object with SQL statement string.
 func NewResult(sql string) (*Result) {
 	r := Result{Sql: sql}

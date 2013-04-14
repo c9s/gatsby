@@ -27,6 +27,10 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
+
+		if val.(PrimaryKey) != nil {
+			val.(PrimaryKey).SetPkId(id)
+		}
 		result.Id = id
 	} else if driver == DriverMysql {
 		res, err := db.Exec(sql,args...)

@@ -3,7 +3,13 @@ import "database/sql"
 import "errors"
 
 func Delete(db *sql.DB, val interface{}) (*Result) {
-	sql := "DELETE FROM " + GetTableName(val) + " WHERE id = $1"
+	pkName := GetPrimaryKeyColumnName(val)
+
+	if pkName == nil {
+		return NewErrorResult( errors.New("PrimaryKey column is not defined."),"")
+	}
+
+	sql := "DELETE FROM " + GetTableName(val) + " WHERE " + *pkName + " = $1"
 
 	if val.(PrimaryKey) == nil {
 		return NewErrorResult(errors.New("PrimaryKey interface is required."),sql)
@@ -14,6 +20,7 @@ func Delete(db *sql.DB, val interface{}) (*Result) {
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
+
 	res, err := stmt.Exec(id)
 	if err != nil {
 		return NewErrorResult(err,sql)
@@ -21,6 +28,7 @@ func Delete(db *sql.DB, val interface{}) (*Result) {
 
 	r := NewResult(sql)
 	r.Result = res
+	r.Id = id
 	return r
 }
 
