@@ -12,6 +12,22 @@ func BuildUpdateClause(val interface{}) (string, []interface{}) {
 	return "UPDATE " + tableName + " SET " + sql, values
 }
 
+
+// Build update columns from a map
+// This function generates SQL like "name = $1, phone = $2".
+func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
+	var setFields []string
+	var values      []interface{}
+	var i int = 1
+	for col, arg := range cols {
+		setFields = append(setFields, fmt.Sprintf("%s = $%d", col, i) )
+		values    = append(values, arg)
+		i++
+	}
+	return strings.Join(setFields, ", "), values
+}
+
+
 func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
