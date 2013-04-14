@@ -5,6 +5,7 @@ import "strings"
 import "github.com/c9s/inflect"
 import _ "github.com/bmizerany/pq"
 
+// cache maps
 var columnNameCache = map[string] []string {};
 var tableNameCache = map[string] string {};
 
@@ -113,9 +114,10 @@ func GetColumnValueMap(val interface{}) (map[string] interface{}) {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
 		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName != nil {
-			columns[ *columnName ] = field.Interface()
+		if columnName == nil {
+			continue
 		}
+		columns[ *columnName ] = field.Interface()
 	}
 	return columns
 }
@@ -134,9 +136,10 @@ func ParseColumnNames(val interface{}) ([]string) {
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName != nil {
-			columns = append(columns, *columnName)
+		if columnName == nil {
+			continue
 		}
+		columns = append(columns, *columnName)
 	}
 	columnNameCache[structName] = columns
 	return columns

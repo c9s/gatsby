@@ -41,10 +41,15 @@ type Staff struct {
 PrimaryKey interface
 --------------------
 
+Implement the PrimaryKey interface
+
 ```go
-// Implement the PrimaryKey interface
 func (self *Staff) GetPkId() int64 {
     return self.Id
+}
+
+func (self *Staff) SetPkId(id int64) {
+    self.Id = id
 }
 ```
 
@@ -109,13 +114,13 @@ sql, args := sqlutils.BuildWhereClauseWithAndOp(map[string]interface{} {
 which outputs:
 
 ```sql
-WHERE name = $1 AND id = $2
+WHERE name = $1
 ```
 
 Which returns:
 
 ```sql
-WHERE name = $1 AND id = $2
+WHERE name = $1
 ```
 
 Creating Record Through Database Connection
