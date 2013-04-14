@@ -1,10 +1,8 @@
 package sqlutils
 import "fmt"
-
 import "reflect"
 import "strings"
 import "strconv"
-import "database/sql"
 
 func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
 	var columnNames []string
@@ -59,21 +57,9 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 	"VALUES ( " + strings.Join(valueFields,", ") + " )", values
 }
 
-
 func BuildInsertClause(val interface{}) (string, []interface{}) {
 	tableName := GetTableName(val)
 	sql, values := BuildInsertColumns(val)
 	return "INSERT INTO " + tableName + sql, values
-}
-
-func GetReturningIdFromRows(rows * sql.Rows) (int64, error) {
-	var id int64
-	var err error
-	rows.Next()
-	err = rows.Scan(&id)
-	if err != nil {
-		return -1, err
-	}
-	return id, err
 }
 
