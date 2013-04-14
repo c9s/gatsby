@@ -18,3 +18,18 @@ func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
 	return NewResult(sql)
 }
 
+func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Result) {
+	sql := BuildSelectClause(val)
+	whereSql, args := BuildWhereClauseWithAndOp(cols)
+
+	sql += whereSql
+
+	rows, err := PrepareAndQuery(db, sql, args...)
+	rows.Next()
+	err = FillFromRow(val,rows)
+
+	if err != nil {
+		return NewErrorResult(err,sql)
+	}
+	return NewResult(sql)
+}

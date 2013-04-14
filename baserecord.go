@@ -30,10 +30,17 @@ func (self *BaseRecord) LoadWithInstance(o interface{}, id int64) (*sqlutils.Res
 	return sqlutils.Load(conn, o, id)
 }
 
+func (self *BaseRecord) LoadByColsWithInstance(o interface{}, id int64) (*sqlutils.Result) {
+	return sqlutils.Load(conn, o, id)
+}
 
 
 func Load(val interface{}, pkId int64) (*sqlutils.Result) {
 	return sqlutils.Load(conn, val, pkId)
+}
+
+func LoadByCols(val interface{}, cols map[string]interface{}) (*sqlutils.Result) {
+	return sqlutils.LoadByCols(conn, val, cols)
 }
 
 func Create(val interface{}, driver int) (*sqlutils.Result) {
