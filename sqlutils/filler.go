@@ -4,6 +4,9 @@ import "errors"
 import "database/sql"
 
 
+// Fill the struct data from a result rows
+// This function iterates the struct by reflection, and creates types from sql
+// package for filling result.
 func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 	t       := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
