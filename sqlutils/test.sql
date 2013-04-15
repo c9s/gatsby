@@ -5,5 +5,6 @@ CREATE TABLE staffs (
 	name varchar(200),
 	gender char(1),
 	staff_type varchar(200),
-	phone varchar(200)
+	phone varchar(200),
+	birthday date
 );

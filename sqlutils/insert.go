@@ -48,9 +48,20 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 			continue
 		}
 
+		var val interface{} = field.Interface()
+
+		if attributes["date"] {
+			switch val.(type) {
+			case string:
+				if val == "" {
+					continue
+				}
+			}
+		}
+
 		columnNames = append(columnNames, *columnName)
 		valueFields = append(valueFields, "$" + strconv.Itoa(fieldId) )
-		values      = append(values, field.Interface() )
+		values      = append(values, val)
 		fieldId++
 	}
 	return "( " + strings.Join(columnNames,", ") + " ) " +

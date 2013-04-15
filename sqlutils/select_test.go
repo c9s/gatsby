@@ -7,6 +7,7 @@ type Staff struct {
 	Gender    string `json:"gender"`
 	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string `json:"phone"`
+	Birthday  string `json:"birthday" field:"birthday,date"`
 }
 
 // Implement the GetPkId interface
@@ -31,7 +32,7 @@ func TestBuildSelectColumns(t * testing.T) {
 func TestBuildSelectClause(t * testing.T) {
 	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
 	sql := BuildSelectClause(&staff)
-	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs" {
+	if sql != "SELECT id,name,gender,staff_type,phone,birthday FROM staffs" {
 		t.Fatal(sql)
 	}
 }

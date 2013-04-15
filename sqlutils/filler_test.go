@@ -36,17 +36,23 @@ func TestFillRecord(t * testing.T) {
 
 
 	sql := BuildSelectClause(&staff) + " WHERE id = $1"
-	if sql != "SELECT id,name,gender,staff_type,phone FROM staffs WHERE id = $1" {
-		t.Fatal(sql)
+	if sql != "SELECT id,name,gender,staff_type,phone,birthday FROM staffs WHERE id = $1" {
+		t.Fatal("Error: " + sql)
 	}
 
 	stmt , err := db.Prepare(sql)
 	rows, err := stmt.Query( r.Id)
-	rows.Next()
-	err = FillFromRow(&staff,rows)
-	if err != nil {
-		t.Fatal(err)
+
+	if rows.Next() {
+		err = FillFromRow(&staff,rows)
+		if err != nil {
+			t.Fatal(err)
+		}
+	} else {
+		t.Fatal("No record found.")
 	}
+
+
 
 	r = Delete(db,&staff)
 	if r.Error != nil {
