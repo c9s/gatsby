@@ -2,6 +2,10 @@ package sqlutils
 import "reflect"
 import "errors"
 import "database/sql"
+// import "time"
+// import "fmt"
+import "github.com/c9s/pq"
+
 
 
 // Fill the struct data from a result rows
@@ -35,6 +39,8 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			args = append(args, new(sql.NullBool))
 		} else if typeStr == "float" || typeStr == "float64" {
 			args = append(args, new(sql.NullFloat64))
+		} else if typeStr == "*time.Time" {
+			args = append(args, new(pq.NullTime))
 		} else {
 			// Not sure if this work
 			args = append(args, reflect.New(fieldType).Elem().Interface() )
@@ -61,7 +67,7 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var typeStr string = t.String()
 
 		if ! val.CanSet() {
-			return errors.New("can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
+			return errors.New("Can not set value " + typeOfT.Field(fieldIdx).Name + " on " + t.Name() )
 		}
 
 		// if arg.(*sql.NullString) == *sql.NullString {
@@ -83,8 +89,12 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 			if arg.(*sql.NullFloat64).Valid {
 				val.SetFloat( arg.(*sql.NullFloat64).Float64)
 			}
+		} else if typeStr == "*time.Time" {
+			if nullTimeVal, ok := arg.(*pq.NullTime) ; ok && nullTimeVal != nil {
+				val.Set( reflect.ValueOf(&nullTimeVal.Time) )
+			}
 		} else {
-			return errors.New("unsupported type" + t.String() )
+			return errors.New("unsupported type " + t.String() )
 		}
 	}
 	return err

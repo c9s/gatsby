@@ -1,28 +1,49 @@
 package sqlutils
 import "testing"
 import "database/sql"
-import _ "github.com/bmizerany/pq"
+import _ "github.com/c9s/pq"
+import "time"
+import "strings"
 
-func openDB() (*sql.DB, error) {
+
+var db *sql.DB
+
+func openDB() (*sql.DB) {
+	if db != nil {
+		return db
+	}
+
     db, err := sql.Open("postgres", "user=postgres password=postgres dbname=test sslmode=disable")
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return db, nil
+	return db
 }
+
+
+func TestFill(t *testing.T) {
+    var db = openDB()
+	stmt, _ := db.Prepare("select created_on from staffs")
+	rows, _ := stmt.Query()
+	for rows.Next() {
+		time1 := new(time.Time)
+		rows.Scan(time1)
+		t.Logf("Created on: %d",time1.Unix())
+	}
+}
+
 
 
 func TestFillRecord(t * testing.T) {
 	staff := Staff{}
-    db, err := openDB()
-	if err != nil {
-		t.Fatal(err)
-	}
+    var db = openDB()
 
 	// Create Staff
 	staff.Id = 1
 	staff.Name = "Mary"
 	staff.Phone = "1234567"
+	t1 := time.Now()
+	staff.CreatedOn = &t1
 
 	r := Create(db,&staff, DriverPg)
 	if r.Error != nil {
@@ -36,9 +57,15 @@ func TestFillRecord(t * testing.T) {
 
 
 	sql := BuildSelectClause(&staff) + " WHERE id = $1"
-	if sql != "SELECT id,name,gender,staff_type,phone,birthday FROM staffs WHERE id = $1" {
-		t.Fatal("Error: " + sql)
+
+	if ! strings.Contains(sql, "id,name,gender,staff_type,phone,birthday") {
+		t.Fatal("Unexpected SQL: " + sql)
 	}
+
+	if ! strings.Contains(sql, "FROM staffs WHERE id = $1") {
+		t.Fatal("Unexpected SQL: " + sql)
+	}
+
 
 	stmt , err := db.Prepare(sql)
 	rows, err := stmt.Query( r.Id)
@@ -52,9 +79,8 @@ func TestFillRecord(t * testing.T) {
 		t.Fatal("No record found.")
 	}
 
-
-
 	r = Delete(db,&staff)
+	t.Log(r)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}

@@ -1,24 +1,6 @@
 package sqlutils
 import "testing"
 
-type Staff struct {
-	Id        int64 `json:"id" field:",primary,serial"`
-	Name      string `json:"name" field:",required"`
-	Gender    string `json:"gender"`
-	StaffType string `json:"staff_type"` // valid types: doctor, nurse, ...etc
-	Phone     string `json:"phone"`
-	Birthday  string `json:"birthday" field:"birthday,date"`
-}
-
-// Implement the GetPkId interface
-func (self *Staff) GetPkId() int64 {
-	return self.Id
-}
-
-func (self *Staff) SetPkId(id int64) {
-	self.Id = id
-}
-
 func TestBuildSelectColumns(t * testing.T) {
 	str := BuildSelectColumnClause( &fooRecord{Id:4, Name: "John"} )
 	if len(str) == 0 {

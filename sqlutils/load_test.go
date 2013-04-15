@@ -1,11 +1,9 @@
 package sqlutils
 import "testing"
 
+
 func TestLoad(t *testing.T) {
-	db, err := openDB()
-	if err != nil {
-		t.Fatal(err)
-	}
+	var db = openDB()
 
 	staff := Staff{Name: "John", Gender: "m", Phone: "1234567"}
 

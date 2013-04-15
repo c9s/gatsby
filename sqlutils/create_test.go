@@ -2,11 +2,7 @@ package sqlutils
 import "testing"
 
 func TestCreate(t *testing.T) {
-
-	db, err := openDB()
-	if err != nil {
-		t.Fatal(err)
-	}
+	var db = openDB()
 
 	staff := Staff{Name: "John", Gender: "m", Phone: "1234567"}
 	sql, args := BuildInsertClause(&staff)
@@ -20,5 +16,6 @@ func TestCreate(t *testing.T) {
 
 	t.Log(sql,args)
 	Create(db, &staff, DriverPg)
+	Delete(db, &staff)
 }
 

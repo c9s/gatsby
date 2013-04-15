@@ -3,7 +3,7 @@ import "reflect"
 import "strings"
 // import "fmt"
 import "github.com/c9s/inflect"
-import _ "github.com/bmizerany/pq"
+import _ "github.com/c9s/pq"
 
 // cache maps
 var columnNameCache = map[string] []string {};

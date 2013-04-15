@@ -3,6 +3,8 @@ import "fmt"
 import "reflect"
 import "strings"
 import "strconv"
+import "time"
+
 
 func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
 	var columnNames []string
@@ -33,7 +35,8 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 	var fieldId int = 1
 
 	for i := 0; i < t.NumField(); i++ {
-		var tag        reflect.StructTag = typeOfT.Field(i).Tag
+		var fieldType  = typeOfT.Field(i)
+		var tag        reflect.StructTag = fieldType.Tag
 		var field      reflect.Value = t.Field(i)
 
 		var columnName *string = GetColumnNameFromTag(&tag)
@@ -49,6 +52,16 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		}
 
 		var val interface{} = field.Interface()
+
+		// if time is null or with zero value, just skip it.
+		if fieldType.Type.String() == "*time.Time" {
+			fmt.Println( fieldType.Type.String() )
+			if timeVal, ok := val.(*time.Time) ; ok {
+				if timeVal == nil || timeVal.Unix() == -62135596800 {
+					continue
+				}
+			}
+		}
 
 		if attributes["date"] {
 			switch val.(type) {

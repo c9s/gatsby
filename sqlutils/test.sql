@@ -6,5 +6,6 @@ CREATE TABLE staffs (
 	gender char(1),
 	staff_type varchar(200),
 	phone varchar(200),
-	birthday date
+	birthday date,
+    created_on timestamp
 );
