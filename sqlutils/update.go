@@ -75,6 +75,7 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
+	stmt.Close()
 
 	result := NewResult(sql)
 	result.Result = res

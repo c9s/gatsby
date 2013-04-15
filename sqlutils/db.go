@@ -11,6 +11,7 @@ func PrepareAndQuery(db *sql.DB, sql string, args ...interface{}) (*sql.Rows,err
 	if err != nil {
 		return nil, err
 	}
+	stmt.Close()
 	return rows, nil
 }
 

@@ -7,7 +7,6 @@ import "database/sql"
 func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 	sql , args := BuildInsertClause(val)
 
-
 	err := CheckRequired(val)
 	if err != nil {
 		return NewErrorResult(err,sql)
