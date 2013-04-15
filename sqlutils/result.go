@@ -8,6 +8,17 @@ type Result struct {
 	Result sql.Result
 }
 
+func (r * Result) String() (s string) {
+	s = ""
+	if r.Error != nil {
+		s += "Error: " + r.Error.Error()
+	}
+	if r.Sql != "" {
+		s += "\nSQL: " + r.Sql
+	}
+	return s
+}
+
 // Return Error Result, which is used in Create, Update, Delete functions.
 func NewErrorResult(err error,sql string) (*Result) {
 	r := Result{Error: err, Sql: sql}
