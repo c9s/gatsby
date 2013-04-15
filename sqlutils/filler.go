@@ -6,8 +6,6 @@ import "database/sql"
 // import "fmt"
 import "github.com/c9s/pq"
 
-
-
 // Fill the struct data from a result rows
 // This function iterates the struct by reflection, and creates types from sql
 // package for filling result.

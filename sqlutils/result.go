@@ -5,6 +5,7 @@ type Result struct {
 	Sql string
 	Id  int64
 	Error error
+	Values *[]interface{}
 	Result sql.Result
 }
 

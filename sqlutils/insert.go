@@ -55,7 +55,6 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 
 		// if time is null or with zero value, just skip it.
 		if fieldType.Type.String() == "*time.Time" {
-			fmt.Println( fieldType.Type.String() )
 			if timeVal, ok := val.(*time.Time) ; ok {
 				if timeVal == nil || timeVal.Unix() == -62135596800 {
 					continue
