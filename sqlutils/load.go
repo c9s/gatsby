@@ -20,6 +20,8 @@ func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
 	sql := BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
 	rows, err := PrepareAndQuery(db, sql, pkId)
 
+	defer func() { rows.Close() }()
+
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
@@ -41,6 +43,9 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 	sql += whereSql
 
 	rows, err := PrepareAndQuery(db, sql, args...)
+
+	defer func() { rows.Close() }()
+
 	if rows.Next() {
 		err = FillFromRow(val,rows)
 		if err != nil {

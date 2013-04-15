@@ -19,6 +19,9 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 		col := GetPrimaryKeyColumnName(val)
 		sql = sql + " RETURNING " + *col
 		rows, err := PrepareAndQuery(db,sql,args...)
+
+		defer func() { rows.Close() }()
+
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
@@ -26,7 +29,6 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
-
 		if val.(PrimaryKey) != nil {
 			val.(PrimaryKey).SetPkId(id)
 		}
