@@ -68,6 +68,9 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
 
 	stmt, err := db.Prepare(sql)
+
+	defer func() { stmt.Close() }()
+
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
@@ -75,7 +78,6 @@ func Update(db *sql.DB, val interface{}) (*Result) {
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
-	stmt.Close()
 
 	result := NewResult(sql)
 	result.Result = res
