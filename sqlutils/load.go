@@ -41,11 +41,12 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 	sql += whereSql
 
 	rows, err := PrepareAndQuery(db, sql, args...)
-	rows.Next()
-	err = FillFromRow(val,rows)
-
-	if err != nil {
-		return NewErrorResult(err,sql)
+	if rows.Next() {
+		err = FillFromRow(val,rows)
+		if err != nil {
+			return NewErrorResult(err,sql)
+		}
+		return NewResult(sql)
 	}
-	return NewResult(sql)
+	return NewErrorResult(errors.New("No result"),sql)
 }
