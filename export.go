@@ -1,6 +1,6 @@
 package gatsby
 import "gatsby/sqlutils"
-// import "database/sql"
+import "database/sql"
 
 func Load(val interface{}, pkId int64) (*sqlutils.Result) {
 	return sqlutils.Load(conn, val, pkId)
