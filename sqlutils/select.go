@@ -2,7 +2,6 @@ package sqlutils
 import "strings"
 import "database/sql"
 import "reflect"
-// import "fmt"
 // import "errors"
 
 // Generate SQL columns string for selecting.
@@ -36,36 +35,19 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
-
-	value := reflect.ValueOf(val)
+	value := reflect.Indirect( reflect.ValueOf(val) )
 	typeOfVal := value.Type()
-
 	sliceOfVal := reflect.SliceOf(typeOfVal)
 	var slice = reflect.MakeSlice(sliceOfVal,0,100)
-	// var slice []interface{}
-
 	defer func() { rows.Close() }()
-
 	for rows.Next() {
-		var newVal = reflect.Indirect( reflect.New(typeOfVal) )
-
-		/*
-		var val = newVal.Elem().Interface()
-		fmt.Println( val )
-		*/
-
-
-		// FillFromRow(newVal.Elem().Interface() ,rows)
-		/*
+		var newValue = reflect.New(typeOfVal)
+		err = FillFromRow(newValue.Interface() , rows)
 		if err != nil {
-			return items.Interface().(*[]interface{}), NewErrorResult(err,sql)
+			return slice.Interface(), NewErrorResult(err, sql)
 		}
-		*/
-		// slice = reflect.Append(slice, newVal)
-		_ = newVal
+		slice = reflect.Append(slice, reflect.Indirect(newValue) )
 	}
-	// return slice.Interface().(*[]interface{}), NewResult(sql)
-	// return slice.Slice(0,30), NewResult(sql)
 	return slice.Interface(), NewResult(sql)
 }
 

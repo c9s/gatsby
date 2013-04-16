@@ -68,14 +68,17 @@ func TestSelectWith(t *testing.T) {
 	items, result := Select(db, &staff)
 	chkResult(t, result)
 
-	staffs := items.(*[]Staff)
+	staffs := items.([]Staff)
 
-
-	/*
-	if len(staffs.([]Staff)) == 0 {
+	if len(staffs) == 0 {
 		t.Fatal("found 0 record")
 	}
-	*/
+
+	for _, s := range staffs {
+		if s.Name == "" {
+			t.Fatal("Empty name")
+		}
+	}
 	_ = staffs
 }
 
