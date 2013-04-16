@@ -29,7 +29,7 @@ func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interf
 }
 
 
-func CreateSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, error) {
+func CreateStructSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, error) {
 	value := reflect.Indirect( reflect.ValueOf(val) )
 	typeOfVal := value.Type()
 	sliceOfVal := reflect.SliceOf(typeOfVal)
@@ -53,7 +53,7 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
-	slice, err := CreateSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err,sql)
 	}
@@ -69,7 +69,7 @@ func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}
 		return nil, NewErrorResult(err,sql)
 	}
 
-	slice, err := CreateSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err,sql)
 	}
@@ -84,11 +84,21 @@ func SelectWhere(db *sql.DB, val interface{}, conds map[string]interface{}) (int
 		return nil, NewErrorResult(err,sql)
 	}
 
-	slice, err := CreateSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err,sql)
 	}
 	return slice, NewResult(sql)
 }
 
-
+func SelectFromQuery(db *sql.DB, val interface{}, sql string, args ...interface{} ) (interface{}, *Result) {
+	rows, err := db.Query(sql, args...)
+	if err != nil {
+		return nil, NewErrorResult(err,sql)
+	}
+	slice, err := CreateStructSliceFromRows(val, rows)
+	if err != nil {
+		return slice, NewErrorResult(err,sql)
+	}
+	return slice, NewResult(sql)
+}

@@ -32,7 +32,62 @@ func TestFill(t *testing.T) {
 	}
 }
 
+func TestCreateMapFromRows(t *testing.T) {
+	staff := Staff{}
+    var db = openDB()
 
+	// Create Staff
+	staff.Id = 1
+	staff.Name = "Mary"
+	staff.Phone = "1234567"
+	t1 := time.Now()
+	staff.CreatedOn = &t1
+
+	r := Create(db,&staff, DriverPg)
+	if r.Error != nil {
+		t.Fatal(r.Error)
+	}
+
+	if r.Id == -1 {
+		t.Fatal("Primary key failed")
+	}
+	staff.Id = r.Id
+
+	rows, _ := db.Query("select id, name from staffs")
+
+	result, err := CreateMapFromRows(rows, new(int64), new(string) )
+	if err != nil {
+		t.Fatal( err )
+	}
+
+	if _, ok := result["id"] ; ! ok {
+		t.Fatal("Can not read id")
+	}
+
+	if _, ok := result["name"] ; ! ok {
+		t.Fatal("Can not read name")
+	}
+
+	t.Log( "Map", result )
+
+
+	results, err := CreateMapsFromRows(rows, new(int64), new(string) )
+	if err != nil {
+		t.Fatal( err )
+	}
+
+	for _, r := range results {
+		if _, ok := r["id"] ; ! ok {
+			t.Fatal("Can not read id")
+		}
+
+		if _, ok := r["name"] ; ! ok {
+			t.Fatal("Can not read name")
+		}
+	}
+
+	Delete(db, &staff)
+}
 
 func TestFillRecord(t * testing.T) {
 	staff := Staff{}
