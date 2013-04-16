@@ -34,7 +34,7 @@ func SelectWhere(val interface{}, conds map[string]interface{} ) (interface{}, *
 	return sqlutils.SelectWhere(conn, val, conds)
 }
 
-func Query(sql string, args ...interface{}) (*sql.Rows) {
+func Query(sql string, args ...interface{}) (*sql.Rows, error) {
 	return conn.Query(sql, args...)
 }
 
