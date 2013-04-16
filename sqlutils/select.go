@@ -28,13 +28,8 @@ func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interf
 	return PrepareAndQuery(db, sql, args)
 }
 
-func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
-	sql := BuildSelectClause(val)
-	rows, err := PrepareAndQuery(db, sql)
 
-	if err != nil {
-		return nil, NewErrorResult(err,sql)
-	}
+func CreateSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, error) {
 	value := reflect.Indirect( reflect.ValueOf(val) )
 	typeOfVal := value.Type()
 	sliceOfVal := reflect.SliceOf(typeOfVal)
@@ -42,36 +37,58 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	defer func() { rows.Close() }()
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
-		err = FillFromRow(newValue.Interface() , rows)
+		var err = FillFromRow(newValue.Interface() , rows)
 		if err != nil {
-			return slice.Interface(), NewErrorResult(err, sql)
+			return slice.Interface(), err
 		}
 		slice = reflect.Append(slice, reflect.Indirect(newValue) )
 	}
-	return slice.Interface(), NewResult(sql)
+	return slice.Interface(), nil
 }
 
 
-func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*[]interface{}, *Result) {
+func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
+	sql := BuildSelectClause(val)
+	rows, err := PrepareAndQuery(db, sql)
+	if err != nil {
+		return nil, NewErrorResult(err,sql)
+	}
+	slice, err := CreateSliceFromRows(val, rows)
+	if err != nil {
+		return slice, NewErrorResult(err,sql)
+	}
+	return slice, NewResult(sql)
+}
+
+
+// select table with a postSQL
+func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
 	sql := BuildSelectClause(val) + " " + postSql
 	rows, err := PrepareAndQuery(db, sql, args)
-
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
 
-	var items = new([]interface{})
-
-	defer func() { rows.Close() }()
-	return items, NewResult(sql)
-	/*
-	if rows.Next() {
-		err = FillFromRow(val,rows)
-		if err != nil {
-			return items, NewErrorResult(err,sql)
-		}
+	slice, err := CreateSliceFromRows(val, rows)
+	if err != nil {
+		return slice, NewErrorResult(err,sql)
 	}
-	*/
-	return items, NewResult(sql)
+	return slice, NewResult(sql)
 }
+
+func SelectWhere(db *sql.DB, val interface{}, conds map[string]interface{}) (interface{}, *Result) {
+	whereSql, args := BuildWhereClauseWithAndOp(conds)
+	sql := BuildSelectClause(val) + whereSql
+	rows, err := PrepareAndQuery(db, sql, args)
+	if err != nil {
+		return nil, NewErrorResult(err,sql)
+	}
+
+	slice, err := CreateSliceFromRows(val, rows)
+	if err != nil {
+		return slice, NewErrorResult(err,sql)
+	}
+	return slice, NewResult(sql)
+}
+
 

@@ -54,6 +54,10 @@ func chkResult(t *testing.T, res *Result) {
 }
 
 
+func TestSelectWhere(t *testing.T) {
+
+}
+
 func TestSelectWith(t *testing.T) {
 	var db = openDB()
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
@@ -75,8 +79,15 @@ func TestSelectWith(t *testing.T) {
 	}
 
 	for _, s := range staffs {
+		t.Log(s.Id)
 		if s.Name == "" {
 			t.Fatal("Empty name")
+		}
+		if s.Id > 0 {
+			var res = Delete(db, &s)
+			if res.Error != nil {
+				t.Fatal(res.Error)
+			}
 		}
 	}
 	_ = staffs

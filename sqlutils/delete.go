@@ -16,15 +16,7 @@ func Delete(db *sql.DB, val interface{}) (*Result) {
 	}
 
 	id := val.(PrimaryKey).GetPkId()
-	stmt, err := db.Prepare(sql)
-
-	defer func() { stmt.Close() }()
-
-	if err != nil {
-		return NewErrorResult(err,sql)
-	}
-
-	res, err := stmt.Exec(id)
+	res, err := db.Exec(sql, id)
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
