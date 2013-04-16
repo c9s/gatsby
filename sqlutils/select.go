@@ -20,12 +20,12 @@ func BuildSelectClause(val interface{}) (string) {
 
 func SelectQuery(db *sql.DB, val interface{}) (*sql.Rows, error) {
 	sql := BuildSelectClause(val)
-	return PrepareAndQuery(db, sql)
+	return db.Query(sql)
 }
 
 func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*sql.Rows, error) {
 	sql := BuildSelectClause(val) + " " + postSql
-	return PrepareAndQuery(db, sql, args)
+	return db.Query(sql, args...)
 }
 
 
@@ -49,7 +49,7 @@ func CreateSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, error) 
 
 func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	sql := BuildSelectClause(val)
-	rows, err := PrepareAndQuery(db, sql)
+	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
@@ -64,7 +64,7 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 // select table with a postSQL
 func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
 	sql := BuildSelectClause(val) + " " + postSql
-	rows, err := PrepareAndQuery(db, sql, args)
+	rows, err := db.Query(sql, args...)
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
@@ -79,7 +79,7 @@ func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}
 func SelectWhere(db *sql.DB, val interface{}, conds map[string]interface{}) (interface{}, *Result) {
 	whereSql, args := BuildWhereClauseWithAndOp(conds)
 	sql := BuildSelectClause(val) + whereSql
-	rows, err := PrepareAndQuery(db, sql, args)
+	rows, err := db.Query(sql, args...)
 	if err != nil {
 		return nil, NewErrorResult(err,sql)
 	}
