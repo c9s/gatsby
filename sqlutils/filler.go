@@ -36,13 +36,13 @@ func CreateMapsFromRows(rows * sql.Rows, types ...interface{}) ([]map[string]int
 	values, reflectValues = CreateReflectValuesFromTypes(types)
 
 	for rows.Next() {
-		var result map[string]interface{}
+		var result = map[string]interface{} {}
 		err = rows.Scan(values...)
 		if err != nil {
 			return nil, err
 		}
-		for i, n := range columnNames {
-			result[n] = reflectValues[i].Elem().Interface()
+		for i, name := range columnNames {
+			result[name] = reflectValues[i].Elem().Interface()
 		}
 		results = append(results,result)
 	}
