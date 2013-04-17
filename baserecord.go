@@ -1,6 +1,5 @@
 package gatsby
 import "gatsby/sqlutils"
-import "database/sql"
 
 type BaseRecord struct {
 
