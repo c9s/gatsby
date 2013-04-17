@@ -15,15 +15,15 @@ type SQLFragments struct {
 	Args []interface{}
 }
 
-func (s * SQLFragments) Len() (int) {
+func (s *SQLFragments) Len() (int) {
 	return len(s.Fragments)
 }
 
-func (s * SQLFragments) Append(frag string) {
+func (s *SQLFragments) Append(frag string) {
 	s.Fragments = append( s.Fragments, frag )
 }
 
-func (s * SQLFragments) AppendQuery(frag string, args ...interface{}) {
+func (s *SQLFragments) AppendQuery(frag string, args ...interface{}) {
 	// replace "?" to $%d
 	cnt := strings.Count(frag, "?")
 	frag = strings.Replace(frag, "?", "$%d", -1)
@@ -37,12 +37,17 @@ func (s * SQLFragments) AppendQuery(frag string, args ...interface{}) {
 	}
 }
 
-func (s * SQLFragments) Join(sep string) (string) {
+func (s *SQLFragments) Join(sep string) (string) {
 	return strings.Join(s.Fragments, sep)
 }
 
-func (s * SQLFragments) String() (string) {
+func (s *SQLFragments) String() (string) {
 	return strings.Join(s.Fragments, " ")
+}
+
+func (s *SQLFragments) Like(columnName string, value interface{}) (*SQLFragments) {
+	s.AppendQuery(fmt.Sprintf("%s = ?", columnName), value)
+	return s
 }
 
 func New() (*SQLFragments) {
