@@ -31,6 +31,11 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
+
+		if tag.Get("field") == "-" {
+			continue
+		}
+
 		if columnName == nil {
 			continue
 		}
@@ -52,6 +57,11 @@ func GetPrimaryKeyColumnName(val interface{}) (*string) {
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
+
+		if tag.Get("field") == "-" {
+			continue
+		}
+
 		if columnName == nil {
 			continue
 		}
@@ -112,6 +122,11 @@ func GetColumnValueMap(val interface{}) (map[string] interface{}) {
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
+
+		if tag.Get("field") == "-" {
+			continue
+		}
+
 		if columnName == nil {
 			continue
 		}
@@ -133,6 +148,11 @@ func ParseColumnNames(val interface{}) ([]string) {
 	var columns []string
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
+
+		if tag.Get("field") == "-" {
+			continue
+		}
+
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue

@@ -91,6 +91,10 @@ func FillFromRow(val interface{}, rows * sql.Rows) (error) {
 		var field      reflect.Value = t.Field(i)
 		var fieldType  reflect.Type = field.Type()
 
+		if tag.Get("field") == "-" {
+			continue
+		}
+
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
