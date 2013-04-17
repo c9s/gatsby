@@ -6,13 +6,6 @@ type BaseRecord struct {
 
 }
 
-var conn *sql.DB
-var driverType int
-
-func SetupConnection(c *sql.DB, driverType int) {
-	conn = c
-	driverType = driverType
-}
 
 func (self *BaseRecord) CreateWithInstance(o interface{}) (*sqlutils.Result) {
 	return sqlutils.Create(conn, o, sqlutils.DriverPg)

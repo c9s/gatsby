@@ -2,6 +2,18 @@ package gatsby
 import "gatsby/sqlutils"
 import "database/sql"
 
+var conn *sql.DB
+var driverType int
+
+func SetupConnection(c *sql.DB, driverType int) {
+	conn = c
+	driverType = driverType
+}
+
+func GetConnection() (*sql.DB) {
+	return conn
+}
+
 func Load(val interface{}, pkId int64) (*sqlutils.Result) {
 	return sqlutils.Load(conn, val, pkId)
 }

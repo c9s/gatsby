@@ -61,8 +61,6 @@ func CreateMapFromRows(rows * sql.Rows, types ...interface{}) (map[string]interf
 	var result = map[string]interface{} {}
 
 	values, reflectValues = CreateReflectValuesFromTypes(types)
-
-	rows.Next()
 	err = rows.Scan(values...)
 	if err != nil {
 		return nil, err

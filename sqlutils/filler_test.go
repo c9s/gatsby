@@ -55,6 +55,7 @@ func TestCreateMapFromRows(t *testing.T) {
 
 	rows, _ := db.Query("select id, name from staffs")
 
+	rows.Next()
 	result, err := CreateMapFromRows(rows, new(int64), new(string) )
 	if err != nil {
 		t.Fatal( err )
@@ -67,8 +68,8 @@ func TestCreateMapFromRows(t *testing.T) {
 	if _, ok := result["name"] ; ! ok {
 		t.Fatal("Can not read name")
 	}
-
 	t.Log( "Map", result )
+
 
 
 	results, err := CreateMapsFromRows(rows, new(int64), new(string) )
