@@ -38,7 +38,7 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 
 	sql += whereSql
 
-	rows, err := PrepareAndQuery(db, sql, args...)
+	rows, err := db.Query(sql, args...)
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}

@@ -18,7 +18,7 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 	if driver == DriverPg {
 		col := GetPrimaryKeyColumnName(val)
 		sql = sql + " RETURNING " + *col
-		rows, err := PrepareAndQuery(db,sql,args...)
+		rows, err := db.Query(sql,args...)
 
 		defer func() { rows.Close() }()
 
