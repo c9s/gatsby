@@ -1,4 +1,5 @@
 package gatsby
+
 import "gatsby/sqlutils"
 import "database/sql"
 
@@ -10,27 +11,27 @@ func SetupConnection(c *sql.DB, driverType int) {
 	driverType = driverType
 }
 
-func GetConnection() (*sql.DB) {
+func GetConnection() *sql.DB {
 	return conn
 }
 
-func Load(val interface{}, pkId int64) (*sqlutils.Result) {
+func Load(val interface{}, pkId int64) *sqlutils.Result {
 	return sqlutils.Load(conn, val, pkId)
 }
 
-func LoadByCols(val interface{}, cols map[string]interface{}) (*sqlutils.Result) {
+func LoadByCols(val interface{}, cols map[string]interface{}) *sqlutils.Result {
 	return sqlutils.LoadByCols(conn, val, cols)
 }
 
-func Create(val interface{}, driver int) (*sqlutils.Result) {
+func Create(val interface{}, driver int) *sqlutils.Result {
 	return sqlutils.Create(conn, val, driver)
 }
 
-func Update(val interface{}) (*sqlutils.Result) {
+func Update(val interface{}) *sqlutils.Result {
 	return sqlutils.Update(conn, val)
 }
 
-func Delete(val interface{}) (*sqlutils.Result) {
+func Delete(val interface{}) *sqlutils.Result {
 	return sqlutils.Delete(conn, val)
 }
 
@@ -42,7 +43,7 @@ func SelectWith(val interface{}, postSql string, args ...interface{}) (interface
 	return sqlutils.SelectWith(conn, val, postSql, args...)
 }
 
-func SelectWhere(val interface{}, conds map[string]interface{} ) (interface{}, *sqlutils.Result) {
+func SelectWhere(val interface{}, conds map[string]interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.SelectWhere(conn, val, conds)
 }
 
@@ -53,5 +54,3 @@ func SelectFromQuery(val interface{}, sql string, args ...interface{}) (interfac
 func Query(sql string, args ...interface{}) (*sql.Rows, error) {
 	return conn.Query(sql, args...)
 }
-
-
