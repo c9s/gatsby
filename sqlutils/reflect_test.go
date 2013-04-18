@@ -53,7 +53,7 @@ func TestColumnNameMap(t *testing.T) {
 
 
 func TestColumnNamesParsing(t * testing.T) {
-	columns := ParseColumnNames( &fooRecord{Id:3, Name: "Mary"} )
+	columns := ReflectColumnNames( &fooRecord{Id:3, Name: "Mary"} )
 
 	// sort.Strings(columns)
 	t.Log(columns)
@@ -67,7 +67,7 @@ func TestColumnNamesParsing(t * testing.T) {
 		t.Fail()
 	}
 
-	columns = ParseColumnNames( &fooRecord{Id:4, Name: "John"} )
+	columns = ReflectColumnNames( &fooRecord{Id:4, Name: "John"} )
 	t.Log(columns)
 	if len(columns) != 3 {
 		t.Fail()

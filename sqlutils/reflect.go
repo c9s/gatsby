@@ -117,7 +117,7 @@ func GetColumnValueMap(val interface{}) (map[string] interface{}) {
 }
 
 // Iterate struct names and return a slice that contains column names.
-func ParseColumnNames(val interface{}) ([]string) {
+func ReflectColumnNames(val interface{}) ([]string) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 

@@ -6,7 +6,7 @@ import "reflect"
 
 // Generate SQL columns string for selecting.
 func BuildSelectColumnClause(val interface{}) (string) {
-	columns := ParseColumnNames(val)
+	columns := ReflectColumnNames(val)
 	return strings.Join(columns,",")
 }
 
