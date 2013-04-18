@@ -25,7 +25,7 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
-		id, err := GetReturningIdFromRows(rows)
+		id, err := GetPgReturningIdFromRows(rows)
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}

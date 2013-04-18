@@ -3,7 +3,7 @@ import "database/sql"
 import "errors"
 
 // This function fetch the returning ID from result rows
-func GetReturningIdFromRows(rows * sql.Rows) (int64, error) {
+func GetPgReturningIdFromRows(rows * sql.Rows) (int64, error) {
 	var id int64
 	var err error
 	if rows.Next() {
