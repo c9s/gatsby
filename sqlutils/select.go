@@ -33,7 +33,7 @@ func CreateStructSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, e
 	value := reflect.Indirect( reflect.ValueOf(val) )
 	typeOfVal := value.Type()
 	sliceOfVal := reflect.SliceOf(typeOfVal)
-	var slice = reflect.MakeSlice(sliceOfVal,0,100)
+	var slice = reflect.MakeSlice(sliceOfVal,0,200)
 	defer func() { rows.Close() }()
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
@@ -42,6 +42,10 @@ func CreateStructSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, e
 			return slice.Interface(), err
 		}
 		slice = reflect.Append(slice, reflect.Indirect(newValue) )
+	}
+	err := rows.Err()
+	if err != nil {
+		return slice, err
 	}
 	return slice.Interface(), nil
 }

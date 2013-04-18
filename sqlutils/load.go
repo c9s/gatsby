@@ -24,6 +24,11 @@ func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
 		}
 		return NewResult(sql)
 	}
+	err = rows.Err()
+	if err != nil {
+		return NewErrorResult(err,sql)
+	}
+
 	return NewErrorResult(errors.New("No result"),sql)
 }
 
@@ -46,6 +51,10 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 			return NewErrorResult(err,sql)
 		}
 		return NewResult(sql)
+	}
+	err = rows.Err()
+	if err != nil {
+		return NewErrorResult(err,sql)
 	}
 	return NewErrorResult(errors.New("No result"),sql)
 }
