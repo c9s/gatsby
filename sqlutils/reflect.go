@@ -1,9 +1,6 @@
 package sqlutils
 import "reflect"
 import "strings"
-// import "fmt"
-import "github.com/c9s/inflect"
-import _ "github.com/c9s/pq"
 
 // cache maps
 var columnNameCache = map[string] []string {};
@@ -13,11 +10,6 @@ var tableNameCache = map[string] string {};
 type PrimaryKey interface {
 	GetPkId() int64
 	SetPkId(int64)
-}
-
-func GetTableName(val interface{}) (string) {
-	typeName := reflect.ValueOf(val).Elem().Type().Name()
-	return GetTableNameFromTypeName(typeName)
 }
 
 
@@ -72,17 +64,6 @@ func GetPrimaryKeyColumnName(val interface{}) (*string) {
 	}
 	return nil
 }
-
-
-// Convert type name to table name with underscore and plurize.
-func GetTableNameFromTypeName(typeName string) (string) {
-	if cache, ok := tableNameCache[ typeName ] ; ok {
-		return cache
-	}
-	tableNameCache[typeName] = inflect.Tableize(typeName)
-	return tableNameCache[typeName]
-}
-
 
 // Extract attributes from "field" tag.
 // Current supported attributes: "required","primary","serial"
