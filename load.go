@@ -59,3 +59,4 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 	}
 	return NewErrorResult(errors.New("No result"),sql)
 }
+

@@ -15,15 +15,20 @@ func GetConnection() *sql.DB {
 	return conn
 }
 
-/*
-func Load(val interface{}, pkId int64) *sqlutils.Result {
-	return sqlutils.Load(conn, val, pkId)
+
+
+type ConnectionHandle struct {
+	conn *sql.DB
 }
 
-func LoadByCols(val interface{}, cols map[string]interface{}) *sqlutils.Result {
-	return sqlutils.LoadByCols(conn, val, cols)
+func (self * ConnectionHandle) Load(val interface{}, pkId int64) *Result {
+	return Load(self.conn, val, pkId)
 }
-*/
+
+func (self * ConnectionHandle) LoadByCols(val interface{}, cols map[string]interface{}) *Result {
+	return LoadByCols(self.conn, val, cols)
+}
+
 /*
 func Create(val interface{}, driver int) *sqlutils.Result {
 	return sqlutils.Create(conn, val, driver)
