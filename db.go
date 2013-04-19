@@ -1,4 +1,5 @@
 package gatsby
+import "database/sql"
 
 const (
 	DriverPg = iota
