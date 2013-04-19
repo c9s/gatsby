@@ -16,7 +16,7 @@ func TestBuildSelectColumns(t * testing.T) {
 
 func TestBuildSelectClause(t * testing.T) {
 	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
-	sql := BuildSelectClauseFromStruct(&staff)
+	sql := BuildSelectClause(&staff)
 	if ! strings.Contains(sql,"SELECT id,name,gender,staff_type,phone,birthday") {
 		t.Fatal(sql)
 	}
