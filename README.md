@@ -1,10 +1,13 @@
 Gatsby Database Toolkit For Go
 ==============================
 
-
 ## Query Builder
 
-Build Select Query:
+Gatsby Query provides a general query object to build SQL for selecting, updating, deleting, inserting records.
+
+Currently it supports 4 mode (CRUD) to build SQL.
+
+To Build Select Query:
 
 ```go
 import "gatsby"
@@ -18,7 +21,7 @@ sql := staffs.String()
 args := staffs.Args()
 ```
 
-Build Insert Query:
+To Build Insert Query:
 
 ```go
 import "gatsby"
@@ -29,7 +32,7 @@ query.Insert(map[string]interface{} {
 sql := query.String()
 ```
 
-Build Update Query:
+To Build Update Query:
 
 ```go
 query := NewQuery("staffs")
@@ -44,17 +47,78 @@ sql := query.String()
 
 ## SQLFragments
 
-More flexible SQL Builder by fragments
+More flexible SQL Builder by fragments.
+
+You can append query fragments then combine them into one by joining, and you can use the generated SQL in anywhere you
+want to combine with your own SQL statements.
+
+SQLFragments filters these question marks into placeholder in number format, for example, the first `?` will be `$1`
+and the second `?` will be `$2`.
 
 ```go
 import "gatsby"
-
 frag := gatsby.NewFragment()
 frag.AppendQuery("name = ?", "John")
 frag.AppendQuery("phone = ?", "John")
 sql := frag.Join("OR")
 args := frag.Args()
 ```
+
+## BaseRecord
+
+The BaseRecord provides a general CRUD operations on a struct type.
+
+To define your model with Gatsby BaseRecord:
+
+```go
+package app
+import "gatsby/sqlutils"
+import "gatsby"
+
+type Staff struct {
+	Id        int64     `json:"id" field:"id,primary,serial"`
+	Name      string    `json:"name"`
+	Gender    string    `json:"gender"`
+	Phone     string    `json:"phone"`
+	CellPhone string    `json:"cell_phone"`
+	gatsby.BaseRecord
+}
+
+func (self * Staff) Create() (*sqlutils.Result) {
+	return self.BaseRecord.CreateWithInstance(self)
+}
+
+func (self * Staff) Update() (*sqlutils.Result) {
+	return self.BaseRecord.UpdateWithInstance(self)
+}
+
+func (self * Staff) Delete() (*sqlutils.Result) {
+	return self.BaseRecord.DeleteWithInstance(self)
+}
+
+func (self * Staff) Load(id int64) (*sqlutils.Result) {
+	return self.BaseRecord.LoadWithInstance(self, id)
+}
+```
+
+Then you can do CRUD operations on the struct object:
+
+```go
+staff := Staff{}
+staff.Load(10)   // load the record where primary key = 10
+
+staff.Name = 'John'
+staff.Update()
+
+staff.Delete()   // delete the record where primary key = 10
+
+res := staff.Create()    // create another record
+if res.Error != nil {
+
+}
+```
+
+
 
 
 
