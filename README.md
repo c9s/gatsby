@@ -25,7 +25,7 @@ To Build Insert Query:
 
 ```go
 import "gatsby"
-query := NewQuery("staffs")
+query := gatsby.NewQuery("staffs")
 query.Insert(map[string]interface{} {
     "name": "John",
 })
@@ -35,7 +35,7 @@ sql := query.String()
 To Build Update Query:
 
 ```go
-query := NewQuery("staffs")
+query := gatsby.NewQuery("staffs")
 query.Update(map[string]interface{} {
     "name": "John",
 })
@@ -117,9 +117,5 @@ if res.Error != nil {
 
 }
 ```
-
-
-
-
 
 
