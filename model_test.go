@@ -24,8 +24,24 @@ func TestModelInsert(t *testing.T) {
 
 	t.Log(sql)
 	if sql == "" {
-		t.Fatal("SQL Select Error")
+		t.Fatal("Insert SQL Error")
 	}
 }
 
+
+func TestModelUpdate(t *testing.T) {
+	model := NewModel("staffs")
+	model.Update(map[string]interface{} {
+		"name": "John",
+	})
+	model.WhereFromMap(map[string]interface{} {
+		"id": 3,
+	})
+	sql := model.String()
+
+	t.Log(sql)
+	if sql == "" {
+		t.Fatal("Update SQL Error")
+	}
+}
 

@@ -21,6 +21,7 @@ type Model struct {
 	selectColumns []string
 	whereMap      *ArgMap
 	insertMap     *ArgMap
+	updateMap	  *ArgMap
 	fragments     sqlfragments.SQLFragments
 
 	limit  int
@@ -44,6 +45,12 @@ func (m *Model) Select(columns ...string) *Model {
 func (m *Model) Insert(argMap ArgMap) *Model {
 	m.mode = MODE_INSERT
 	m.insertMap = &argMap
+	return m
+}
+
+func (m *Model) Update(argMap ArgMap) *Model {
+	m.mode = MODE_UPDATE
+	m.updateMap = &argMap
 	return m
 }
 
@@ -77,6 +84,17 @@ func (m *Model) String() string {
 		}
 		if m.offset > 0 {
 			sql += fmt.Sprintf(" OFFSET %d", m.offset)
+		}
+		return sql
+	case MODE_UPDATE:
+		var sql = "UPDATE " + m.tableName + " SET "
+		var updateSql, args = sqlutils.BuildUpdateColumnsFromMap(*m.updateMap)
+		sql += updateSql
+		m.arguments = append(m.arguments, args...)
+		if m.whereMap != nil {
+			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
+			sql += " WHERE " + whereSql
+			m.arguments = append(m.arguments, args...)
 		}
 		return sql
 	case MODE_INSERT:
