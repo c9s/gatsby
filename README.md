@@ -107,7 +107,7 @@ Then you can do CRUD operations on the struct object:
 staff := Staff{}
 staff.Load(10)   // load the record where primary key = 10
 
-staff.Name = 'John'
+staff.Name = "John"
 staff.Update()
 
 staff.Delete()   // delete the record where primary key = 10
