@@ -26,7 +26,7 @@ func TestSelectQuery(t *testing.T) {
 }
 
 func TestBuildSelectColumns(t * testing.T) {
-	str := BuildSelectColumnClause( &fooRecord{Id:4, Name: "John"} )
+	str := BuildSelectColumnClauseFromStruct( &fooRecord{Id:4, Name: "John"} )
 	if len(str) == 0 {
 		t.Fail()
 	}
@@ -38,7 +38,7 @@ func TestBuildSelectColumns(t * testing.T) {
 
 func TestBuildSelectClause(t * testing.T) {
 	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
-	sql := BuildSelectClause(&staff)
+	sql := BuildSelectClauseFromStruct(&staff)
 	if ! strings.Contains(sql,"SELECT id,name,gender,staff_type,phone,birthday") {
 		t.Fatal(sql)
 	}

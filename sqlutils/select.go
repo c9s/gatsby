@@ -5,7 +5,7 @@ import "reflect"
 // import "errors"
 
 // Generate SQL columns string for selecting.
-func BuildSelectColumnClause(val interface{}) (string) {
+func BuildSelectColumnClauseFromStruct(val interface{}) (string) {
 	columns := ReflectColumnNames(val)
 	return strings.Join(columns,",")
 }
@@ -14,7 +14,7 @@ func BuildSelectClause(val interface{}) (string) {
 	// get table name
 	// inflect.Underscore()
 	tableName := GetTableName(val)
-	return "SELECT " + BuildSelectColumnClause(val) + " FROM " + tableName;
+	return "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + tableName;
 }
 
 
