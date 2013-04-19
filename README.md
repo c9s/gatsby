@@ -49,10 +49,10 @@ sql := query.String()
 
 More flexible SQL Builder by fragments.
 
-You can append query fragments then combine them into one by joining, and you can use the generated SQL in anywhere you
+You can append query fragments then combine them into one SQL string by joining, and you can use the generated SQL in anywhere you
 want to combine with your own SQL statements.
 
-SQLFragments filters these question marks into placeholder in number format, for example, the first `?` will be `$1`
+SQLFragments filters these question marks into placeholders with number format, for example, the first `?` will be `$1`
 and the second `?` will be `$2`.
 
 ```go
@@ -60,7 +60,7 @@ import "gatsby"
 frag := gatsby.NewFragment()
 frag.AppendQuery("name = ?", "John")
 frag.AppendQuery("phone = ?", "John")
-sql := frag.Join("OR")
+sql := frag.Join("OR")         // generates name = $1 AND phone = $2
 args := frag.Args()
 ```
 
