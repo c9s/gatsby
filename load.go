@@ -1,15 +1,16 @@
-package sqlutils
+package gatsby
 import "database/sql"
 import "fmt"
 import "errors"
+import "gatsby/sqlutils"
 
 // Load record by primary key value.
 func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
-	pName := GetPrimaryKeyColumnName(val)
+	pName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pName == nil {
 		panic("primary key is required.")
 	}
-	sql := BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
+	sql := sqlutils.BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
 	rows, err := db.Query(sql, pkId)
 	if err != nil {
 		return NewErrorResult(err,sql)
@@ -18,7 +19,7 @@ func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
 	defer func() { rows.Close() }()
 
 	if rows.Next() {
-		err = FillFromRow(val,rows)
+		err = sqlutils.FillFromRow(val,rows)
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
@@ -33,8 +34,8 @@ func Load(db *sql.DB, val interface{}, pkId int64) (*Result) {
 }
 
 func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Result) {
-	sql := BuildSelectClause(val)
-	whereSql, args := BuildWhereClauseWithAndOp(cols)
+	sql := sqlutils.BuildSelectClause(val)
+	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
 
 	sql += whereSql
 
@@ -46,7 +47,7 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string] interface{}) (*Res
 	defer func() { rows.Close() }()
 
 	if rows.Next() {
-		err = FillFromRow(val,rows)
+		err = sqlutils.FillFromRow(val,rows)
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}

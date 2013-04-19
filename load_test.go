@@ -1,4 +1,4 @@
-package sqlutils
+package gatsby
 import "testing"
 
 
@@ -50,9 +50,11 @@ func TestLoad(t *testing.T) {
 	}
 
 
+	/*
 	r = Delete(db,&staff)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
+	*/
 
 }

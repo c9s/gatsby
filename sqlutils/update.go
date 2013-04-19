@@ -2,8 +2,6 @@ package sqlutils
 import "fmt"
 import "reflect"
 import "strings"
-import "database/sql"
-
 
 // This function generates "UPDATE {table} SET name = $1, name2 = $2"
 func BuildUpdateClause(val interface{}) (string, []interface{}) {
@@ -50,37 +48,4 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 }
 
 
-
-func Update(db *sql.DB, val interface{}) (*Result) {
-
-	pkName := GetPrimaryKeyColumnName(&val)
-	if pkName == nil {
-		panic("primary key column is not defined.")
-	}
-
-	sql, values := BuildUpdateClause(val)
-
-	if val.(PrimaryKey) != nil {
-		id := val.(PrimaryKey).GetPkId()
-		values = append(values, id)
-	}
-
-	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
-
-	stmt, err := db.Prepare(sql)
-
-	defer func() { stmt.Close() }()
-
-	if err != nil {
-		return NewErrorResult(err,sql)
-	}
-	res, err := stmt.Exec(values...)
-	if err != nil {
-		return NewErrorResult(err,sql)
-	}
-
-	result := NewResult(sql)
-	result.Result = res
-	return result
-}
 
