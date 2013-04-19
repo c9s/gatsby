@@ -1,9 +1,10 @@
 package gatsby
+
 import "testing"
 
 func TestQuerySelect(t *testing.T) {
 	query := NewQuery("staffs")
-	query.Select("id","name","columns").WhereFromMap(map[string]interface{} {
+	query.Select("id", "name", "columns").WhereFromMap(map[string]interface{}{
 		"name": "John",
 	})
 	sql := query.String()
@@ -14,10 +15,9 @@ func TestQuerySelect(t *testing.T) {
 	}
 }
 
-
 func TestQueryInsert(t *testing.T) {
 	query := NewQuery("staffs")
-	query.Insert(map[string]interface{} {
+	query.Insert(map[string]interface{}{
 		"name": "John",
 	})
 	sql := query.String()
@@ -28,13 +28,12 @@ func TestQueryInsert(t *testing.T) {
 	}
 }
 
-
 func TestQueryUpdate(t *testing.T) {
 	query := NewQuery("staffs")
-	query.Update(map[string]interface{} {
+	query.Update(map[string]interface{}{
 		"name": "John",
 	})
-	query.WhereFromMap(map[string]interface{} {
+	query.WhereFromMap(map[string]interface{}{
 		"id": 3,
 	})
 	sql := query.String()
@@ -44,4 +43,3 @@ func TestQueryUpdate(t *testing.T) {
 		t.Fatal("Update SQL Error")
 	}
 }
-

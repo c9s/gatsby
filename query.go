@@ -76,6 +76,7 @@ func (m *Query) String() string {
 	// build for select
 	switch m.mode {
 	case MODE_SELECT:
+
 		var sql string = "SELECT " + strings.Join(m.selectColumns, ", ") + " FROM " + m.tableName
 		if m.whereMap != nil {
 			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
@@ -89,6 +90,18 @@ func (m *Query) String() string {
 			sql += fmt.Sprintf(" OFFSET %d", m.offset)
 		}
 		return sql
+
+	case MODE_DELETE:
+
+		var sql = "DELETE FROM " + m.tableName
+
+		if m.whereMap != nil {
+			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
+			sql += " WHERE " + whereSql
+			m.arguments = append(m.arguments, args...)
+		}
+		return sql
+
 	case MODE_UPDATE:
 		var sql = "UPDATE " + m.tableName + " SET "
 		var updateSql, args = sqlutils.BuildUpdateColumnsFromMap(*m.updateMap)
@@ -100,12 +113,15 @@ func (m *Query) String() string {
 			m.arguments = append(m.arguments, args...)
 		}
 		return sql
+
 	case MODE_INSERT:
+
 		var sql string = "INSERT INTO " + m.tableName
 		var insertSql, args = sqlutils.BuildInsertColumnsFromMap(*m.insertMap)
 		sql += " " + insertSql
 		m.arguments = append(m.arguments, args...)
 		return sql
+
 	default:
 		panic("Unsupported mode")
 	}

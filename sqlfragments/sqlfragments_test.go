@@ -11,5 +11,3 @@ func TestFragments(t *testing.T) {
 		t.Fatal("sqlfragments fatal error")
 	}
 }
-
-

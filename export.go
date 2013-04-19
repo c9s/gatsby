@@ -50,4 +50,3 @@ func SelectWhere(val interface{}, conds map[string]interface{}) (interface{}, *s
 func SelectFromQuery(val interface{}, sql string, args ...interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.SelectFromQuery(conn, val, sql, args...)
 }
-
