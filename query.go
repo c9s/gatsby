@@ -15,7 +15,7 @@ const (
 
 type ArgMap map[string]interface{}
 
-type Model struct {
+type Query struct {
 	tableName     string
 	mode          int
 	selectColumns []string
@@ -30,46 +30,46 @@ type Model struct {
 	arguments []interface{}
 }
 
-func NewModel(tableName string) *Model {
-	model := new(Model)
-	model.tableName = tableName
-	return model
+func NewQuery(tableName string) *Query {
+	query := new(Query)
+	query.tableName = tableName
+	return query
 }
 
-func (m *Model) Select(columns ...string) *Model {
+func (m *Query) Select(columns ...string) *Query {
 	m.mode = MODE_SELECT
 	m.selectColumns = columns
 	return m
 }
 
-func (m *Model) Insert(argMap ArgMap) *Model {
+func (m *Query) Insert(argMap ArgMap) *Query {
 	m.mode = MODE_INSERT
 	m.insertMap = &argMap
 	return m
 }
 
-func (m *Model) Update(argMap ArgMap) *Model {
+func (m *Query) Update(argMap ArgMap) *Query {
 	m.mode = MODE_UPDATE
 	m.updateMap = &argMap
 	return m
 }
 
-func (m *Model) WhereFromMap(argMap ArgMap) *Model {
+func (m *Query) WhereFromMap(argMap ArgMap) *Query {
 	m.whereMap = &argMap
 	return m
 }
 
-func (m *Model) Limit(offset, limit int) *Model {
+func (m *Query) Limit(offset, limit int) *Query {
 	m.offset = offset
 	m.limit = limit
 	return m
 }
 
-func (m *Model) Args() ([]interface{}) {
+func (m *Query) Args() ([]interface{}) {
 	return m.arguments
 }
 
-func (m *Model) String() string {
+func (m *Query) String() string {
 	// build for select
 	switch m.mode {
 	case MODE_SELECT:
