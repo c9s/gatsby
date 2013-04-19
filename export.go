@@ -29,22 +29,22 @@ func (self * ConnectionHandle) LoadByCols(val interface{}, cols map[string]inter
 	return LoadByCols(self.conn, val, cols)
 }
 
-/*
-func Create(val interface{}, driver int) *sqlutils.Result {
-	return sqlutils.Create(conn, val, driver)
+func (self * ConnectionHandle) Create(val interface{}, driver int) *Result {
+	return Create(self.conn, val, driver)
 }
-*/
-/*
-func Update(val interface{}) *sqlutils.Result {
-	return sqlutils.Update(conn, val)
-}
-*/
-/*
-func Delete(val interface{}) *sqlutils.Result {
-	return sqlutils.Delete(conn, val)
-}
-*/
 
+
+func (self * ConnectionHandle) Update(val interface{}) *Result {
+	return Update(self.conn, val)
+}
+
+func (self * ConnectionHandle) Delete(val interface{}) *Result {
+	return Delete(self.conn, val)
+}
+
+
+
+/*
 func Select(val interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.Select(conn, val)
 }
