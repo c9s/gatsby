@@ -58,6 +58,10 @@ func (m *Model) Limit(offset, limit int) *Model {
 	return m
 }
 
+func (m *Model) Args() ([]interface{}) {
+	return m.arguments
+}
+
 func (m *Model) String() string {
 	// build for select
 	switch m.mode {
