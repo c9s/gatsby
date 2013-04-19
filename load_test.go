@@ -49,12 +49,8 @@ func TestLoad(t *testing.T) {
 		t.Fatal(res.Error)
 	}
 
-
-	/*
 	r = Delete(db,&staff)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
-	*/
-
 }

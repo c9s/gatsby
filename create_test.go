@@ -6,6 +6,6 @@ func TestCreate(t *testing.T) {
 	staff := Staff{}
 	staff.Name = "John"
 	Create(db, &staff, DriverPg)
-	// Delete(db, &staff)
+	Delete(db, &staff)
 }
 
