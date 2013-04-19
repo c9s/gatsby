@@ -1,7 +1,8 @@
 package sqlutils
 import "strings"
-import "database/sql"
 import "reflect"
+import "database/sql"
+
 // import "errors"
 
 // Generate SQL columns string for selecting.
@@ -18,15 +19,6 @@ func BuildSelectClause(val interface{}) (string) {
 }
 
 
-func SelectQuery(db *sql.DB, val interface{}) (*sql.Rows, error) {
-	sql := BuildSelectClause(val)
-	return db.Query(sql)
-}
-
-func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*sql.Rows, error) {
-	sql := BuildSelectClause(val) + " " + postSql
-	return db.Query(sql, args...)
-}
 
 
 func CreateStructSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, error) {
@@ -51,58 +43,3 @@ func CreateStructSliceFromRows(val interface{}, rows *sql.Rows ) (interface{}, e
 }
 
 
-func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
-	sql := BuildSelectClause(val)
-	rows, err := db.Query(sql)
-	if err != nil {
-		return nil, NewErrorResult(err,sql)
-	}
-	slice, err := CreateStructSliceFromRows(val, rows)
-	if err != nil {
-		return slice, NewErrorResult(err,sql)
-	}
-	return slice, NewResult(sql)
-}
-
-
-// select table with a postSQL
-func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
-	sql := BuildSelectClause(val) + " " + postSql
-	rows, err := db.Query(sql, args...)
-	if err != nil {
-		return nil, NewErrorResult(err,sql)
-	}
-
-	slice, err := CreateStructSliceFromRows(val, rows)
-	if err != nil {
-		return slice, NewErrorResult(err,sql)
-	}
-	return slice, NewResult(sql)
-}
-
-func SelectWhere(db *sql.DB, val interface{}, conds map[string]interface{}) (interface{}, *Result) {
-	whereSql, args := BuildWhereClauseWithAndOp(conds)
-	sql := BuildSelectClause(val) + whereSql
-	rows, err := db.Query(sql, args...)
-	if err != nil {
-		return nil, NewErrorResult(err,sql)
-	}
-
-	slice, err := CreateStructSliceFromRows(val, rows)
-	if err != nil {
-		return slice, NewErrorResult(err,sql)
-	}
-	return slice, NewResult(sql)
-}
-
-func SelectFromQuery(db *sql.DB, val interface{}, sql string, args ...interface{} ) (interface{}, *Result) {
-	rows, err := db.Query(sql, args...)
-	if err != nil {
-		return nil, NewErrorResult(err,sql)
-	}
-	slice, err := CreateStructSliceFromRows(val, rows)
-	if err != nil {
-		return slice, NewErrorResult(err,sql)
-	}
-	return slice, NewResult(sql)
-}

@@ -1,6 +1,4 @@
 package gatsby
-
-import "gatsby/sqlutils"
 import "database/sql"
 
 var conn *sql.DB
@@ -44,14 +42,17 @@ func (self * ConnectionHandle) Delete(val interface{}) *Result {
 
 
 
+/*
 func Select(val interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.Select(conn, val)
 }
-
+*/
+/*
 func SelectWith(val interface{}, postSql string, args ...interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.SelectWith(conn, val, postSql, args...)
 }
-
+*/
+/*
 func SelectWhere(val interface{}, conds map[string]interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.SelectWhere(conn, val, conds)
 }
@@ -59,3 +60,4 @@ func SelectWhere(val interface{}, conds map[string]interface{}) (interface{}, *s
 func SelectFromQuery(val interface{}, sql string, args ...interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.SelectFromQuery(conn, val, sql, args...)
 }
+*/
