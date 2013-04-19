@@ -72,7 +72,6 @@ To define your model with Gatsby BaseRecord:
 
 ```go
 package app
-import "gatsby/sqlutils"
 import "gatsby"
 
 type Staff struct {
@@ -84,19 +83,19 @@ type Staff struct {
 	gatsby.BaseRecord
 }
 
-func (self * Staff) Create() (*sqlutils.Result) {
+func (self * Staff) Create() (*gatsby.Result) {
 	return self.BaseRecord.CreateWithInstance(self)
 }
 
-func (self * Staff) Update() (*sqlutils.Result) {
+func (self * Staff) Update() (*gatsby.Result) {
 	return self.BaseRecord.UpdateWithInstance(self)
 }
 
-func (self * Staff) Delete() (*sqlutils.Result) {
+func (self * Staff) Delete() (*gatsby.Result) {
 	return self.BaseRecord.DeleteWithInstance(self)
 }
 
-func (self * Staff) Load(id int64) (*sqlutils.Result) {
+func (self * Staff) Load(id int64) (*gatsby.Result) {
 	return self.BaseRecord.LoadWithInstance(self, id)
 }
 ```
