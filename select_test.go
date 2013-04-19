@@ -1,4 +1,5 @@
 package gatsby
+
 import "testing"
 
 func chkResult(t *testing.T, res *Result) {
@@ -11,7 +12,7 @@ func TestSelectQuery(t *testing.T) {
 	var db = openDB()
 
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
-	chkResult(t, Create(db, &staff, DriverPg) )
+	chkResult(t, Create(db, &staff, DriverPg))
 
 	rows, err := SelectQuery(db, &staff)
 	if err != nil {
@@ -29,18 +30,16 @@ func TestSelectQuery(t *testing.T) {
 	Delete(db, &staff)
 }
 
-
-
 func TestSelectWith(t *testing.T) {
 	var db = openDB()
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
-	chkResult(t, Create(db, &staff, DriverPg) )
+	chkResult(t, Create(db, &staff, DriverPg))
 
 	staff2 := Staff{Name: "Mary", Gender: "m", Phone: "0975277696"}
-	chkResult(t, Create(db, &staff2, DriverPg) )
+	chkResult(t, Create(db, &staff2, DriverPg))
 
 	staff3 := Staff{Name: "Jack", Gender: "m", Phone: "0975277696"}
-	chkResult(t, Create(db, &staff3, DriverPg) )
+	chkResult(t, Create(db, &staff3, DriverPg))
 
 	items, result := Select(db, &staff)
 	chkResult(t, result)
@@ -65,4 +64,3 @@ func TestSelectWith(t *testing.T) {
 	}
 	_ = staffs
 }
-

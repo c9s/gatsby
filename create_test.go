@@ -1,4 +1,5 @@
 package gatsby
+
 import "testing"
 
 func TestCreate(t *testing.T) {
@@ -8,4 +9,3 @@ func TestCreate(t *testing.T) {
 	Create(db, &staff, DriverPg)
 	Delete(db, &staff)
 }
-

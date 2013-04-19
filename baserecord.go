@@ -9,7 +9,6 @@ func (self *BaseRecord) CreateWithInstance(o interface{}) *Result {
 	return Create(conn, o, sqlutils.DriverPg)
 }
 
-
 /*
 func (self *BaseRecord) DeleteWithInstance(o interface{}) *Result {
 	return sqlutils.Delete(conn, o)

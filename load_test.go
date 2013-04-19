@@ -1,6 +1,6 @@
 package gatsby
-import "testing"
 
+import "testing"
 
 func TestLoad(t *testing.T) {
 	var db = openDB()
@@ -16,12 +16,8 @@ func TestLoad(t *testing.T) {
 	}
 	t.Logf("staff id: %d", r.Id)
 
-
-
-
-
 	staff2 := Staff{}
-	r = Load(db,&staff2, r.Id)
+	r = Load(db, &staff2, r.Id)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
@@ -33,10 +29,8 @@ func TestLoad(t *testing.T) {
 		t.Fatal("Can not load record")
 	}
 
-
-
 	staff3 := Staff{}
-	res := LoadByCols(db, &staff3, map[string]interface{} {
+	res := LoadByCols(db, &staff3, map[string]interface{}{
 		"Phone": "1234567",
 	})
 	if res.Error != nil {
@@ -49,7 +43,7 @@ func TestLoad(t *testing.T) {
 		t.Fatal(res.Error)
 	}
 
-	r = Delete(db,&staff)
+	r = Delete(db, &staff)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
