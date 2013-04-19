@@ -5,22 +5,6 @@ import _ "github.com/c9s/pq"
 import "time"
 import "strings"
 
-
-var db *sql.DB
-
-func openDB() (*sql.DB) {
-	if db != nil {
-		return db
-	}
-
-    db, err := sql.Open("postgres", "user=postgres password=postgres dbname=test sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-	return db
-}
-
-
 func TestFill(t *testing.T) {
     var db = openDB()
 	stmt, _ := db.Prepare("select created_on from staffs")

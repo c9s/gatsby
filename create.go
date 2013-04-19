@@ -1,13 +1,14 @@
-package sqlutils
+package gatsby
 import "database/sql"
+import "gatsby/sqlutils"
 // import "fmt"
 
 
 // id, err := sqlutils.Create(struct pointer)
 func Create(db *sql.DB, val interface{}, driver int) (*Result) {
-	sql , args := BuildInsertClause(val)
+	sql , args := sqlutils.BuildInsertClause(val)
 
-	err := CheckRequired(val)
+	err := sqlutils.CheckRequired(val)
 	if err != nil {
 		return NewErrorResult(err,sql)
 	}
@@ -16,7 +17,7 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 
 	// get the autoincrement id from result
 	if driver == DriverPg {
-		col := GetPrimaryKeyColumnName(val)
+		col := sqlutils.GetPrimaryKeyColumnName(val)
 		sql = sql + " RETURNING " + *col
 		rows, err := db.Query(sql,args...)
 
@@ -25,12 +26,12 @@ func Create(db *sql.DB, val interface{}, driver int) (*Result) {
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
-		id, err := GetPgReturningIdFromRows(rows)
+		id, err := sqlutils.GetPgReturningIdFromRows(rows)
 		if err != nil {
 			return NewErrorResult(err,sql)
 		}
-		if val.(PrimaryKey) != nil {
-			val.(PrimaryKey).SetPkId(id)
+		if val.(sqlutils.PrimaryKey) != nil {
+			val.(sqlutils.PrimaryKey).SetPkId(id)
 		}
 		result.Id = id
 	} else if driver == DriverMysql {
