@@ -44,7 +44,6 @@ func (self * ConnectionHandle) Delete(val interface{}) *Result {
 
 
 
-/*
 func Select(val interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.Select(conn, val)
 }
