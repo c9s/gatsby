@@ -1,4 +1,5 @@
 package gatsby
+
 import "gatsby/sqlfragments"
 import "gatsby/sqlutils"
 import "strings"
@@ -11,46 +12,56 @@ const (
 	MODE_INSERT
 )
 
-type Model struct {
-	tableName string
-	mode	  int
-	selectColumns   []string
-	whereMap		*map[string]interface{}
-	fragments sqlfragments.SQLFragments
 
-	limit int
+type ArgMap map[string]interface{}
+
+type Model struct {
+	tableName     string
+	mode          int
+	selectColumns []string
+	whereMap      *ArgMap
+	insertMap     *ArgMap
+	fragments     sqlfragments.SQLFragments
+
+	limit  int
 	offset int
 
-	arguments		[]interface{}
+	arguments []interface{}
 }
 
-func NewModel(tableName string) (*Model) {
+func NewModel(tableName string) *Model {
 	model := new(Model)
 	model.tableName = tableName
 	return model
 }
 
-func (m * Model) Select(columns ...string) (*Model) {
+func (m *Model) Select(columns ...string) *Model {
 	m.mode = MODE_SELECT
 	m.selectColumns = columns
 	return m
 }
 
-func (m * Model) WhereFromMap(argMap map[string]interface{} ) (*Model) {
+func (m *Model) Insert(argMap ArgMap) *Model {
+	m.mode = MODE_INSERT
+	m.insertMap = &argMap
+	return m
+}
+
+func (m *Model) WhereFromMap(argMap ArgMap) *Model {
 	m.whereMap = &argMap
 	return m
 }
 
-func (m * Model) Limit(offset, limit int)  (*Model) {
+func (m *Model) Limit(offset, limit int) *Model {
 	m.offset = offset
 	m.limit = limit
 	return m
 }
 
-func (m * Model) String() string {
+func (m *Model) String() string {
 	// build for select
 	if m.mode == MODE_SELECT {
-		var sql string = "SELECT " + strings.Join(m.selectColumns,", ") + " FROM " + m.tableName
+		var sql string = "SELECT " + strings.Join(m.selectColumns, ", ") + " FROM " + m.tableName
 
 		if m.whereMap != nil {
 			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
@@ -69,4 +80,3 @@ func (m * Model) String() string {
 	}
 	return ""
 }
-
