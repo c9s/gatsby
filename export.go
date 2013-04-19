@@ -51,6 +51,3 @@ func SelectFromQuery(val interface{}, sql string, args ...interface{}) (interfac
 	return sqlutils.SelectFromQuery(conn, val, sql, args...)
 }
 
-func Query(sql string, args ...interface{}) (*sql.Rows, error) {
-	return conn.Query(sql, args...)
-}

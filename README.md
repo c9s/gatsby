@@ -42,3 +42,20 @@ query.WhereFromMap(map[string]interface{} {
 sql := query.String()
 ```
 
+## SQLFragments
+
+More flexible SQL Builder by fragments
+
+```go
+import "gatsby"
+
+frag := gatsby.NewFragment()
+frag.AppendQuery("name = ?", "John")
+frag.AppendQuery("phone = ?", "John")
+sql := frag.Join("OR")
+args := frag.Args()
+```
+
+
+
+

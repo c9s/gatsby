@@ -12,7 +12,6 @@ const (
 	MODE_INSERT
 )
 
-
 type ArgMap map[string]interface{}
 
 type Query struct {
@@ -21,13 +20,17 @@ type Query struct {
 	selectColumns []string
 	whereMap      *ArgMap
 	insertMap     *ArgMap
-	updateMap	  *ArgMap
+	updateMap     *ArgMap
 	fragments     sqlfragments.SQLFragments
 
 	limit  int
 	offset int
 
 	arguments []interface{}
+}
+
+func NewFragment() *sqlfragments.SQLFragments {
+	return new(sqlfragments.SQLFragments)
 }
 
 func NewQuery(tableName string) *Query {
@@ -65,7 +68,7 @@ func (m *Query) Limit(offset, limit int) *Query {
 	return m
 }
 
-func (m *Query) Args() ([]interface{}) {
+func (m *Query) Args() []interface{} {
 	return m.arguments
 }
 

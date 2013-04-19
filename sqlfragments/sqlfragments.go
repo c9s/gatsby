@@ -11,16 +11,16 @@ func createIntSliceWithRange(from, to int) ([]interface{}) {
 }
 
 type SQLFragments struct {
-	Fragments []string
-	Args []interface{}
+	fragments []string
+	args []interface{}
 }
 
 func (s *SQLFragments) Len() (int) {
-	return len(s.Fragments)
+	return len(s.fragments)
 }
 
 func (s *SQLFragments) Append(frag string) {
-	s.Fragments = append( s.Fragments, frag )
+	s.fragments = append( s.fragments, frag )
 }
 
 func (s *SQLFragments) AppendQuery(frag string, args ...interface{}) {
@@ -28,21 +28,25 @@ func (s *SQLFragments) AppendQuery(frag string, args ...interface{}) {
 	cnt := strings.Count(frag, "?")
 	frag = strings.Replace(frag, "?", "$%d", -1)
 
-	var varStartFrom = len(s.Args) + 1
+	var varStartFrom = len(s.args) + 1
 	var varNumbers = createIntSliceWithRange(varStartFrom, varStartFrom + cnt)
 
-	s.Fragments = append( s.Fragments, fmt.Sprintf(frag, varNumbers... ) )
+	s.fragments = append( s.fragments, fmt.Sprintf(frag, varNumbers... ) )
 	for _, a := range args {
-		s.Args = append(s.Args, a)
+		s.args = append(s.args, a)
 	}
 }
 
+func (s *SQLFragments) Args() []interface{} {
+	return s.args
+}
+
 func (s *SQLFragments) Join(sep string) (string) {
-	return strings.Join(s.Fragments, sep)
+	return strings.Join(s.fragments, sep)
 }
 
 func (s *SQLFragments) String() (string) {
-	return strings.Join(s.Fragments, " ")
+	return strings.Join(s.fragments, " ")
 }
 
 func (s *SQLFragments) Like(columnName string, value interface{}) (*SQLFragments) {
@@ -53,4 +57,5 @@ func (s *SQLFragments) Like(columnName string, value interface{}) (*SQLFragments
 func New() (*SQLFragments) {
 	return new(SQLFragments)
 }
+
 
