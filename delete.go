@@ -1,21 +1,22 @@
-package sqlutils
+package gatsby
 import "database/sql"
 import "errors"
+import "gatsby/sqlutils"
 
 func Delete(db *sql.DB, val interface{}) (*Result) {
-	pkName := GetPrimaryKeyColumnName(val)
+	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 
 	if pkName == nil {
 		return NewErrorResult( errors.New("PrimaryKey column is not defined."),"")
 	}
 
-	sql := "DELETE FROM " + GetTableName(val) + " WHERE " + *pkName + " = $1"
+	sql := "DELETE FROM " + sqlutils.GetTableName(val) + " WHERE " + *pkName + " = $1"
 
-	if val.(PrimaryKey) == nil {
+	if val.(sqlutils.PrimaryKey) == nil {
 		return NewErrorResult(errors.New("PrimaryKey interface is required."),sql)
 	}
 
-	id := val.(PrimaryKey).GetPkId()
+	id := val.(sqlutils.PrimaryKey).GetPkId()
 	res, err := db.Exec(sql, id)
 	if err != nil {
 		return NewErrorResult(err,sql)

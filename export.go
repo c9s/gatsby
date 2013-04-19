@@ -34,10 +34,11 @@ func Update(val interface{}) *sqlutils.Result {
 	return sqlutils.Update(conn, val)
 }
 */
-
+/*
 func Delete(val interface{}) *sqlutils.Result {
 	return sqlutils.Delete(conn, val)
 }
+*/
 
 func Select(val interface{}) (interface{}, *sqlutils.Result) {
 	return sqlutils.Select(conn, val)
