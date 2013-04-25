@@ -9,20 +9,19 @@ func (self *BaseRecord) CreateWithInstance(o interface{}) *Result {
 	return Create(conn, o, sqlutils.DriverPg)
 }
 
-/*
 func (self *BaseRecord) DeleteWithInstance(o interface{}) *Result {
-	return sqlutils.Delete(conn, o)
+	return Delete(conn, o)
 }
 
 func (self *BaseRecord) UpdateWithInstance(o interface{}) *Result {
-	return sqlutils.Update(conn, o)
+	return Update(conn, o)
 }
 
 func (self *BaseRecord) LoadWithInstance(o interface{}, id int64) *Result {
-	return sqlutils.Load(conn, o, id)
+	return Load(conn, o, id)
 }
 
 func (self *BaseRecord) LoadByColsWithInstance(o interface{}, id int64) *Result {
-	return sqlutils.Load(conn, o, id)
+	return Load(conn, o, id)
 }
-*/
+
