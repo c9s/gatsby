@@ -14,7 +14,7 @@ func TestSelectQuery(t *testing.T) {
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
 	chkResult(t, Create(db, &staff, DriverPg))
 
-	rows, err := SelectQuery(db, &staff)
+	rows, err := SelectAll(db, &staff)
 	if err != nil {
 		t.Fatal(err)
 	}

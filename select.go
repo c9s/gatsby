@@ -16,7 +16,7 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	return slice, NewResult(sql)
 }
 
-func SelectQuery(db *sql.DB, val interface{}) (*sql.Rows, error) {
+func SelectAll(db *sql.DB, val interface{}) (*sql.Rows, error) {
 	sql := sqlutils.BuildSelectClause(val)
 	return db.Query(sql)
 }
@@ -26,7 +26,8 @@ func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interf
 	return db.Query(sql, args...)
 }
 
-// select table with a postSQL
+
+// Select a table and returns objects
 func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
 	sql := sqlutils.BuildSelectClause(val) + " " + postSql
 	rows, err := db.Query(sql, args...)
