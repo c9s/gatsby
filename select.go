@@ -16,12 +16,12 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	return slice, NewResult(sql)
 }
 
-func SelectAll(db *sql.DB, val interface{}) (*sql.Rows, error) {
+func QuerySelect(db *sql.DB, val interface{}) (*sql.Rows, error) {
 	sql := sqlutils.BuildSelectClause(val)
 	return db.Query(sql)
 }
 
-func SelectQueryWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*sql.Rows, error) {
+func QuerySelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*sql.Rows, error) {
 	sql := sqlutils.BuildSelectClause(val) + " " + postSql
 	return db.Query(sql, args...)
 }
