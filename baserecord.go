@@ -21,7 +21,7 @@ func (self *BaseRecord) LoadWithInstance(o interface{}, id int64) *Result {
 	return Load(conn, o, id)
 }
 
-func (self *BaseRecord) LoadByColsWithInstance(o interface{}, id int64) *Result {
-	return Load(conn, o, id)
+func (self *BaseRecord) LoadByColsWithInstance(o interface{}, cols map[string]interface{}) *Result {
+	return LoadByCols(conn, o, cols)
 }
 
