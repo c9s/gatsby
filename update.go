@@ -5,8 +5,7 @@ import "gatsby/sqlutils"
 import "fmt"
 
 func Update(db *sql.DB, val interface{}) *Result {
-
-	pkName := sqlutils.GetPrimaryKeyColumnName(&val)
+	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
 		panic("primary key column is not defined.")
 	}
