@@ -7,6 +7,10 @@ type BaseRecord struct {
 	Txn *sql.Tx
 }
 
+func (self *BaseRecord) SetTxn(txn *sql.Tx) {
+	self.Txn = txn
+}
+
 func (self *BaseRecord) Begin() (*sql.Tx, error) {
 	var tx *sql.Tx
 	var err error
