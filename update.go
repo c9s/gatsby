@@ -4,7 +4,7 @@ import "gatsby/sqlutils"
 import "fmt"
 
 func Update(e Executor, val interface{}) *Result {
-	var db = e.(Executor)
+	var executor = e.(Executor)
 
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
@@ -20,7 +20,7 @@ func Update(e Executor, val interface{}) *Result {
 
 	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
 
-	stmt, err := db.Prepare(sql)
+	stmt, err := executor.Prepare(sql)
 
 	defer func() { stmt.Close() }()
 
