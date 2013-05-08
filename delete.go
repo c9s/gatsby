@@ -8,7 +8,10 @@ import (
 
 // Delete from DB connection object or a transaction object (pointer)
 func Delete(e interface{}, val interface{}) *Result {
-	var executor = e.(Executor)
+	var executor, ok = e.(Executor)
+	if !ok {
+		panic("Not an Executor type")
+	}
 
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 

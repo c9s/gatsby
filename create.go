@@ -6,7 +6,12 @@ import "gatsby/sqlutils"
 
 // id, err := sqlutils.Create(struct pointer)
 func Create(e interface{}, val interface{}, driver int) *Result {
-	var executor = e.(Executor)
+	var executor, ok = e.(Executor)
+
+	if !ok {
+		panic("Not an Executor type")
+	}
+
 	var sqlStr, args = sqlutils.BuildInsertClause(val)
 
 	err := sqlutils.CheckRequired(val)

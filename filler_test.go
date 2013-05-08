@@ -96,7 +96,7 @@ func TestFillRecord(t *testing.T) {
 
 	sql := sqlutils.BuildSelectClause(&staff) + " WHERE id = $1"
 
-	if !strings.Contains(sql, "id,name,gender,staff_type,phone,birthday,created_on") {
+	if !strings.Contains(sql, "id, name, gender, staff_type, phone, birthday, created_on") {
 		t.Fatal("Unexpected SQL: " + sql)
 	}
 

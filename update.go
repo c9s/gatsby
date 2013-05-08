@@ -4,7 +4,10 @@ import "gatsby/sqlutils"
 import "fmt"
 
 func Update(e Executor, val interface{}) *Result {
-	var executor = e.(Executor)
+	var executor, ok = e.(Executor)
+	if !ok {
+		panic("Not an Executor type")
+	}
 
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
