@@ -11,6 +11,10 @@ func (self *BaseRecord) SetTxn(txn *sql.Tx) {
 	self.Txn = txn
 }
 
+func (self *BaseRecord) GetTxn() *sql.Tx {
+	return self.Txn
+}
+
 func (self *BaseRecord) Begin() (*sql.Tx, error) {
 	var tx *sql.Tx
 	var err error
