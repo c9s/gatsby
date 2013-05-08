@@ -44,5 +44,3 @@ func (self *ConnectionHandle) Update(val interface{}) *Result {
 func (self *ConnectionHandle) Delete(val interface{}) *Result {
 	return Delete(self.conn, val)
 }
-
-

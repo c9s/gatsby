@@ -26,7 +26,6 @@ func QuerySelectWith(db *sql.DB, val interface{}, postSql string, args ...interf
 	return db.Query(sql, args...)
 }
 
-
 // Select a table and returns objects
 func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
 	sql := sqlutils.BuildSelectClause(val) + " " + postSql

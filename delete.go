@@ -7,7 +7,9 @@ import (
 )
 
 // Delete from DB connection object or a transaction object (pointer)
-func Delete(executor *Executor, val interface{}) *Result {
+func Delete(e interface{}, val interface{}) *Result {
+	var executor = e.(Executor)
+
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 
 	if pkName == nil {
@@ -23,15 +25,15 @@ func Delete(executor *Executor, val interface{}) *Result {
 	id := val.(sqlutils.PrimaryKey).GetPkId()
 
 	var err error
-	var res *sql.Result
+	var res sql.Result
 
-	res, err = e.Exec(sqlStr, id)
+	res, err = executor.Exec(sqlStr, id)
 	if err != nil {
 		return NewErrorResult(err, sqlStr)
 	}
 
 	var r = NewResult(sqlStr)
-	r.Result = *res
+	r.Result = res
 	r.Id = id
 	return r
 }

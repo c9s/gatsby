@@ -1,4 +1,5 @@
 package gatsby
+
 import "gatsby/sqlutils"
 import "testing"
 import _ "github.com/c9s/pq"
@@ -6,19 +7,19 @@ import "time"
 import "strings"
 
 func TestFill(t *testing.T) {
-    var db = openDB()
+	var db = openDB()
 	stmt, _ := db.Prepare("select created_on from staffs")
 	rows, _ := stmt.Query()
 	for rows.Next() {
 		time1 := new(time.Time)
 		rows.Scan(time1)
-		t.Logf("Created on: %d",time1.Unix())
+		t.Logf("Created on: %d", time1.Unix())
 	}
 }
 
 func TestCreateMapFromRows(t *testing.T) {
 	staff := Staff{}
-    var db = openDB()
+	var db = openDB()
 
 	// Create Staff
 	staff.Id = 1
@@ -27,7 +28,7 @@ func TestCreateMapFromRows(t *testing.T) {
 	t1 := time.Now()
 	staff.CreatedOn = &t1
 
-	r := Create(db,&staff, DriverPg)
+	r := Create(db, &staff, DriverPg)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
@@ -40,33 +41,31 @@ func TestCreateMapFromRows(t *testing.T) {
 	rows, _ := db.Query("select id, name from staffs")
 
 	rows.Next()
-	result, err := sqlutils.CreateMapFromRows(rows, new(int64), new(string) )
+	result, err := sqlutils.CreateMapFromRows(rows, new(int64), new(string))
 	if err != nil {
-		t.Fatal( err )
+		t.Fatal(err)
 	}
 
-	if _, ok := result["id"] ; ! ok {
+	if _, ok := result["id"]; !ok {
 		t.Fatal("Can not read id")
 	}
 
-	if _, ok := result["name"] ; ! ok {
+	if _, ok := result["name"]; !ok {
 		t.Fatal("Can not read name")
 	}
-	t.Log( "Map", result )
+	t.Log("Map", result)
 
-
-
-	results, err := sqlutils.CreateMapsFromRows(rows, new(int64), new(string) )
+	results, err := sqlutils.CreateMapsFromRows(rows, new(int64), new(string))
 	if err != nil {
-		t.Fatal( err )
+		t.Fatal(err)
 	}
 
 	for _, r := range results {
-		if _, ok := r["id"] ; ! ok {
+		if _, ok := r["id"]; !ok {
 			t.Fatal("Can not read id")
 		}
 
-		if _, ok := r["name"] ; ! ok {
+		if _, ok := r["name"]; !ok {
 			t.Fatal("Can not read name")
 		}
 	}
@@ -74,9 +73,9 @@ func TestCreateMapFromRows(t *testing.T) {
 	Delete(db, &staff)
 }
 
-func TestFillRecord(t * testing.T) {
+func TestFillRecord(t *testing.T) {
 	staff := Staff{}
-    var db = openDB()
+	var db = openDB()
 
 	// Create Staff
 	staff.Id = 1
@@ -85,7 +84,7 @@ func TestFillRecord(t * testing.T) {
 	t1 := time.Now()
 	staff.CreatedOn = &t1
 
-	r := Create(db,&staff, DriverPg)
+	r := Create(db, &staff, DriverPg)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
@@ -97,20 +96,19 @@ func TestFillRecord(t * testing.T) {
 
 	sql := sqlutils.BuildSelectClause(&staff) + " WHERE id = $1"
 
-	if ! strings.Contains(sql, "id, name, gender, staff_type, phone, birthday") {
+	if !strings.Contains(sql, "id, name, gender, staff_type, phone, birthday") {
 		t.Fatal("Unexpected SQL: " + sql)
 	}
 
-	if ! strings.Contains(sql, "FROM staffs WHERE id = $1") {
+	if !strings.Contains(sql, "FROM staffs WHERE id = $1") {
 		t.Fatal("Unexpected SQL: " + sql)
 	}
 
-
-	stmt , err := db.Prepare(sql)
-	rows, err := stmt.Query( r.Id)
+	stmt, err := db.Prepare(sql)
+	rows, err := stmt.Query(r.Id)
 
 	if rows.Next() {
-		err = sqlutils.FillFromRow(&staff,rows)
+		err = sqlutils.FillFromRow(&staff, rows)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -118,12 +116,9 @@ func TestFillRecord(t * testing.T) {
 		t.Fatal("No record found.")
 	}
 
-	r = Delete(db,&staff)
+	r = Delete(db, &staff)
 	t.Log(r)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
 }
-
-
-
