@@ -1,30 +1,37 @@
 package gatsby
 
-import "database/sql"
-import "errors"
-import "gatsby/sqlutils"
+import (
+	"database/sql"
+	"errors"
+	"gatsby/sqlutils"
+)
 
-func Delete(db *sql.DB, val interface{}) *Result {
+// Delete from DB connection object or a transaction object (pointer)
+func Delete(executor *Executor, val interface{}) *Result {
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 
 	if pkName == nil {
 		return NewErrorResult(errors.New("PrimaryKey column is not defined."), "")
 	}
 
-	sql := "DELETE FROM " + sqlutils.GetTableName(val) + " WHERE " + *pkName + " = $1"
+	sqlStr := "DELETE FROM " + sqlutils.GetTableName(val) + " WHERE " + *pkName + " = $1"
 
 	if val.(sqlutils.PrimaryKey) == nil {
-		return NewErrorResult(errors.New("PrimaryKey interface is required."), sql)
+		return NewErrorResult(errors.New("PrimaryKey interface is required."), sqlStr)
 	}
 
 	id := val.(sqlutils.PrimaryKey).GetPkId()
-	res, err := db.Exec(sql, id)
+
+	var err error
+	var res *sql.Result
+
+	res, err = e.Exec(sqlStr, id)
 	if err != nil {
-		return NewErrorResult(err, sql)
+		return NewErrorResult(err, sqlStr)
 	}
 
-	r := NewResult(sql)
-	r.Result = res
+	var r = NewResult(sqlStr)
+	r.Result = *res
 	r.Id = id
 	return r
 }
