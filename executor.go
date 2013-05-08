@@ -5,4 +5,5 @@ import "database/sql"
 type Executor interface {
 	Exec(string, ...interface{}) (sql.Result, error)
 	Query(string, ...interface{}) (*sql.Rows, error)
+	Prepare(query string) (*sql.Stmt, error)
 }

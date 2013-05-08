@@ -8,6 +8,9 @@ type BaseRecord struct {
 }
 
 func (self *BaseRecord) CreateWithInstance(o interface{}) *Result {
+	if self.Tx != nil {
+		return Create(self.Tx, o, sqlutils.DriverPg)
+	}
 	return Create(conn, o, sqlutils.DriverPg)
 }
 
@@ -20,6 +23,9 @@ func (self *BaseRecord) DeleteWithInstance(o interface{}) *Result {
 }
 
 func (self *BaseRecord) UpdateWithInstance(o interface{}) *Result {
+	if self.Tx != nil {
+		return Update(self.Tx, o)
+	}
 	return Update(conn, o)
 }
 

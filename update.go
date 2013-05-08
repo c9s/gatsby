@@ -1,10 +1,11 @@
 package gatsby
 
-import "database/sql"
 import "gatsby/sqlutils"
 import "fmt"
 
-func Update(db *sql.DB, val interface{}) *Result {
+func Update(e Executor, val interface{}) *Result {
+	var db = e.(Executor)
+
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
 		panic("primary key column is not defined.")
