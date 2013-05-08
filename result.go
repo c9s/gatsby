@@ -3,11 +3,12 @@ package gatsby
 import "database/sql"
 
 type Result struct {
-	Sql    string
-	Id     int64
-	Error  error
-	Values *[]interface{}
-	Result sql.Result
+	Sql     string
+	Id      int64
+	Error   error
+	IsEmpty bool
+	Values  *[]interface{}
+	Result  sql.Result
 }
 
 func (r *Result) String() (s string) {

@@ -35,3 +35,41 @@ func TestCreateWithTransactionAndCommit(t *testing.T) {
 	}
 	CloseConnection()
 }
+
+func TestCreateWithTransactionAndRollback(t *testing.T) {
+	var db = openDB()
+	SetupConnection(db, DriverPg)
+
+	staff := Staff{BaseRecord: &BaseRecord{}}
+	staff.Name = "Txn Test With Rollback"
+	tx, err := staff.Begin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tx == nil {
+		t.Fatal("transaction is nil")
+	}
+
+	// create with transaction
+	res := staff.Create()
+	if res.Error != nil {
+		t.Fatal(res.Error)
+	}
+	t.Log(res)
+	t.Log(staff)
+
+	err = staff.Rollback()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pId := staff.Id
+	staff2 := Staff{}
+	res = staff2.Load(pId)
+
+	if !res.IsEmpty {
+		t.Fatal("Still found the record.")
+	}
+
+	CloseConnection()
+}
