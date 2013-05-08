@@ -12,11 +12,11 @@ func (self *BaseRecord) Begin() (*sql.Tx, error) {
 	var err error
 
 	if self == nil {
-		panic("you need to initialize the BaseRecord struct")
+		panic("You need to initialize the BaseRecord struct")
 	}
 
 	if self.Txn != nil {
-		panic("you have already began a transaction.")
+		panic("You have already began a transaction.")
 	}
 
 	tx, err = conn.Begin()
@@ -25,7 +25,7 @@ func (self *BaseRecord) Begin() (*sql.Tx, error) {
 	}
 
 	if tx == nil {
-		panic("empty transaction object, check driver support?")
+		panic("Empty transaction object, check driver support?")
 	}
 
 	self.Txn = tx
