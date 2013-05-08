@@ -16,6 +16,12 @@ func SetupConnection(c *sql.DB, driverType int) {
 	driverType = driverType
 }
 
+func CloseConnection() {
+	if conn != nil {
+		conn.Close()
+	}
+}
+
 func GetConnection() *sql.DB {
 	return conn
 }

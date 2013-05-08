@@ -10,6 +10,7 @@ type Staff struct {
 	Phone     string     `json:"phone"`
 	Birthday  string     `json:"birthday" field:"birthday,date"`
 	CreatedOn *time.Time `json:"created_on" field:"created_on"`
+	*BaseRecord
 }
 
 // Implement the GetPkId interface
@@ -19,4 +20,20 @@ func (self *Staff) GetPkId() int64 {
 
 func (self *Staff) SetPkId(id int64) {
 	self.Id = id
+}
+
+func (self *Staff) Create() *Result {
+	return self.BaseRecord.CreateWithInstance(self)
+}
+
+func (self *Staff) Update() *Result {
+	return self.BaseRecord.UpdateWithInstance(self)
+}
+
+func (self *Staff) Delete() *Result {
+	return self.BaseRecord.DeleteWithInstance(self)
+}
+
+func (self *Staff) Load(id int64) *Result {
+	return self.BaseRecord.LoadWithInstance(self, id)
 }
