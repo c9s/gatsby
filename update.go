@@ -23,7 +23,7 @@ func Update(e Executor, val interface{}) *Result {
 		panic("PrimaryKey interface is required.")
 	}
 
-	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values)+1)
+	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
 
 	stmt, err := executor.Prepare(sql)
 	if err != nil {
