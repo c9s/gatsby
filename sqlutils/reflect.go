@@ -1,17 +1,16 @@
 package sqlutils
+
 import "reflect"
 
 // cache maps
-var columnNameCache = map[string] []string {};
-var tableNameCache = map[string] string {};
+var columnNameCache = map[string][]string{}
+var tableNameCache = map[string]string{}
 
-// provide PrimaryKey interface for faster column name accessing 
+// provide PrimaryKey interface for faster column name accessing
 type PrimaryKey interface {
 	GetPkId() int64
 	SetPkId(int64)
 }
-
-
 
 // Find the primary key column and return the value of primary key.
 // Return nil if primary key is not found.
@@ -31,7 +30,7 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 			continue
 		}
 		var columnAttributes = GetColumnAttributesFromTag(&tag)
-		if _, ok := columnAttributes["primary"] ; ok {
+		if _, ok := columnAttributes["primary"]; ok {
 			val := t.Field(i).Interface().(int64)
 			return &val
 		}
@@ -41,7 +40,7 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 }
 
 // Return the primary key column name, return nil if not found.
-func GetPrimaryKeyColumnName(val interface{}) (*string) {
+func GetPrimaryKeyColumnName(val interface{}) *string {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
@@ -57,22 +56,21 @@ func GetPrimaryKeyColumnName(val interface{}) (*string) {
 			continue
 		}
 		var columnAttributes = GetColumnAttributesFromTag(&tag)
-		if _, ok := columnAttributes["primary"] ; ok {
+		if _, ok := columnAttributes["primary"]; ok {
 			return columnName
 		}
 	}
 	return nil
 }
 
-
-// Iterate structure fields and return the 
+// Iterate structure fields and return the
 // values with map[string] interface{}
-func GetColumnValueMap(val interface{}) (map[string] interface{}) {
+func GetColumnValueMap(val interface{}) map[string]interface{} {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	// var structName string = typeOfT.String()
-	var columns = map[string] interface{} {};
+	var columns = map[string]interface{}{}
 
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
@@ -85,18 +83,18 @@ func GetColumnValueMap(val interface{}) (map[string] interface{}) {
 		if columnName == nil {
 			continue
 		}
-		columns[ *columnName ] = t.Field(i).Interface()
+		columns[*columnName] = t.Field(i).Interface()
 	}
 	return columns
 }
 
 // Iterate struct names and return a slice that contains column names.
-func ReflectColumnNames(val interface{}) ([]string) {
+func ReflectColumnNames(val interface{}) []string {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
 	var structName string = typeOfT.String()
-	if cache, ok := columnNameCache[structName] ; ok {
+	if cache, ok := columnNameCache[structName]; ok {
 		return cache
 	}
 
@@ -117,6 +115,3 @@ func ReflectColumnNames(val interface{}) ([]string) {
 	columnNameCache[structName] = columns
 	return columns
 }
-
-
-

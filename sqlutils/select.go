@@ -6,7 +6,7 @@ import "database/sql"
 
 // import "errors"
 
-// Build SQL columns string for selecting, 
+// Build SQL columns string for selecting,
 // this function returns "column1, column2, column3"
 func BuildSelectColumnClauseFromStruct(val interface{}) string {
 	var columns = ReflectColumnNames(val)
@@ -19,7 +19,7 @@ func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) s
 	var columns = ReflectColumnNames(val)
 	var aliasColumns = []string{}
 	for _, n := range columns {
-		aliasColumns = append( aliasColumns , alias + "." + n)
+		aliasColumns = append(aliasColumns, alias+"."+n)
 	}
 	return strings.Join(aliasColumns, ", ")
 }
@@ -34,7 +34,7 @@ func BuildSelectClause(val interface{}) string {
 // This function returns a "SELECT alias1.column1, alias1.column2 FROM tableName alias" clause
 func BuildSelectClauseWithAlias(val interface{}, alias string) string {
 	tableName := GetTableName(val)
-	return "SELECT " + BuildSelectColumnClauseFromStructWithAlias(val,alias) + " FROM " + tableName + " " + alias
+	return "SELECT " + BuildSelectColumnClauseFromStructWithAlias(val, alias) + " FROM " + tableName + " " + alias
 }
 
 func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {

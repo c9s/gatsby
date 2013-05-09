@@ -1,11 +1,12 @@
 package sqlutils
+
 import "testing"
 import "strings"
 
 func TestBuildWhereClause(t *testing.T) {
-	argMap := map[string]interface{} {
+	argMap := map[string]interface{}{
 		"name": "foo",
-		"id": 123,
+		"id":   123,
 	}
 	sql, args := BuildWhereClauseWithAndOp(argMap)
 
@@ -19,5 +20,3 @@ func TestBuildWhereClause(t *testing.T) {
 		t.Fatal("lenght is not 2")
 	}
 }
-
-

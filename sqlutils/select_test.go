@@ -1,31 +1,31 @@
 package sqlutils
+
 import "testing"
 import "strings"
 
-
-func TestBuildSelectClauseWithAlias( t * testing.T ) {
-	str := BuildSelectColumnClauseFromStructWithAlias( &fooRecord{}, "foo")
+func TestBuildSelectClauseWithAlias(t *testing.T) {
+	str := BuildSelectColumnClauseFromStructWithAlias(&fooRecord{}, "foo")
 	t.Log(str)
 }
 
-func TestBuildSelectColumns(t * testing.T) {
-	str := BuildSelectColumnClauseFromStruct( &fooRecord{Id:4, Name: "John"} )
+func TestBuildSelectColumns(t *testing.T) {
+	str := BuildSelectColumnClauseFromStruct(&fooRecord{Id: 4, Name: "John"})
 	if len(str) == 0 {
 		t.Fail()
 	}
-	if ! strings.Contains(str,"id, name, type") {
+	if !strings.Contains(str, "id, name, type") {
 		t.Fatal(str)
 	}
 	t.Log(str)
 }
 
-func TestBuildSelectClause(t * testing.T) {
-	staff := Staff{Id:4, Name: "John", Gender: "m", Phone: "0975277696"}
+func TestBuildSelectClause(t *testing.T) {
+	staff := Staff{Id: 4, Name: "John", Gender: "m", Phone: "0975277696"}
 	sql := BuildSelectClause(&staff)
-	if ! strings.Contains(sql,"SELECT id, name, gender, staff_type, phone, birthday") {
+	if !strings.Contains(sql, "SELECT id, name, gender, staff_type, phone, birthday") {
 		t.Fatal(sql)
 	}
-	if ! strings.Contains(sql,"FROM staffs") {
+	if !strings.Contains(sql, "FROM staffs") {
 		t.Fatal(sql)
 	}
 }
@@ -35,5 +35,3 @@ func chkResult(t *testing.T, res *Result) {
 		t.Fatal(res.Error, res.Sql)
 	}
 }
-
-

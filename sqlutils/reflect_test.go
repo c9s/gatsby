@@ -1,4 +1,5 @@
 package sqlutils
+
 import "testing"
 import "sort"
 
@@ -8,7 +9,6 @@ type fooRecord struct {
 	Type     string `json:"type"`
 	Internal int    `json:-`
 }
-
 
 func TestTableName(t *testing.T) {
 	n := GetTableName(&fooRecord{})
@@ -25,7 +25,7 @@ func TestPrimaryKeyColumnName(t *testing.T) {
 }
 
 func TestPrimaryKeyColumnValueFound(t *testing.T) {
-	v := GetPrimaryKeyValue(&fooRecord{ Id: 1 })
+	v := GetPrimaryKeyValue(&fooRecord{Id: 1})
 	if v == nil {
 		t.Fatal("Primary key value not found.")
 	}
@@ -44,16 +44,15 @@ func TestPrimaryKeyColumnValueFound2(t *testing.T) {
 }
 
 func TestColumnNameMap(t *testing.T) {
-	columns := GetColumnValueMap( &fooRecord{ Id: 3, Name: "Mary" } )
+	columns := GetColumnValueMap(&fooRecord{Id: 3, Name: "Mary"})
 	t.Log(columns)
 	if len(columns) == 0 {
 		t.Fail()
 	}
 }
 
-
-func TestColumnNamesParsing(t * testing.T) {
-	columns := ReflectColumnNames( &fooRecord{Id:3, Name: "Mary"} )
+func TestColumnNamesParsing(t *testing.T) {
+	columns := ReflectColumnNames(&fooRecord{Id: 3, Name: "Mary"})
 
 	// sort.Strings(columns)
 	t.Log(columns)
@@ -67,10 +66,9 @@ func TestColumnNamesParsing(t * testing.T) {
 		t.Fail()
 	}
 
-	columns = ReflectColumnNames( &fooRecord{Id:4, Name: "John"} )
+	columns = ReflectColumnNames(&fooRecord{Id: 4, Name: "John"})
 	t.Log(columns)
 	if len(columns) != 3 {
 		t.Fail()
 	}
 }
-
