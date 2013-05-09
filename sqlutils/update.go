@@ -36,11 +36,15 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var field reflect.Value = t.Field(i)
 
+		if field.Interface() == nil {
+			continue
+		}
+
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
-		setFields = append(setFields, fmt.Sprintf("%s = $%d", *columnName, i+1))
+		setFields = append(setFields, fmt.Sprintf("%s = $%d", *columnName, len(values)+1))
 		values = append(values, field.Interface())
 	}
 	return strings.Join(setFields, ", "), values

@@ -19,17 +19,18 @@ func Update(e Executor, val interface{}) *Result {
 	if val.(sqlutils.PrimaryKey) != nil {
 		id := val.(sqlutils.PrimaryKey).GetPkId()
 		values = append(values, id)
+	} else {
+		panic("PrimaryKey interface is required.")
 	}
 
-	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
+	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values)+1)
 
 	stmt, err := executor.Prepare(sql)
-
-	defer stmt.Close()
-
 	if err != nil {
 		return NewErrorResult(err, sql)
 	}
+	defer stmt.Close()
+
 	res, err := stmt.Exec(values...)
 	if err != nil {
 		return NewErrorResult(err, sql)
