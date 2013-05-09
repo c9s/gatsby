@@ -16,9 +16,9 @@ func CheckRequired(val interface{}) error {
 		if _, ok := attributes["required"]; ok {
 			// check the column value
 			if fieldValue.Type().Name() == "string" && fieldValue.Interface().(string) == "" {
-				return errors.New(fieldType.Name + " field required.")
+				return errors.New(fieldType.Name + " field is required.")
 			} else if fieldValue.Type().Name() == "int" && fieldValue.Interface().(int) == 0 {
-				return errors.New(fieldType.Name + " field required.")
+				return errors.New(fieldType.Name + " field is required.")
 			}
 		}
 	}

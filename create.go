@@ -1,6 +1,8 @@
 package gatsby
 
-import "gatsby/sqlutils"
+import (
+	"gatsby/sqlutils"
+)
 
 // import "fmt"
 
@@ -12,13 +14,14 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 		panic("Not an Executor type")
 	}
 
-	var sqlStr, args = sqlutils.BuildInsertClause(val)
+	var err error
 
-	err := sqlutils.CheckRequired(val)
+	err = sqlutils.CheckRequired(val)
 	if err != nil {
-		return NewErrorResult(err, sqlStr)
+		return NewErrorResult(err, "")
 	}
 
+	var sqlStr, args = sqlutils.BuildInsertClause(val)
 	result := NewResult(sqlStr)
 
 	// get the autoincrement id from result
@@ -27,10 +30,11 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 		sqlStr = sqlStr + " RETURNING " + *col
 		rows, err := executor.Query(sqlStr, args...)
 
-		defer rows.Close()
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
+		defer rows.Close()
+
 		id, err := sqlutils.GetPgReturningIdFromRows(rows)
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
