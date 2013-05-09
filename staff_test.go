@@ -10,7 +10,7 @@ type Staff struct {
 	Phone     string     `json:"phone"`
 	Birthday  string     `json:"birthday" field:"birthday,date"`
 	CreatedOn *time.Time `json:"created_on" field:"created_on"`
-	*BaseRecord
+	BaseRecord
 }
 
 // Implement the GetPkId interface

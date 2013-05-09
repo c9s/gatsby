@@ -13,7 +13,7 @@ func TestCreate(t *testing.T) {
 func TestCreateWithTransactionAndCommit(t *testing.T) {
 	var db = openDB()
 	SetupConnection(db, DriverPg)
-	staff := Staff{BaseRecord: &BaseRecord{}}
+	staff := Staff{}
 	staff.Name = "Txn Test"
 	tx, err := staff.Begin()
 	if err != nil {
@@ -39,8 +39,7 @@ func TestCreateWithTransactionAndCommit(t *testing.T) {
 func TestCreateWithTransactionAndRollback(t *testing.T) {
 	var db = openDB()
 	SetupConnection(db, DriverPg)
-
-	staff := Staff{BaseRecord: &BaseRecord{}}
+	staff := Staff{}
 	staff.Name = "Txn Test With Rollback"
 	tx, err := staff.Begin()
 	if err != nil {
