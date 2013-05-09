@@ -7,10 +7,22 @@ import "strings"
 // column name from 'json' tag.
 func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 	fieldTags := strings.Split(tag.Get("field"), ",")
+
+	// ignore it
+	if fieldTags[0] == "-" {
+		return nil
+	}
+
 	if len(fieldTags[0]) > 0 {
 		return &fieldTags[0]
 	}
 	jsonTags := strings.Split(tag.Get("json"), ",")
+
+	// ignore it
+	if jsonTags[0] == "-" {
+		return nil
+	}
+
 	if len(jsonTags[0]) > 0 {
 		return &jsonTags[0]
 	}
