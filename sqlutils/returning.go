@@ -14,5 +14,8 @@ func GetPgReturningIdFromRows(rows *sql.Rows) (int64, error) {
 		}
 		return id, err
 	}
+	if err := rows.Err(); err != nil {
+		return -1, err
+	}
 	return -1, errors.New("No returning ID")
 }

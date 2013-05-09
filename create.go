@@ -27,8 +27,7 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 		sqlStr = sqlStr + " RETURNING " + *col
 		rows, err := executor.Query(sqlStr, args...)
 
-		defer func() { rows.Close() }()
-
+		defer rows.Close()
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
