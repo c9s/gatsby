@@ -16,7 +16,7 @@ func Load(db *sql.DB, val interface{}, pkId int64) *Result {
 		return NewErrorResult(err, sqlstring)
 	}
 
-	defer func() { rows.Close() }()
+	defer rows.Close()
 
 	if rows.Next() {
 		err = sqlutils.FillFromRow(val, rows)
@@ -46,7 +46,7 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string]interface{}) *Resul
 		return NewErrorResult(err, sqlstring)
 	}
 
-	defer func() { rows.Close() }()
+	defer rows.Close()
 
 	if rows.Next() {
 		err = sqlutils.FillFromRow(val, rows)

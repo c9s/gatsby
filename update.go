@@ -25,7 +25,7 @@ func Update(e Executor, val interface{}) *Result {
 
 	stmt, err := executor.Prepare(sql)
 
-	defer func() { stmt.Close() }()
+	defer stmt.Close()
 
 	if err != nil {
 		return NewErrorResult(err, sql)
