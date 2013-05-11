@@ -4,7 +4,7 @@ import "database/sql"
 import "fmt"
 import "gatsby/sqlutils"
 
-func queryAndLoad(db *sql.DB, val interface{}, sqlstring string, args ...interface{}) *Result {
+func LoadFromQuery(db *sql.DB, val interface{}, sqlstring string, args ...interface{}) *Result {
 	rows, err := db.Query(sqlstring, args...)
 	if err != nil {
 		return NewErrorResult(err, sqlstring)
@@ -35,12 +35,12 @@ func Load(db *sql.DB, val interface{}, pkId int64) *Result {
 		panic("primary key is required.")
 	}
 	sqlstring := sqlutils.BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
-	return queryAndLoad(db, val, sqlstring, pkId)
+	return LoadFromQuery(db, val, sqlstring, pkId)
 }
 
 func LoadByCols(db *sql.DB, val interface{}, cols map[string]interface{}) *Result {
 	sqlstring := sqlutils.BuildSelectClause(val)
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
 	sqlstring += whereSql
-	return queryAndLoad(db, val, sqlstring, args...)
+	return LoadFromQuery(db, val, sqlstring, args...)
 }
