@@ -41,7 +41,7 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 
 		// if the struct supports the primary key interface, we can set the value faster.
 		result.Id = id
-		if val.(sqlutils.PrimaryKey) != nil {
+		if _, ok := val.(sqlutils.PrimaryKey); ok {
 			val.(sqlutils.PrimaryKey).SetPkId(id)
 		} else {
 			sqlutils.SetPrimaryKeyValue(val, id)
