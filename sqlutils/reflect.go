@@ -12,6 +12,30 @@ type PrimaryKey interface {
 	SetPkId(int64)
 }
 
+func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
+	t := reflect.ValueOf(val).Elem()
+	typeOfT := t.Type()
+
+	for i := 0; i < t.NumField(); i++ {
+		var tag reflect.StructTag = typeOfT.Field(i).Tag
+		var columnName *string = GetColumnNameFromTag(&tag)
+
+		if tag.Get("field") == "-" {
+			continue
+		}
+
+		if columnName == nil {
+			continue
+		}
+		var columnAttributes = GetColumnAttributesFromTag(&tag)
+		if _, ok := columnAttributes["primary"]; ok {
+			t.Field(i).SetInt(keyValue)
+			return true
+		}
+	}
+	return false
+}
+
 // Find the primary key column and return the value of primary key.
 // Return nil if primary key is not found.
 func GetPrimaryKeyValue(val interface{}) *int64 {
@@ -36,7 +60,6 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 		}
 	}
 	return nil
-
 }
 
 // Return the primary key column name, return nil if not found.

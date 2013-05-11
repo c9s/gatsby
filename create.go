@@ -39,6 +39,7 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
+
 		if val.(sqlutils.PrimaryKey) != nil {
 			val.(sqlutils.PrimaryKey).SetPkId(id)
 		}

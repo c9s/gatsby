@@ -4,7 +4,7 @@ import "testing"
 import "sort"
 
 type fooRecord struct {
-	Id       int64  `json:"id" field:",primary"`
+	Id       int64  `json:"id" field:"id,primary"`
 	Name     string `json:"name"`
 	Type     string `json:"type"`
 	Internal int    `json:-`
@@ -25,7 +25,8 @@ func TestPrimaryKeyColumnName(t *testing.T) {
 }
 
 func TestPrimaryKeyColumnValueFound(t *testing.T) {
-	v := GetPrimaryKeyValue(&fooRecord{Id: 1})
+	foo := fooRecord{Id: 1}
+	v := GetPrimaryKeyValue(&foo)
 	if v == nil {
 		t.Fatal("Primary key value not found.")
 	}
@@ -33,6 +34,12 @@ func TestPrimaryKeyColumnValueFound(t *testing.T) {
 		t.Fatal("Unexpected primary key value.")
 	}
 	t.Logf("Primary key value: %d", *v)
+
+	SetPrimaryKeyValue(&foo, 2)
+	v = GetPrimaryKeyValue(&foo)
+	if *v != 2 {
+		t.Fatal("Primary key value is not updated.")
+	}
 }
 
 func TestPrimaryKeyColumnValueFound2(t *testing.T) {
