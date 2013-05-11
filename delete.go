@@ -21,11 +21,12 @@ func Delete(e interface{}, val interface{}) *Result {
 
 	sqlStr := "DELETE FROM " + sqlutils.GetTableName(val) + " WHERE " + *pkName + " = $1"
 
-	if val.(sqlutils.PrimaryKey) == nil {
-		return NewErrorResult(errors.New("PrimaryKey interface is required."), sqlStr)
+	var id int64
+	if _, ok := val.(sqlutils.PrimaryKey); ok {
+		id = val.(sqlutils.PrimaryKey).GetPkId()
+	} else {
+		id = *sqlutils.GetPrimaryKeyValue(val)
 	}
-
-	id := val.(sqlutils.PrimaryKey).GetPkId()
 
 	var err error
 	var res sql.Result

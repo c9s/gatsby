@@ -17,7 +17,7 @@ func Update(e Executor, val interface{}) *Result {
 
 	sql, values := sqlutils.BuildUpdateClause(val)
 
-	if val.(sqlutils.PrimaryKey) != nil {
+	if _, ok := val.(sqlutils.PrimaryKey); ok {
 		var id = val.(sqlutils.PrimaryKey).GetPkId()
 		values = append(values, id)
 	} else {

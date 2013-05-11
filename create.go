@@ -56,7 +56,7 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 			return NewErrorResult(err, sqlStr)
 		}
 
-		if val.(sqlutils.PrimaryKey) != nil {
+		if _, ok := val.(sqlutils.PrimaryKey); ok {
 			val.(sqlutils.PrimaryKey).SetPkId(result.Id)
 		} else {
 			sqlutils.SetPrimaryKeyValue(val, result.Id)
