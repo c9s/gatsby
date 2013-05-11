@@ -6,15 +6,14 @@ import (
 
 // import "fmt"
 
-// id, err := sqlutils.Create(struct pointer)
+// id, err := Create(db pointer, struct pointer)
 func Create(e interface{}, val interface{}, driver int) *Result {
+	var err error
 	var executor, ok = e.(Executor)
 
 	if !ok {
 		panic("Not an Executor type")
 	}
-
-	var err error
 
 	err = sqlutils.CheckRequired(val)
 	if err != nil {
@@ -40,10 +39,13 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 			return NewErrorResult(err, sqlStr)
 		}
 
+		// if the struct supports the primary key interface, we can set the value faster.
+		result.Id = id
 		if val.(sqlutils.PrimaryKey) != nil {
 			val.(sqlutils.PrimaryKey).SetPkId(id)
+		} else {
+			sqlutils.SetPrimaryKeyValue(val, id)
 		}
-		result.Id = id
 	} else if driver == DriverMysql {
 		res, err := executor.Exec(sqlStr, args...)
 		if err != nil {
@@ -52,6 +54,12 @@ func Create(e interface{}, val interface{}, driver int) *Result {
 		result.Id, err = res.LastInsertId()
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
+		}
+
+		if val.(sqlutils.PrimaryKey) != nil {
+			val.(sqlutils.PrimaryKey).SetPkId(result.Id)
+		} else {
+			sqlutils.SetPrimaryKeyValue(val, result.Id)
 		}
 	} else {
 		panic("Unsupported driver type")

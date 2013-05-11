@@ -2,6 +2,7 @@ package gatsby
 
 import "gatsby/sqlutils"
 import "fmt"
+import "errors"
 
 func Update(e Executor, val interface{}) *Result {
 	var executor, ok = e.(Executor)
@@ -17,10 +18,14 @@ func Update(e Executor, val interface{}) *Result {
 	sql, values := sqlutils.BuildUpdateClause(val)
 
 	if val.(sqlutils.PrimaryKey) != nil {
-		id := val.(sqlutils.PrimaryKey).GetPkId()
+		var id = val.(sqlutils.PrimaryKey).GetPkId()
 		values = append(values, id)
 	} else {
-		panic("PrimaryKey interface is required.")
+		var id = sqlutils.GetPrimaryKeyValue(val)
+		if id == nil {
+			return NewErrorResult(errors.New("primary key field is required."), "")
+		}
+		values = append(values, *id)
 	}
 
 	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
@@ -29,6 +34,7 @@ func Update(e Executor, val interface{}) *Result {
 	if err != nil {
 		return NewErrorResult(err, sql)
 	}
+
 	defer stmt.Close()
 
 	res, err := stmt.Exec(values...)
