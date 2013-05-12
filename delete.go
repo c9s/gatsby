@@ -7,12 +7,7 @@ import (
 )
 
 // Delete from DB connection object or a transaction object (pointer)
-func Delete(e interface{}, val interface{}) *Result {
-	var executor, ok = e.(Executor)
-	if !ok {
-		panic("Not an Executor type")
-	}
-
+func Delete(executor Executor, val PtrRecord) *Result {
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 
 	if pkName == nil {

@@ -9,12 +9,12 @@ type WhereMap map[string]interface{}
 /*
 The record object, which is a struct pointer.
 */
-type Record interface{}
+type PtrRecord interface{}
 
 /*
 Fill a record object by executing a SQL query.
 */
-func LoadFromQuery(db *sql.DB, val Record, sqlstring string, args ...interface{}) *Result {
+func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
 	rows, err := db.Query(sqlstring, args...)
 	if err != nil {
 		return NewErrorResult(err, sqlstring)
@@ -39,7 +39,7 @@ func LoadFromQuery(db *sql.DB, val Record, sqlstring string, args ...interface{}
 }
 
 // Load record by primary key value.
-func Load(db *sql.DB, val Record, pkId int64) *Result {
+func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
 	var pName = sqlutils.GetPrimaryKeyColumnName(val)
 	if pName == nil {
 		panic("primary key is required.")
@@ -53,7 +53,7 @@ func Load(db *sql.DB, val Record, pkId int64) *Result {
 /*
 Load record from a where condition map
 */
-func LoadByCols(db *sql.DB, val Record, cols WhereMap) *Result {
+func LoadByCols(db *sql.DB, val PtrRecord, cols WhereMap) *Result {
 	var sqlstring = sqlutils.BuildSelectClause(val)
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
 	sqlstring += whereSql

@@ -3,7 +3,10 @@ package gatsby
 import "database/sql"
 import "gatsby/sqlutils"
 
-func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
+/*
+Select all records from a table which based on the record struct.
+*/
+func Select(db *sql.DB, val PtrRecord) (interface{}, *Result) {
 	var sql = sqlutils.BuildSelectClause(val)
 	rows, err := db.Query(sql)
 	if err != nil {
@@ -18,18 +21,21 @@ func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
 	return slice, NewResult(sql)
 }
 
-func QuerySelect(db *sql.DB, val interface{}) (*sql.Rows, error) {
+/*
+Execute a select query to the database connection.
+*/
+func QuerySelect(db *sql.DB, val PtrRecord) (*sql.Rows, error) {
 	sql := sqlutils.BuildSelectClause(val)
 	return db.Query(sql)
 }
 
-func QuerySelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (*sql.Rows, error) {
+func QuerySelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) (*sql.Rows, error) {
 	sql := sqlutils.BuildSelectClause(val) + " " + postSql
 	return db.Query(sql, args...)
 }
 
 // Select a table and returns objects
-func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}) (interface{}, *Result) {
+func SelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) (interface{}, *Result) {
 	sql := sqlutils.BuildSelectClause(val) + " " + postSql
 	rows, err := db.Query(sql, args...)
 	if err != nil {
@@ -44,7 +50,7 @@ func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}
 	return slice, NewResult(sql)
 }
 
-func SelectWhere(db *sql.DB, val interface{}, conds WhereMap) (interface{}, *Result) {
+func SelectWhere(db *sql.DB, val PtrRecord, conds WhereMap) (interface{}, *Result) {
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(conds)
 	sql := sqlutils.BuildSelectClause(val) + whereSql
 	rows, err := db.Query(sql, args...)
@@ -60,7 +66,7 @@ func SelectWhere(db *sql.DB, val interface{}, conds WhereMap) (interface{}, *Res
 	return slice, NewResult(sql)
 }
 
-func SelectFromQuery(db *sql.DB, val interface{}, sql string, args ...interface{}) (interface{}, *Result) {
+func SelectFromQuery(db *sql.DB, val PtrRecord, sql string, args ...interface{}) (interface{}, *Result) {
 	rows, err := db.Query(sql, args...)
 	if err != nil {
 		return nil, NewErrorResult(err, sql)

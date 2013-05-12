@@ -4,12 +4,7 @@ import "gatsby/sqlutils"
 import "fmt"
 import "errors"
 
-func Update(e Executor, val interface{}) *Result {
-	var executor, ok = e.(Executor)
-	if !ok {
-		panic("Not an Executor type")
-	}
-
+func Update(executor Executor, val interface{}) *Result {
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
 		panic("primary key column is not defined.")

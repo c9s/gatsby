@@ -7,13 +7,8 @@ import (
 // import "fmt"
 
 // id, err := Create(db pointer, struct pointer)
-func Create(e interface{}, val interface{}, driver int) *Result {
+func Create(executor Executor, val interface{}, driver int) *Result {
 	var err error
-	var executor, ok = e.(Executor)
-
-	if !ok {
-		panic("Not an Executor type")
-	}
 
 	err = sqlutils.CheckRequired(val)
 	if err != nil {
