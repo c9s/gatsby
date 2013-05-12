@@ -103,6 +103,12 @@ func (self *BaseRecord) Load(id int64) *Result {
 	return Load(conn, self.Target, id)
 }
 
+/*
+Load and fill current record with customzied query (after the select clause)
+
+	record.LoadWith(`WHERE name = $1`, name)
+
+*/
 func (self *BaseRecord) LoadWith(postQuery string, args ...interface{}) *Result {
 	return LoadWith(conn, self.Target, postQuery, args...)
 }
