@@ -7,8 +7,12 @@ func TestStaffCRUD(t *testing.T) {
 
 	SetupConnection(db, DriverPg)
 
-	var staff *Staff = NewModel(&Staff{Name: "Foo"}).(*Staff)
+	var staff = NewRecord(&Staff{Name: "Foo"}).(*Staff)
 	resultSuccess(t, staff.Create())
+
+	resultSuccess(t, staff.LoadByCols(WhereMap{
+		"name": "foo",
+	}))
 
 	staff.Name = "NameB"
 	resultSuccess(t, staff.Update())

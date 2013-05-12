@@ -16,7 +16,7 @@ type BaseRecord struct {
 	Target PtrRecord
 }
 
-func NewModel(o PtrTargetRecord) interface{} {
+func NewRecord(o PtrTargetRecord) interface{} {
 	o.SetTarget(o)
 	return o
 }
