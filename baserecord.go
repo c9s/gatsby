@@ -1,14 +1,14 @@
 package gatsby
 
-import "gatsby/sqlutils"
 import "database/sql"
 
 type BaseRecord struct {
-	Txn *sql.Tx
+	Txn    *sql.Tx
+	Target PtrRecord
 }
 
-type EntityManager struct {
-	BaseRecord
+func (self *BaseRecord) SetTarget(target PtrRecord) {
+	self.Target = target
 }
 
 func (self *BaseRecord) SetTxn(txn *sql.Tx) {
@@ -64,26 +64,45 @@ func (self *BaseRecord) Commit() error {
 	return nil
 }
 
-func (self *BaseRecord) Create(o PtrRecord) *Result {
+func (self *BaseRecord) Create() *Result {
 	if self.Txn != nil {
-		return Create(self.Txn, o, sqlutils.DriverPg)
+		return Create(self.Txn, self.Target, driverType)
 	}
-	return Create(conn, o, sqlutils.DriverPg)
+	return Create(conn, self.Target, driverType)
 }
 
 func (self *BaseRecord) CreateWithInstance(o PtrRecord) *Result {
 	if self.Txn != nil {
-		return Create(self.Txn, o, sqlutils.DriverPg)
+		return Create(self.Txn, o, driverType)
 	}
-	return Create(conn, o, sqlutils.DriverPg)
+	return Create(conn, o, driverType)
 }
 
-func (self *BaseRecord) Delete(o PtrRecord) *Result {
+func (self *BaseRecord) Update() *Result {
+	if self.Txn != nil {
+		return Update(self.Txn, self.Target)
+	}
+	return Update(conn, self.Target)
+}
+
+func (self *BaseRecord) Load(id int64) *Result {
+	return Load(conn, self.Target, id)
+}
+
+func (self *BaseRecord) LoadByCols(cols WhereMap) *Result {
+	return LoadByCols(conn, self.Target, cols)
+}
+
+func (self *BaseRecord) Delete() *Result {
 	// delete with transaction
 	if self.Txn != nil {
-		return Delete(self.Txn, o)
+		return Delete(self.Txn, self.Target)
 	}
-	return Delete(conn, o)
+	return Delete(conn, self.Target)
+}
+
+func (self *BaseRecord) SelectByCols(cols WhereMap) (interface{}, *Result) {
+	return SelectWhere(conn, self.Target, cols)
 }
 
 func (self *BaseRecord) DeleteWithInstance(o PtrRecord) *Result {
@@ -94,13 +113,6 @@ func (self *BaseRecord) DeleteWithInstance(o PtrRecord) *Result {
 	return Delete(conn, o)
 }
 
-func (self *BaseRecord) Update(o PtrRecord) *Result {
-	if self.Txn != nil {
-		return Update(self.Txn, o)
-	}
-	return Update(conn, o)
-}
-
 func (self *BaseRecord) UpdateWithInstance(o PtrRecord) *Result {
 	if self.Txn != nil {
 		return Update(self.Txn, o)
@@ -108,16 +120,8 @@ func (self *BaseRecord) UpdateWithInstance(o PtrRecord) *Result {
 	return Update(conn, o)
 }
 
-func (self *BaseRecord) Load(o PtrRecord, id int64) *Result {
-	return Load(conn, o, id)
-}
-
 func (self *BaseRecord) LoadWithInstance(o PtrRecord, id int64) *Result {
 	return Load(conn, o, id)
-}
-
-func (self *BaseRecord) LoadByCols(o PtrRecord, cols WhereMap) *Result {
-	return LoadByCols(conn, o, cols)
 }
 
 func (self *BaseRecord) LoadByColsWithInstance(o PtrRecord, cols WhereMap) *Result {

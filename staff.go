@@ -21,23 +21,3 @@ func (self *Staff) GetPkId() int64 {
 func (self *Staff) SetPkId(id int64) {
 	self.Id = id
 }
-
-func (self *Staff) GetInstance() interface{} {
-	return self
-}
-
-func (self *Staff) Create() *Result {
-	return self.CreateWithInstance(self)
-}
-
-func (self *Staff) Update() *Result {
-	return self.UpdateWithInstance(self)
-}
-
-func (self *Staff) Delete() *Result {
-	return self.DeleteWithInstance(self)
-}
-
-func (self *Staff) Load(id int64) *Result {
-	return self.LoadWithInstance(self, id)
-}
