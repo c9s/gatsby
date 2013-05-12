@@ -12,7 +12,8 @@ The record object, which is a struct pointer.
 type PtrRecord interface{}
 
 /*
-Fill a record object by executing a SQL query.
+Fill a record object by executing QueryRow from sql.DB object,
+this method is faster than the DB.Query method.
 */
 func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
 	var err error
