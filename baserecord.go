@@ -103,6 +103,10 @@ func (self *BaseRecord) Load(id int64) *Result {
 	return Load(conn, self.Target, id)
 }
 
+func (self *BaseRecord) LoadWith(postQuery string, args ...interface{}) *Result {
+	return LoadWith(conn, self.Target, postQuery, args...)
+}
+
 func (self *BaseRecord) LoadByCols(cols WhereMap) *Result {
 	return LoadByCols(conn, self.Target, cols)
 }

@@ -54,6 +54,12 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 	return res
 }
 
+func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) *Result {
+	var sqlstring = sqlutils.BuildSelectClause(val) + " " + postQuery
+	sqlstring += sqlutils.BuildLimitClause(1)
+	return LoadFromQueryRow(db, val, sqlstring, args...)
+}
+
 // Load record by primary key value.
 func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
 	var pName = sqlutils.GetPrimaryKeyColumnName(val)
