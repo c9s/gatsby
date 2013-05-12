@@ -15,7 +15,8 @@ func TestCreateWithTransactionAndCommit(t *testing.T) {
 	SetupConnection(db, DriverPg)
 
 	staff := Staff{}
-	staff.SetTarget(&staff)
+	staff.Init()
+
 	staff.Name = "Txn Test"
 	tx, err := staff.Begin()
 	if err != nil {
@@ -43,7 +44,7 @@ func TestCreateWithTransactionAndRollback(t *testing.T) {
 	SetupConnection(db, DriverPg)
 
 	staff := Staff{}
-	staff.SetTarget(&staff)
+	staff.Init()
 
 	staff.Name = "Txn Test With Rollback"
 	tx, err := staff.Begin()
@@ -69,7 +70,8 @@ func TestCreateWithTransactionAndRollback(t *testing.T) {
 
 	pId := staff.Id
 	staff2 := Staff{}
-	staff2.SetTarget(&staff2)
+	staff2.Init()
+
 	res = staff2.Load(pId)
 
 	if !res.IsEmpty {

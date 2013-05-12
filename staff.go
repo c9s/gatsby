@@ -13,6 +13,10 @@ type Staff struct {
 	BaseRecord
 }
 
+func (self *Staff) Init() {
+	self.SetTarget(self)
+}
+
 // Implement the GetPkId interface
 func (self *Staff) GetPkId() int64 {
 	return self.Id
