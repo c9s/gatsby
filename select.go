@@ -4,11 +4,13 @@ import "database/sql"
 import "gatsby/sqlutils"
 
 func Select(db *sql.DB, val interface{}) (interface{}, *Result) {
-	sql := sqlutils.BuildSelectClause(val)
+	var sql = sqlutils.BuildSelectClause(val)
 	rows, err := db.Query(sql)
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}
+	defer rows.Close()
+
 	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)
@@ -33,6 +35,7 @@ func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}
+	defer rows.Close()
 
 	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
 	if err != nil {
@@ -48,6 +51,7 @@ func SelectWhere(db *sql.DB, val interface{}, conds WhereMap) (interface{}, *Res
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}
+	defer rows.Close()
 
 	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
 	if err != nil {
@@ -61,6 +65,8 @@ func SelectFromQuery(db *sql.DB, val interface{}, sql string, args ...interface{
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}
+	defer rows.Close()
+
 	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)

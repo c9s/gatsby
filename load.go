@@ -40,11 +40,12 @@ func LoadFromQuery(db *sql.DB, val Record, sqlstring string, args ...interface{}
 
 // Load record by primary key value.
 func Load(db *sql.DB, val Record, pkId int64) *Result {
-	pName := sqlutils.GetPrimaryKeyColumnName(val)
+	var pName = sqlutils.GetPrimaryKeyColumnName(val)
 	if pName == nil {
 		panic("primary key is required.")
 	}
-	sqlstring := sqlutils.BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1", *pName)
+	var sqlstring = sqlutils.BuildSelectClause(val) +
+		fmt.Sprintf(" WHERE %s = $1", *pName)
 	sqlstring += sqlutils.BuildLimitClause(1)
 	return LoadFromQuery(db, val, sqlstring, pkId)
 }
@@ -53,7 +54,7 @@ func Load(db *sql.DB, val Record, pkId int64) *Result {
 Load record from a where condition map
 */
 func LoadByCols(db *sql.DB, val Record, cols WhereMap) *Result {
-	sqlstring := sqlutils.BuildSelectClause(val)
+	var sqlstring = sqlutils.BuildSelectClause(val)
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
 	sqlstring += whereSql
 
