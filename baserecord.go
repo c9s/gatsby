@@ -2,9 +2,23 @@ package gatsby
 
 import "database/sql"
 
+/*
+The record object, which is a struct pointer.
+*/
+type PtrRecord interface{}
+
+type PtrTargetRecord interface {
+	SetTarget(PtrRecord)
+}
+
 type BaseRecord struct {
 	Txn    *sql.Tx
 	Target PtrRecord
+}
+
+func NewModel(o PtrTargetRecord) interface{} {
+	o.SetTarget(o)
+	return o
 }
 
 func (self *BaseRecord) SetTarget(target PtrRecord) {

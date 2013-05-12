@@ -7,20 +7,11 @@ func TestStaffCRUD(t *testing.T) {
 
 	SetupConnection(db, DriverPg)
 
-	baseRecord := BaseRecord{}
-	baseRecord.SetTarget(&Staff{})
+	var staff *Staff = NewModel(&Staff{Name: "Foo"}).(*Staff)
+	resultSuccess(t, staff.Create())
 
-	/*
-		var staff = Staff{Name: "NameA"}
-		staff.SetTarget(&staff)
-	*/
+	staff.Name = "NameB"
+	resultSuccess(t, staff.Update())
 
-	/*
-		var res = resultSuccess(t, staff.Create())
-		resultSuccess(t, staff.Load(res.Id))
-
-		staff.Name = "NameB"
-		resultSuccess(t, staff.Update())
-		resultSuccess(t, staff.Delete())
-	*/
+	resultSuccess(t, staff.Delete())
 }

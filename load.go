@@ -7,11 +7,6 @@ import "gatsby/sqlutils"
 type WhereMap map[string]interface{}
 
 /*
-The record object, which is a struct pointer.
-*/
-type PtrRecord interface{}
-
-/*
 Fill a record object by executing QueryRow from sql.DB object,
 this method is faster than the DB.Query method.
 */
