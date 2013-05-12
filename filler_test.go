@@ -108,7 +108,7 @@ func TestFillRecord(t *testing.T) {
 	rows, err := stmt.Query(r.Id)
 
 	if rows.Next() {
-		err = sqlutils.FillFromRows(&staff, rows)
+		err = FillFromRows(&staff, rows)
 		if err != nil {
 			t.Fatal(err)
 		}

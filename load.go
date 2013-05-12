@@ -20,7 +20,7 @@ func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...inter
 
 	var row = db.QueryRow(sqlstring, args...)
 
-	err = sqlutils.FillFromRows(val, row)
+	err = FillFromRows(val, row)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			res := NewResult(sqlstring)
@@ -43,7 +43,7 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 	defer rows.Close()
 
 	if rows.Next() {
-		err = sqlutils.FillFromRows(val, rows)
+		err = FillFromRows(val, rows)
 		if err != nil {
 			return NewErrorResult(err, sqlstring)
 		}

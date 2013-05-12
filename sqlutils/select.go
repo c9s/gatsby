@@ -1,8 +1,6 @@
 package sqlutils
 
 import "strings"
-import "reflect"
-import "database/sql"
 
 // import "errors"
 
@@ -35,25 +33,4 @@ func BuildSelectClause(val interface{}) string {
 func BuildSelectClauseWithAlias(val interface{}, alias string) string {
 	tableName := GetTableName(val)
 	return "SELECT " + BuildSelectColumnClauseFromStructWithAlias(val, alias) + " FROM " + tableName + " " + alias
-}
-
-func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {
-	value := reflect.Indirect(reflect.ValueOf(val))
-	typeOfVal := value.Type()
-	sliceOfVal := reflect.SliceOf(typeOfVal)
-	var slice = reflect.MakeSlice(sliceOfVal, 0, 200)
-	defer rows.Close()
-	for rows.Next() {
-		var newValue = reflect.New(typeOfVal)
-		var err = FillFromRows(newValue.Interface(), rows)
-		if err != nil {
-			return slice.Interface(), err
-		}
-		slice = reflect.Append(slice, reflect.Indirect(newValue))
-	}
-	err := rows.Err()
-	if err != nil {
-		return slice, err
-	}
-	return slice.Interface(), nil
 }

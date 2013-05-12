@@ -2,6 +2,28 @@ package gatsby
 
 import "database/sql"
 import "gatsby/sqlutils"
+import "reflect"
+
+func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {
+	value := reflect.Indirect(reflect.ValueOf(val))
+	typeOfVal := value.Type()
+	sliceOfVal := reflect.SliceOf(typeOfVal)
+	var slice = reflect.MakeSlice(sliceOfVal, 0, 200)
+	defer rows.Close()
+	for rows.Next() {
+		var newValue = reflect.New(typeOfVal)
+		var err = FillFromRows(newValue.Interface(), rows)
+		if err != nil {
+			return slice.Interface(), err
+		}
+		slice = reflect.Append(slice, reflect.Indirect(newValue))
+	}
+	err := rows.Err()
+	if err != nil {
+		return slice, err
+	}
+	return slice.Interface(), nil
+}
 
 /*
 Select all records from a table which based on the record struct.
@@ -14,7 +36,7 @@ func Select(db *sql.DB, val PtrRecord) (interface{}, *Result) {
 	}
 	defer rows.Close()
 
-	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)
 	}
@@ -43,7 +65,7 @@ func SelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) 
 	}
 	defer rows.Close()
 
-	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)
 	}
@@ -59,7 +81,7 @@ func SelectWhere(db *sql.DB, val PtrRecord, conds WhereMap) (interface{}, *Resul
 	}
 	defer rows.Close()
 
-	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)
 	}
@@ -73,7 +95,7 @@ func SelectFromQuery(db *sql.DB, val PtrRecord, sql string, args ...interface{})
 	}
 	defer rows.Close()
 
-	slice, err := sqlutils.CreateStructSliceFromRows(val, rows)
+	slice, err := CreateStructSliceFromRows(val, rows)
 	if err != nil {
 		return slice, NewErrorResult(err, sql)
 	}
