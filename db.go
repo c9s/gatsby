@@ -35,7 +35,7 @@ func (self *ConnectionHandle) Load(val PtrRecord, pkId int64) *Result {
 	return Load(self.conn, val, pkId)
 }
 
-func (self *ConnectionHandle) LoadByCols(val PtrRecord, cols map[string]interface{}) *Result {
+func (self *ConnectionHandle) LoadByCols(val PtrRecord, cols WhereMap) *Result {
 	return LoadByCols(self.conn, val, cols)
 }
 
