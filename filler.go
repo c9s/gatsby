@@ -12,13 +12,16 @@ type RowScanner interface {
 	Scan(dest ...interface{}) error
 }
 
+type RecordMap map[string]interface{}
+
 // Fill the struct data from a result rows
 // This function iterates the struct by reflection, and creates types from sql
 // package for filling result.
-func FillFromRows(val interface{}, rows RowScanner) error {
+func FillFromRows(val PtrRecord, rows RowScanner) error {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
+	var err error
 	var args []interface{}
 	var fieldNums []int
 	var fieldAttrList []map[string]bool
@@ -54,20 +57,20 @@ func FillFromRows(val interface{}, rows RowScanner) error {
 			args = append(args, reflect.New(fieldType).Elem().Interface())
 		}
 
-		fieldAttrs := sqlutils.GetColumnAttributesFromTag(&tag)
+		var fieldAttrs = sqlutils.GetColumnAttributesFromTag(&tag)
 
 		fieldNums = append(fieldNums, i)
 		fieldAttrList = append(fieldAttrList, fieldAttrs)
 	}
 
-	err := rows.Scan(args...)
+	err = rows.Scan(args...)
 	if err != nil {
 		return err
 	}
 
 	for i, arg := range args {
 		var fieldIdx int = fieldNums[i]
-		fieldAttrs := fieldAttrList[i]
+		var fieldAttrs = fieldAttrList[i]
 
 		var isRequired = fieldAttrs["required"]
 		var val reflect.Value = t.Field(fieldIdx)
@@ -108,7 +111,7 @@ func FillFromRows(val interface{}, rows RowScanner) error {
 	return err
 }
 
-func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]map[string]interface{}, error) {
+func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]RecordMap, error) {
 	columnNames, err := rows.Columns()
 	if err != nil {
 		return nil, err
@@ -118,11 +121,11 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]map[string]inte
 	var values []interface{}
 	var reflectValues []reflect.Value
 
-	var results []map[string]interface{}
+	var results []RecordMap
 	values, reflectValues = sqlutils.CreateReflectValuesFromTypes(types)
 
 	for rows.Next() {
-		var result = map[string]interface{}{}
+		var result = RecordMap{}
 		err = rows.Scan(values...)
 		if err != nil {
 			return nil, err
@@ -135,7 +138,7 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]map[string]inte
 	return results, nil
 }
 
-func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (map[string]interface{}, error) {
+func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (RecordMap, error) {
 	columnNames, err := rows.Columns()
 	if err != nil {
 		return nil, err
@@ -144,7 +147,7 @@ func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (map[string]interfa
 	// create interface
 	var values []interface{}
 	var reflectValues []reflect.Value
-	var result = map[string]interface{}{}
+	var result = RecordMap{}
 
 	values, reflectValues = sqlutils.CreateReflectValuesFromTypes(types)
 	err = rows.Scan(values...)
