@@ -45,7 +45,7 @@ func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, er
 	defer rows.Close()
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
-		var err = FillFromRow(newValue.Interface(), rows)
+		var err = FillFromRows(newValue.Interface(), rows)
 		if err != nil {
 			return slice.Interface(), err
 		}

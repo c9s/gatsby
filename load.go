@@ -14,6 +14,26 @@ type PtrRecord interface{}
 /*
 Fill a record object by executing a SQL query.
 */
+func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
+	var err error
+
+	var row = db.QueryRow(sqlstring, args...)
+
+	err = sqlutils.FillFromRows(val, row)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			res := NewResult(sqlstring)
+			res.IsEmpty = true
+			return res
+		}
+		return NewErrorResult(err, sqlstring)
+	}
+	return NewResult(sqlstring)
+}
+
+/*
+Fill a record object by executing a SQL query.
+*/
 func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
 	rows, err := db.Query(sqlstring, args...)
 	if err != nil {
@@ -22,7 +42,7 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 	defer rows.Close()
 
 	if rows.Next() {
-		err = sqlutils.FillFromRow(val, rows)
+		err = sqlutils.FillFromRows(val, rows)
 		if err != nil {
 			return NewErrorResult(err, sqlstring)
 		}
@@ -47,7 +67,7 @@ func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
 	var sqlstring = sqlutils.BuildSelectClause(val) +
 		fmt.Sprintf(" WHERE %s = $1", *pName)
 	sqlstring += sqlutils.BuildLimitClause(1)
-	return LoadFromQuery(db, val, sqlstring, pkId)
+	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 
 /*
@@ -60,5 +80,5 @@ func LoadByCols(db *sql.DB, val PtrRecord, cols WhereMap) *Result {
 
 	// we should only query one record
 	sqlstring += sqlutils.BuildLimitClause(1)
-	return LoadFromQuery(db, val, sqlstring, args...)
+	return LoadFromQueryRow(db, val, sqlstring, args...)
 }

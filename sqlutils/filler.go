@@ -1,11 +1,15 @@
 package sqlutils
 
-import "reflect"
-import "errors"
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+	"github.com/c9s/pq"
+	"reflect"
+)
 
-// import "time"
-import "github.com/c9s/pq"
+type RowScanner interface {
+	Scan(dest ...interface{}) error
+}
 
 func CreateReflectValuesFromTypes(types []interface{}) ([]interface{}, []reflect.Value) {
 	var values []interface{}
@@ -75,7 +79,7 @@ func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (map[string]interfa
 // Fill the struct data from a result rows
 // This function iterates the struct by reflection, and creates types from sql
 // package for filling result.
-func FillFromRow(val interface{}, rows *sql.Rows) error {
+func FillFromRows(val interface{}, rows RowScanner) error {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 

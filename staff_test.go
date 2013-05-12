@@ -17,5 +17,4 @@ func TestStaffCRUD(t *testing.T) {
 	resultSuccess(t, staff.Update())
 
 	resultSuccess(t, staff.Delete())
-	// resultSuccess(t, manager.Update(&staff))
 }
