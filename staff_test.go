@@ -1,39 +1,21 @@
 package gatsby
 
-import "time"
+import "testing"
 
-type Staff struct {
-	Id        int64      `json:"id" field:",primary,serial"`
-	Name      string     `json:"name" field:",required"`
-	Gender    string     `json:"gender"`
-	StaffType string     `json:"staff_type"` // valid types: doctor, nurse, ...etc
-	Phone     string     `json:"phone"`
-	Birthday  string     `json:"birthday" field:"birthday,date"`
-	CreatedOn *time.Time `json:"created_on" field:"created_on"`
-	BaseRecord
-}
+func TestStaffCRUD(t *testing.T) {
+	var db = openDB()
 
-// Implement the GetPkId interface
-func (self *Staff) GetPkId() int64 {
-	return self.Id
-}
+	SetupConnection(db, DriverPg)
 
-func (self *Staff) SetPkId(id int64) {
-	self.Id = id
-}
+	var staff = Staff{Name: "NameA"}
 
-func (self *Staff) Create() *Result {
-	return self.BaseRecord.CreateWithInstance(self)
-}
+	var manager = EntityManager{}
+	res := resultSuccess(t, manager.Create(&staff))
+	resultSuccess(t, staff.Load(res.Id))
 
-func (self *Staff) Update() *Result {
-	return self.BaseRecord.UpdateWithInstance(self)
-}
+	staff.Name = "NameB"
+	resultSuccess(t, staff.Update())
 
-func (self *Staff) Delete() *Result {
-	return self.BaseRecord.DeleteWithInstance(self)
-}
-
-func (self *Staff) Load(id int64) *Result {
-	return self.BaseRecord.LoadWithInstance(self, id)
+	resultSuccess(t, staff.Delete())
+	// resultSuccess(t, manager.Update(&staff))
 }
