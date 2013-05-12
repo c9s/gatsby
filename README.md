@@ -82,34 +82,27 @@ type Staff struct {
 	CellPhone string    `json:"cell_phone"`
 	gatsby.BaseRecord
 }
-
-func (self * Staff) Create() (*gatsby.Result) {
-	return self.BaseRecord.CreateWithInstance(self)
-}
-
-func (self * Staff) Update() (*gatsby.Result) {
-	return self.BaseRecord.UpdateWithInstance(self)
-}
-
-func (self * Staff) Delete() (*gatsby.Result) {
-	return self.BaseRecord.DeleteWithInstance(self)
-}
-
-func (self * Staff) Load(id int64) (*gatsby.Result) {
-	return self.BaseRecord.LoadWithInstance(self, id)
-}
 ```
 
 Then you can do CRUD operations on the struct object:
 
 ```go
-staff := Staff{}
-staff.Load(10)   // load the record where primary key = 10
+staff := gatsby.NewRecord(&Staff{}).(*Staff)
+
+res := staff.Load(10)   // load the record where primary key = 10
+
+if res.Error != nil {
+    // handle error here
+}
+if res.IsEmpty { 
+    // handle empty record here
+}
 
 staff.Name = "John"
-staff.Update()
 
-staff.Delete()   // delete the record where primary key = 10
+res := staff.Update()
+
+res := staff.Delete()   // delete the record where primary key = 10
 
 res := staff.Create()    // create another record
 if res.Error != nil {
