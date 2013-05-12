@@ -4,11 +4,18 @@ import "database/sql"
 import "gatsby/sqlutils"
 import "reflect"
 
+const SliceCap = 200
+
+/*
+Scan data from sql.Rows and returns a map slice.
+
+This returns []map[string]interface{}
+*/
 func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {
 	var value = reflect.Indirect(reflect.ValueOf(val))
 	var typeOfVal = value.Type()
 	var sliceOfVal = reflect.SliceOf(typeOfVal)
-	var slice = reflect.MakeSlice(sliceOfVal, 0, 200)
+	var slice = reflect.MakeSlice(sliceOfVal, 0, SliceCap)
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
 		var err = FillFromRows(newValue.Interface(), rows)
@@ -17,7 +24,7 @@ func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, er
 		}
 		slice = reflect.Append(slice, reflect.Indirect(newValue))
 	}
-	err := rows.Err()
+	var err = rows.Err()
 	if err != nil {
 		return slice, err
 	}
@@ -88,7 +95,7 @@ func SelectWhere(db *sql.DB, val PtrRecord, conds WhereMap) (interface{}, *Resul
 }
 
 func SelectFromQuery(db *sql.DB, val PtrRecord, sql string, args ...interface{}) (interface{}, *Result) {
-	rows, err := db.Query(sql, args...)
+	var rows, err = db.Query(sql, args...)
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}

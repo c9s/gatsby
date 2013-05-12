@@ -14,6 +14,8 @@ type RowScanner interface {
 
 type RecordMap map[string]interface{}
 
+type RecordMapList []RecordMap
+
 // Fill the struct data from a result rows
 // This function iterates the struct by reflection, and creates types from sql
 // package for filling result.
@@ -111,8 +113,8 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 	return err
 }
 
-func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]RecordMap, error) {
-	columnNames, err := rows.Columns()
+func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) (RecordMapList, error) {
+	var columnNames, err = rows.Columns()
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +123,7 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) ([]RecordMap, erro
 	var values []interface{}
 	var reflectValues []reflect.Value
 
-	var results []RecordMap
+	var results RecordMapList
 	values, reflectValues = sqlutils.CreateReflectValuesFromTypes(types)
 
 	for rows.Next() {
