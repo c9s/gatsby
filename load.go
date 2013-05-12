@@ -34,7 +34,8 @@ func Load(db *sql.DB, val interface{}, pkId int64) *Result {
 	if pName == nil {
 		panic("primary key is required.")
 	}
-	sqlstring := sqlutils.BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1 LIMIT 1", *pName)
+	sqlstring := sqlutils.BuildSelectClause(val) + fmt.Sprintf(" WHERE %s = $1", *pName)
+	sqlstring += sqlutils.BuildLimitClause(1)
 	return LoadFromQuery(db, val, sqlstring, pkId)
 }
 
@@ -42,5 +43,8 @@ func LoadByCols(db *sql.DB, val interface{}, cols map[string]interface{}) *Resul
 	sqlstring := sqlutils.BuildSelectClause(val)
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
 	sqlstring += whereSql
+
+	// we should only query one record
+	sqlstring += sqlutils.BuildLimitClause(1)
 	return LoadFromQuery(db, val, sqlstring, args...)
 }

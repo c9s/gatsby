@@ -18,6 +18,7 @@ func TestLoad(t *testing.T) {
 
 	staff2 := Staff{}
 	r = Load(db, &staff2, r.Id)
+	t.Log(r.Sql)
 	if r.Error != nil {
 		t.Fatal(r.Error)
 	}
