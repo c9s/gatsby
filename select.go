@@ -41,7 +41,7 @@ func SelectWith(db *sql.DB, val interface{}, postSql string, args ...interface{}
 	return slice, NewResult(sql)
 }
 
-func SelectWhere(db *sql.DB, val interface{}, conds map[string]interface{}) (interface{}, *Result) {
+func SelectWhere(db *sql.DB, val interface{}, conds WhereMap) (interface{}, *Result) {
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(conds)
 	sql := sqlutils.BuildSelectClause(val) + whereSql
 	rows, err := db.Query(sql, args...)
