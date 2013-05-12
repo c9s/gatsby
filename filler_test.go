@@ -41,7 +41,7 @@ func TestCreateMapFromRows(t *testing.T) {
 	rows, _ := db.Query("select id, name from staffs")
 
 	rows.Next()
-	result, err := sqlutils.CreateMapFromRows(rows, new(int64), new(string))
+	result, err := CreateMapFromRows(rows, new(int64), new(string))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +55,7 @@ func TestCreateMapFromRows(t *testing.T) {
 	}
 	t.Log("Map", result)
 
-	results, err := sqlutils.CreateMapsFromRows(rows, new(int64), new(string))
+	results, err := CreateMapsFromRows(rows, new(int64), new(string))
 	if err != nil {
 		t.Fatal(err)
 	}
