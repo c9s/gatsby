@@ -5,11 +5,10 @@ import "gatsby/sqlutils"
 import "reflect"
 
 func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {
-	value := reflect.Indirect(reflect.ValueOf(val))
-	typeOfVal := value.Type()
-	sliceOfVal := reflect.SliceOf(typeOfVal)
+	var value = reflect.Indirect(reflect.ValueOf(val))
+	var typeOfVal = value.Type()
+	var sliceOfVal = reflect.SliceOf(typeOfVal)
 	var slice = reflect.MakeSlice(sliceOfVal, 0, 200)
-	defer rows.Close()
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
 		var err = FillFromRows(newValue.Interface(), rows)
@@ -73,9 +72,9 @@ func SelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) 
 }
 
 func SelectWhere(db *sql.DB, val PtrRecord, conds WhereMap) (interface{}, *Result) {
-	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(conds)
-	sql := sqlutils.BuildSelectClause(val) + whereSql
-	rows, err := db.Query(sql, args...)
+	var whereSql, args = sqlutils.BuildWhereClauseWithAndOp(conds)
+	var sql = sqlutils.BuildSelectClause(val) + whereSql
+	var rows, err = db.Query(sql, args...)
 	if err != nil {
 		return nil, NewErrorResult(err, sql)
 	}
