@@ -1,8 +1,10 @@
 package gatsby
 
-import "database/sql"
-import "gatsby/sqlutils"
-import "reflect"
+import (
+	"database/sql"
+	"gatsby/sqlutils"
+	"reflect"
+)
 
 const SliceCap = 200
 
@@ -11,7 +13,7 @@ Scan data from sql.Rows and returns a map slice.
 
 This returns []map[string]interface{}
 */
-func CreateStructSliceFromRows(val interface{}, rows *sql.Rows) (interface{}, error) {
+func CreateStructSliceFromRows(val PtrRecord, rows *sql.Rows) (interface{}, error) {
 	var value = reflect.Indirect(reflect.ValueOf(val))
 	var typeOfVal = value.Type()
 	var sliceOfVal = reflect.SliceOf(typeOfVal)

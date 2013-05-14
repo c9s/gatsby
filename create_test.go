@@ -14,10 +14,13 @@ func TestCreateWithTransactionAndCommit(t *testing.T) {
 	var db = openDB()
 	SetupConnection(db, DriverPg)
 
+	db.Query("delete from staffs;")
+
 	staff := Staff{}
 	staff.Init()
 
 	staff.Name = "Txn Test"
+	staff.Gender = "f"
 	tx, err := staff.Begin()
 	if err != nil {
 		t.Fatal(err)

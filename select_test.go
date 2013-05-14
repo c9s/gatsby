@@ -1,6 +1,7 @@
 package gatsby
 
 import "testing"
+import "gatsby/sqlutils"
 
 func chkResult(t *testing.T, res *Result) {
 	if res.Error != nil {
@@ -8,9 +9,36 @@ func chkResult(t *testing.T, res *Result) {
 	}
 }
 
+func TestSelectQueryWithAlias(t *testing.T) {
+	var db = openDB()
+	db.Query("delete from staffs;")
+
+	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
+	chkResult(t, Create(db, &staff, DriverPg))
+	defer Delete(db, &staff)
+
+	var selectClause = sqlutils.BuildSelectClauseWithAlias(&staff, "s")
+	t.Log(selectClause)
+
+	rows, err := db.Query(selectClause)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data, err := CreateStructSliceFromRows(&staff, rows)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var staffs = data.([]Staff)
+	for _, s := range staffs {
+		t.Log(s)
+	}
+	db.Query("delete from staffs;")
+}
+
 func TestSelectQuery(t *testing.T) {
 	var db = openDB()
-
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
 	chkResult(t, Create(db, &staff, DriverPg))
 
@@ -18,9 +46,7 @@ func TestSelectQuery(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	var count = 0
-
 	for rows.Next() {
 		count++
 	}
@@ -30,7 +56,7 @@ func TestSelectQuery(t *testing.T) {
 	Delete(db, &staff)
 }
 
-func TestSelectWith(t *testing.T) {
+func TestSelect(t *testing.T) {
 	var db = openDB()
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
 	chkResult(t, Create(db, &staff, DriverPg))
