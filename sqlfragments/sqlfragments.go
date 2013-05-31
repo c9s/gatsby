@@ -38,6 +38,11 @@ func (s *SQLFragments) AppendQuery(frag string, args ...interface{}) {
 	}
 }
 
+func (s *SQLFragments) PushArg(a interface{}) int {
+	s.args = append(s.args, a)
+	return len(s.args)
+}
+
 func (s *SQLFragments) Args() []interface{} {
 	return s.args
 }
