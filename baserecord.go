@@ -12,8 +12,8 @@ type PtrTargetRecord interface {
 }
 
 type BaseRecord struct {
-	Txn    *sql.Tx
-	Target PtrRecord
+	Txn    *sql.Tx   `json:-`
+	Target PtrRecord `json:-`
 }
 
 func NewRecord(o PtrTargetRecord) interface{} {
