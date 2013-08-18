@@ -60,8 +60,7 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 		fieldNums = append(fieldNums, i)
 	}
 
-	err = rows.Scan(args...)
-	if err != nil {
+	if err := rows.Scan(args...); err != nil {
 		return err
 	}
 
@@ -121,8 +120,7 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) (RecordMapList, er
 
 	for rows.Next() {
 		var result = RecordMap{}
-		err = rows.Scan(values...)
-		if err != nil {
+		if err := rows.Scan(values...); err != nil {
 			return nil, err
 		}
 		for i, name := range columnNames {
@@ -145,8 +143,7 @@ func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (RecordMap, error) 
 	var result = RecordMap{}
 
 	values, reflectValues = sqlutils.CreateReflectValuesFromTypes(types)
-	err = rows.Scan(values...)
-	if err != nil {
+	if err := rows.Scan(values...); err != nil {
 		return nil, err
 	}
 	for i, n := range columnNames {
