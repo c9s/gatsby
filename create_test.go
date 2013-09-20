@@ -2,6 +2,18 @@ package gatsby
 
 import "testing"
 
+func BenchmarkCreateAndDelete(b *testing.B) {
+	var db = openDB()
+	staff := Staff{}
+	staff.Name = "John"
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		Create(db, &staff, DriverPg)
+		Delete(db, &staff)
+	}
+}
+
 func TestCreate(t *testing.T) {
 	var db = openDB()
 	staff := Staff{}

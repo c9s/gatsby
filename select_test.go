@@ -37,6 +37,25 @@ func TestSelectQueryWithAlias(t *testing.T) {
 	db.Query("delete from staffs;")
 }
 
+func BenchmarkSelectQuery(b *testing.B) {
+	var db = openDB()
+	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
+	Create(db, &staff, DriverPg)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		rows, err := QuerySelect(db, &staff)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if _, err := CreateStructSliceFromRows(&staff, rows); err != nil {
+			b.Fatal(err)
+		}
+	}
+	Delete(db, &staff)
+}
+
 func TestSelectQuery(t *testing.T) {
 	var db = openDB()
 	staff := Staff{Name: "John", Gender: "m", Phone: "0975277696"}
