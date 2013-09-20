@@ -4,6 +4,7 @@ import "reflect"
 
 // cache maps
 var columnNameCache = map[string][]string{}
+var columnNameClauseCache = map[string]string{}
 var tableNameCache = map[string]string{}
 
 // provide PrimaryKey interface for faster column name accessing
@@ -87,6 +88,30 @@ func GetColumnValueMap(val interface{}) map[string]interface{} {
 		columns[*columnName] = t.Field(i).Interface()
 	}
 	return columns
+}
+
+func ReflectColumnNamesClause(val interface{}) string {
+	t := reflect.ValueOf(val).Elem()
+	typeOfT := t.Type()
+
+	var structName string = typeOfT.String()
+	if cache, ok := columnNameClauseCache[structName]; ok {
+		return cache
+	}
+
+	var sql string = ""
+	for i := 0; i < t.NumField(); i++ {
+		var tag reflect.StructTag = typeOfT.Field(i).Tag
+		var columnName *string = GetColumnNameFromTag(&tag)
+		if columnName == nil {
+			continue
+		}
+		sql += *columnName + ", "
+	}
+
+	sql = sql[:len(sql)-2]
+	columnNameClauseCache[structName] = sql
+	return sql
 }
 
 // Iterate struct names and return a slice that contains column names.

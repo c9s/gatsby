@@ -1,13 +1,11 @@
 package sqlutils
 
-import "strings"
-
 // import "errors"
 
 // Build SQL columns string for selecting,
 // this function returns "column1, column2, column3"
 func BuildSelectColumnClauseFromStruct(val interface{}) string {
-	return strings.Join(ReflectColumnNames(val), ", ")
+	return ReflectColumnNamesClause(val)
 }
 
 // Build SQL columns string for selecting, this function returns
