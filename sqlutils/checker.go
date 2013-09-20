@@ -30,7 +30,7 @@ func CheckRequired(val interface{}) error {
 				if t == "" {
 					return errors.New(fieldType.Name + " field is required.")
 				}
-			case int:
+			case int, int16, int32, int64:
 				if t == 0 {
 					return errors.New(fieldType.Name + " field is required.")
 				}

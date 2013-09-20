@@ -1,8 +1,9 @@
 package gatsby
 
-import "database/sql"
-import "fmt"
-import "gatsby/sqlutils"
+import (
+	"database/sql"
+	"gatsby/sqlutils"
+)
 
 type WhereMap map[string]interface{}
 
@@ -66,9 +67,8 @@ func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
 	if pName == nil {
 		panic("primary key is required.")
 	}
-	var sqlstring = sqlutils.BuildSelectClause(val) +
-		fmt.Sprintf(" WHERE %s = $1", *pName)
-	sqlstring += sqlutils.BuildLimitClause(1)
+	var sqlstring = sqlutils.BuildSelectClause(val) + " WHERE " + *pName + " = $1" +
+		sqlutils.BuildLimitClause(1)
 	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 

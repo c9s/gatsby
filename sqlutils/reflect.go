@@ -7,6 +7,7 @@ var columnNameCache = map[string][]string{}
 var columnNameClauseCache = map[string]string{}
 var columnNameClauseWithAliasCache = map[string]string{}
 var tableNameCache = map[string]string{}
+var primaryKeyColumnCache = map[string]string{}
 
 // provide PrimaryKey interface for faster column name accessing
 type PrimaryKey interface {
@@ -58,14 +59,19 @@ func GetPrimaryKeyColumnName(val interface{}) *string {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
+	var structName string = typeOfT.String()
+	if cache, ok := primaryKeyColumnCache[structName]; ok {
+		return &cache
+	}
+
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
 			continue
 		}
-		var columnAttributes = GetColumnAttributesFromTag(&tag)
-		if _, ok := columnAttributes["primary"]; ok {
+		if HasColumnAttributeFromTag(&tag, "primary") {
+			primaryKeyColumnCache[structName] = *columnName
 			return columnName
 		}
 	}

@@ -12,6 +12,19 @@ func resultSuccess(t *testing.T, res *Result) *Result {
 	return res
 }
 
+func BenchmarkLoad(b *testing.B) {
+	var db = openDB()
+	staff := Staff{Name: "John", Gender: "m", Phone: "1234567"}
+	res := Create(db, &staff, DriverPg)
+
+	staff2 := Staff{}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		Load(db, &staff2, res.Id)
+	}
+}
+
 func TestLoad(t *testing.T) {
 	var db = openDB()
 
