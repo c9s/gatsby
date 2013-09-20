@@ -5,7 +5,7 @@ import "time"
 type Staff struct {
 	Id        int64      `json:"id" field:",primary,serial"`
 	Name      string     `json:"name" field:",required"`
-	Gender    string     `json:"gender"`
+	Gender    string     `json:"gender" field:"gender"`
 	StaffType string     `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string     `json:"phone"`
 	Birthday  *time.Time `json:"birthday" field:"birthday,date"`

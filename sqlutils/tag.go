@@ -14,8 +14,8 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 		if strings.HasPrefix(tagStr, "-") {
 			return nil
 		}
-		fieldTags := strings.Split(tagStr, ",")
-		if len(fieldTags[0]) > 0 {
+		fieldTags := strings.SplitN(tagStr, ",", 2)
+		if fieldTags[0] != "" {
 			return &fieldTags[0]
 		}
 	}
@@ -24,8 +24,8 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 		if strings.HasPrefix(jsonTagStr, "-") {
 			return nil
 		}
-		jsonTags := strings.Split(jsonTagStr, ",")
-		if len(jsonTags[0]) > 0 {
+		jsonTags := strings.SplitN(jsonTagStr, ",", 2)
+		if jsonTags[0] != "" {
 			return &jsonTags[0]
 		}
 	}
