@@ -14,11 +14,11 @@ func BuildSelectColumnClauseFromStruct(val interface{}) string {
 // "alias.column1, alias.column2, alias.column3"
 func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) string {
 	var columns = ReflectColumnNames(val)
-	var aliasColumns = []string{}
+	var sql = ""
 	for _, n := range columns {
-		aliasColumns = append(aliasColumns, alias+"."+n)
+		sql += alias + "." + n + ", "
 	}
-	return strings.Join(aliasColumns, ", ")
+	return sql[:len(sql)-2]
 }
 
 // Given a struct object, return a "SELECT ... FROM {tableName}" SQL clause.

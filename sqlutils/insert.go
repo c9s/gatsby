@@ -44,7 +44,7 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		var attributes = GetColumnAttributesFromTag(&tag)
 
 		// if it's a serial column (with auto-increment, we can simply skip)
-		if _, ok := attributes["serial"]; ok {
+		if attributes["serial"] {
 			continue
 		}
 
@@ -52,11 +52,9 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		var val interface{} = field.Interface()
 
 		// if time is null or with zero value, just skip it.
-		if fieldType.Type.String() == "*time.Time" {
-			if timeVal, ok := val.(*time.Time); ok {
-				if timeVal == nil || timeVal.Unix() == -62135596800 {
-					continue
-				}
+		if timeVal, ok := val.(*time.Time); ok {
+			if timeVal == nil || timeVal.Unix() == -62135596800 {
+				continue
 			}
 		}
 
