@@ -1,30 +1,33 @@
 package sqlutils
 
-import "reflect"
-import "strings"
+import (
+	"reflect"
+	"strings"
+)
 
 // Extract column name attribute from struct tag (the first element) of the 'field' tag or
 // column name from 'json' tag.
 func GetColumnNameFromTag(tag *reflect.StructTag) *string {
-	fieldTags := strings.Split(tag.Get("field"), ",")
 
-	// ignore it
-	if fieldTags[0] == "-" {
-		return nil
+	if tagStr := tag.Get("field"); tagStr != "" {
+		// ignore it if it starts with dash
+		if strings.HasPrefix(tagStr, "-") {
+			return nil
+		}
+		fieldTags := strings.Split(tagStr, ",")
+		if len(fieldTags[0]) > 0 {
+			return &fieldTags[0]
+		}
 	}
 
-	if len(fieldTags[0]) > 0 {
-		return &fieldTags[0]
-	}
-	jsonTags := strings.Split(tag.Get("json"), ",")
-
-	// ignore it
-	if jsonTags[0] == "-" {
-		return nil
-	}
-
-	if len(jsonTags[0]) > 0 {
-		return &jsonTags[0]
+	if jsonTagStr := tag.Get("json"); jsonTagStr != "" {
+		if strings.HasPrefix(jsonTagStr, "-") {
+			return nil
+		}
+		jsonTags := strings.Split(jsonTagStr, ",")
+		if len(jsonTags[0]) > 0 {
+			return &jsonTags[0]
+		}
 	}
 	return nil
 }
