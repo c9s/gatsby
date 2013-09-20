@@ -37,6 +37,11 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 	return &jsonTagStr
 }
 
+func HasColumnAttributeFromTag(tag *reflect.StructTag, aName string) bool {
+	tagStr := tag.Get("field")
+	return strings.Index(tagStr, ","+aName) != -1
+}
+
 // Extract attributes from "field" tag.
 // Current supported attributes: "required","primary","serial"
 func GetColumnAttributesFromTag(tag *reflect.StructTag) map[string]bool {

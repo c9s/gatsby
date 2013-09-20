@@ -1,9 +1,9 @@
 PASS
-BenchmarkCheckRequired	  500000	      5010 ns/op	    1209 B/op	      26 allocs/op
-BenchmarkBuildInsertClause	  500000	      6449 ns/op	    1142 B/op	      38 allocs/op
-BenchmarkGetPrimaryKeyValue	 1000000	      1194 ns/op	     292 B/op	       6 allocs/op
-BenchmarkGetColumnValueMap	 1000000	      2198 ns/op	     489 B/op	      12 allocs/op
-BenchmarkBuildSelectColumnClauseFromStructWithAlias	 1000000	      1297 ns/op	     226 B/op	       8 allocs/op
-BenchmarkBuildSelectColumnClauseFromStruct	 5000000	       394 ns/op	      32 B/op	       2 allocs/op
-BenchmarkGetTableName	100000000	        29.0 ns/op	       0 B/op	       0 allocs/op
-ok  	gatsby/sqlutils	16.071s
+BenchmarkCheckRequired	 1000000	      2067 ns/op	      81 B/op	       9 allocs/op
+BenchmarkBuildInsertClause	  500000	      6033 ns/op	     756 B/op	      36 allocs/op
+BenchmarkGetPrimaryKeyValue	 2000000	       882 ns/op	      50 B/op	       4 allocs/op
+BenchmarkGetColumnValueMap	 1000000	      2303 ns/op	     489 B/op	      12 allocs/op
+BenchmarkBuildSelectColumnClauseFromStructWithAlias	50000000	        30.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBuildSelectColumnClauseFromStruct	100000000	        27.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGetTableName	50000000	        29.8 ns/op	       0 B/op	       0 allocs/op
+ok  	gatsby/sqlutils	16.198s

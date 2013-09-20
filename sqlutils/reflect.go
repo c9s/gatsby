@@ -43,10 +43,11 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 		if GetColumnNameFromTag(&tag) == nil {
 			continue
 		}
-		var columnAttributes = GetColumnAttributesFromTag(&tag)
-		if _, ok := columnAttributes["primary"]; ok {
-			val := t.Field(i).Interface().(int64)
-			return &val
+		if HasColumnAttributeFromTag(&tag, "primary") {
+			if val, ok := t.Field(i).Interface().(int64); ok {
+				return &val
+			}
+			panic("Can not convert primary key value to int64")
 		}
 	}
 	return nil

@@ -1,8 +1,11 @@
 package sqlutils
 
-import "fmt"
-import "reflect"
-import "strings"
+import (
+	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+)
 
 // This function generates "UPDATE {table} SET name = $1, name2 = $2"
 func BuildUpdateClause(val interface{}) (string, []interface{}) {
@@ -44,7 +47,7 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 		if columnName == nil {
 			continue
 		}
-		setFields = append(setFields, fmt.Sprintf("%s = $%d", *columnName, len(values)+1))
+		setFields = append(setFields, *columnName+" = $"+strconv.Itoa(len(values)+1))
 		values = append(values, field.Interface())
 	}
 	return strings.Join(setFields, ", "), values

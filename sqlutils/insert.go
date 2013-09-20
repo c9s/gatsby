@@ -1,6 +1,5 @@
 package sqlutils
 
-import "fmt"
 import "reflect"
 import "strings"
 import "strconv"
@@ -14,7 +13,7 @@ func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface
 
 	for col, arg := range cols {
 		columnNames = append(columnNames, col)
-		valueFields = append(valueFields, fmt.Sprintf("$%d", i))
+		valueFields = append(valueFields, "$"+strconv.Itoa(i))
 		values = append(values, arg)
 		i++
 	}
@@ -27,8 +26,9 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
-	var columnNames []string
-	var valueFields []string
+	var columnNamesSql string = ""
+	var valueFieldsSql string = ""
+
 	var values []interface{}
 	var fieldId int = 1
 
@@ -41,10 +41,7 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 			continue
 		}
 
-		var attributes = GetColumnAttributesFromTag(&tag)
-
-		// if it's a serial column (with auto-increment, we can simply skip)
-		if attributes["serial"] {
+		if HasColumnAttributeFromTag(&tag, "serial") {
 			continue
 		}
 
@@ -52,28 +49,28 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		var val interface{} = field.Interface()
 
 		// if time is null or with zero value, just skip it.
-		if timeVal, ok := val.(*time.Time); ok {
-			if timeVal == nil || timeVal.Unix() == -62135596800 {
+		switch tv := val.(type) {
+		case *time.Time:
+			if tv == nil || tv.Unix() == -62135596800 {
+				continue
+			}
+		case time.Time:
+			if tv.Unix() == -62135596800 {
+				continue
+			}
+		case string:
+			if HasColumnAttributeFromTag(&tag, "date") && tv == "" {
 				continue
 			}
 		}
 
-		if attributes["date"] {
-			switch val.(type) {
-			case string:
-				if val == "" {
-					continue
-				}
-			}
-		}
-
-		columnNames = append(columnNames, *columnName)
-		valueFields = append(valueFields, "$"+strconv.Itoa(fieldId))
+		columnNamesSql += *columnName + ", "
+		valueFieldsSql += "$" + strconv.Itoa(fieldId) + ", "
 		values = append(values, val)
 		fieldId++
 	}
-	return "( " + strings.Join(columnNames, ", ") + " ) " +
-		"VALUES ( " + strings.Join(valueFields, ", ") + " )", values
+	return "( " + columnNamesSql[:len(columnNamesSql)-2] + " ) " +
+		"VALUES ( " + valueFieldsSql[:len(valueFieldsSql)-2] + " )", values
 }
 
 func BuildInsertClause(val interface{}) (string, []interface{}) {

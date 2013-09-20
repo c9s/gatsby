@@ -1,14 +1,14 @@
 package sqlutils
 
-import "fmt"
+import "strconv"
 
 /*
 This function builds limit clause.
 */
-func BuildLimitOffsetClause(limit int64, offset int64) string {
-	return fmt.Sprintf(" LIMIT %d OFFSET %d", limit, offset)
+func BuildLimitOffsetClause(limit int, offset int) string {
+	return "LIMIT " + strconv.Itoa(limit) + " OFFSET " + strconv.Itoa(offset)
 }
 
-func BuildLimitClause(limit int64) string {
-	return fmt.Sprintf(" LIMIT %d", limit)
+func BuildLimitClause(limit int) string {
+	return "LIMIT " + strconv.Itoa(limit)
 }
