@@ -29,6 +29,8 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 	var args []interface{}
 	var tag reflect.StructTag
 	var fieldNums []int
+	var fieldValue reflect.Value
+	var rval interface{}
 
 	for i := 0; i < t.NumField(); i++ {
 		tag = typeOfT.Field(i).Tag
@@ -37,10 +39,11 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 			continue
 		}
 
-		var field reflect.Value = t.Field(i)
-		var fieldValue = field.Interface()
+		fieldValue = t.Field(i)
 
-		switch fieldValue.(type) {
+		rval = fieldValue.Interface()
+
+		switch rval.(type) {
 		case string:
 			args = append(args, new(sql.NullString))
 		case int64, int32, int16, int:
@@ -53,24 +56,26 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 			args = append(args, new(pq.NullTime))
 		default:
 			// XXX: Not sure if this work
-			var fieldType reflect.Type = field.Type()
+			var fieldType reflect.Type = fieldValue.Type()
 			args = append(args, reflect.New(fieldType).Elem().Interface())
 		}
 
 		fieldNums = append(fieldNums, i)
 	}
 
-	if err := rows.Scan(args...); err != nil {
+	if err = rows.Scan(args...); err != nil {
 		return err
 	}
 
+	var fieldIdx int
+
 	for i, arg := range args {
-		var fieldIdx int = fieldNums[i]
+		fieldIdx = fieldNums[i]
 		// tag = typeOfT.Field(fieldIdx).Tag
 		// isRequired := sqlutils.HasColumnAttributeFromTag(&tag, "required")
 
-		var fieldValue reflect.Value = t.Field(fieldIdx)
-		// var val = fieldValue.Interface()
+		fieldValue = t.Field(fieldIdx)
+		// var rval = fieldValue.Interface()
 
 		if !fieldValue.CanSet() {
 			var valueType reflect.Type = fieldValue.Type()
@@ -106,7 +111,9 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 }
 
 func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) (RecordMapList, error) {
-	var columnNames, err = rows.Columns()
+	var err error
+
+	columnNames, err := rows.Columns()
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +127,7 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) (RecordMapList, er
 
 	for rows.Next() {
 		var result = RecordMap{}
-		if err := rows.Scan(values...); err != nil {
+		if err = rows.Scan(values...); err != nil {
 			return nil, err
 		}
 		for i, name := range columnNames {
@@ -132,20 +139,21 @@ func CreateMapsFromRows(rows *sql.Rows, types ...interface{}) (RecordMapList, er
 }
 
 func CreateMapFromRows(rows *sql.Rows, types ...interface{}) (RecordMap, error) {
-	columnNames, err := rows.Columns()
-	if err != nil {
-		return nil, err
-	}
-
-	// create interface
+	var err error
 	var values []interface{}
 	var reflectValues []reflect.Value
 	var result = RecordMap{}
 
 	values, reflectValues = sqlutils.CreateReflectValuesFromTypes(types)
-	if err := rows.Scan(values...); err != nil {
+	if err = rows.Scan(values...); err != nil {
 		return nil, err
 	}
+
+	columnNames, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
 	for i, n := range columnNames {
 		result[n] = reflectValues[i].Elem().Interface()
 	}
