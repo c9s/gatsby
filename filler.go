@@ -71,36 +71,36 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 		// isRequired := sqlutils.HasColumnAttributeFromTag(&tag, "required")
 
 		var fieldValue reflect.Value = t.Field(fieldIdx)
-		var val = fieldValue.Interface()
+		// var val = fieldValue.Interface()
 
 		if !fieldValue.CanSet() {
 			var valueType reflect.Type = fieldValue.Type()
 			return errors.New("Can not set value " + typeOfT.Field(fieldIdx).Name + " on " + valueType.Name())
 		}
 
-		switch realVal := val.(type) {
-		case string:
-			if arg.(*sql.NullString).Valid {
-				fieldValue.SetString(arg.(*sql.NullString).String)
+		switch argVal := arg.(type) {
+		case *sql.NullString:
+			if argVal.Valid {
+				fieldValue.SetString(argVal.String)
 			}
-		case int, int16, int32, int64:
-			if arg.(*sql.NullInt64).Valid {
-				fieldValue.SetInt(arg.(*sql.NullInt64).Int64)
+		case *sql.NullInt64:
+			if argVal.Valid {
+				fieldValue.SetInt(argVal.Int64)
 			}
-		case bool:
-			if arg.(*sql.NullBool).Valid {
-				fieldValue.SetBool(arg.(*sql.NullBool).Bool)
+		case *sql.NullBool:
+			if argVal.Valid {
+				fieldValue.SetBool(argVal.Bool)
 			}
-		case float64:
-			if arg.(*sql.NullFloat64).Valid {
-				fieldValue.SetFloat(arg.(*sql.NullFloat64).Float64)
+		case *sql.NullFloat64:
+			if argVal.Valid {
+				fieldValue.SetFloat(argVal.Float64)
 			}
-		case *time.Time:
-			if nullTimeVal, ok := arg.(*pq.NullTime); ok && nullTimeVal != nil {
-				fieldValue.Set(reflect.ValueOf(&nullTimeVal.Time))
+		case *pq.NullTime:
+			if argVal.Valid {
+				fieldValue.Set(reflect.ValueOf(&argVal.Time))
 			}
 		default:
-			return fmt.Errorf("unsupported type %T", realVal)
+			return fmt.Errorf("unsupported type %T", argVal)
 		}
 	}
 	return err
