@@ -1,7 +1,7 @@
 package gatsby
 
 import "gatsby/sqlutils"
-import "fmt"
+import "strconv"
 import "errors"
 
 func Update(executor Executor, val interface{}) *Result {
@@ -23,7 +23,8 @@ func Update(executor Executor, val interface{}) *Result {
 		values = append(values, *id)
 	}
 
-	sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
+	// sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
+	sql += " WHERE " + *pkName + " = $" + strconv.Itoa(len(values))
 
 	stmt, err := executor.Prepare(sql)
 	if err != nil {
