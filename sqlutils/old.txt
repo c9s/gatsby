@@ -1,9 +1,0 @@
-PASS
-BenchmarkCheckRequired	 1000000	      2067 ns/op	      81 B/op	       9 allocs/op
-BenchmarkBuildInsertClause	  500000	      6033 ns/op	     756 B/op	      36 allocs/op
-BenchmarkGetPrimaryKeyValue	 2000000	       882 ns/op	      50 B/op	       4 allocs/op
-BenchmarkGetColumnValueMap	 1000000	      2303 ns/op	     489 B/op	      12 allocs/op
-BenchmarkBuildSelectColumnClauseFromStructWithAlias	50000000	        30.8 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBuildSelectColumnClauseFromStruct	100000000	        27.9 ns/op	       0 B/op	       0 allocs/op
-BenchmarkGetTableName	50000000	        29.8 ns/op	       0 B/op	       0 allocs/op
-ok  	gatsby/sqlutils	16.198s
