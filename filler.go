@@ -6,6 +6,7 @@ import (
 	"gatsby/sqlutils"
 	"github.com/c9s/pq"
 	"reflect"
+	"strings"
 )
 
 type RowScanner interface {
@@ -90,7 +91,7 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 			} else if isRequired {
 				return errors.New("required field")
 			}
-		} else if typeStr == "int" || typeStr == "int64" {
+		} else if strings.HasPrefix(typeStr, "int") {
 			if arg.(*sql.NullInt64).Valid {
 				val.SetInt(arg.(*sql.NullInt64).Int64)
 			}

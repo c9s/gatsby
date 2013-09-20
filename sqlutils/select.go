@@ -7,8 +7,7 @@ import "strings"
 // Build SQL columns string for selecting,
 // this function returns "column1, column2, column3"
 func BuildSelectColumnClauseFromStruct(val interface{}) string {
-	var columns = ReflectColumnNames(val)
-	return strings.Join(columns, ", ")
+	return strings.Join(ReflectColumnNames(val), ", ")
 }
 
 // Build SQL columns string for selecting, this function returns
@@ -24,13 +23,12 @@ func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) s
 
 // Given a struct object, return a "SELECT ... FROM {tableName}" SQL clause.
 func BuildSelectClause(val interface{}) string {
-	tableName := GetTableName(val)
-	return "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + tableName
+	return "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + GetTableName(val)
 }
 
 // Given a struct object and an alias string,
 // This function returns a "SELECT alias1.column1, alias1.column2 FROM tableName alias" clause
 func BuildSelectClauseWithAlias(val interface{}, alias string) string {
-	tableName := GetTableName(val)
-	return "SELECT " + BuildSelectColumnClauseFromStructWithAlias(val, alias) + " FROM " + tableName + " " + alias
+	return "SELECT " + BuildSelectColumnClauseFromStructWithAlias(val, alias) +
+		" FROM " + GetTableName(val) + " " + alias
 }

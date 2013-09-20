@@ -10,10 +10,11 @@ func CheckRequired(val interface{}) error {
 
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var fieldValue reflect.Value = t.Field(i)
-		var fieldType = typeOfT.Field(i)
 		var attributes map[string]bool = GetColumnAttributesFromTag(&tag)
 		if _, ok := attributes["required"]; ok {
+			var fieldValue reflect.Value = t.Field(i)
+			var fieldType = typeOfT.Field(i)
+
 			// check the column value
 			if fieldValue.Type().Name() == "string" && fieldValue.Interface().(string) == "" {
 				return errors.New(fieldType.Name + " field is required.")

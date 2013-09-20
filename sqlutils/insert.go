@@ -18,9 +18,8 @@ func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface
 		values = append(values, arg)
 		i++
 	}
-	sql := "( " + strings.Join(columnNames, ", ") + " )" +
-		" VALUES ( " + strings.Join(valueFields, ", ") + " )"
-	return sql, values
+	return "( " + strings.Join(columnNames, ", ") + " )" +
+		" VALUES ( " + strings.Join(valueFields, ", ") + " )", values
 }
 
 // Build Insert Column Clause from a struct type.
@@ -36,7 +35,6 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 	for i := 0; i < t.NumField(); i++ {
 		var fieldType = typeOfT.Field(i)
 		var tag reflect.StructTag = fieldType.Tag
-		var field reflect.Value = t.Field(i)
 
 		var columnName *string = GetColumnNameFromTag(&tag)
 		if columnName == nil {
@@ -50,6 +48,7 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 			continue
 		}
 
+		var field reflect.Value = t.Field(i)
 		var val interface{} = field.Interface()
 
 		// if time is null or with zero value, just skip it.
@@ -80,7 +79,6 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 }
 
 func BuildInsertClause(val interface{}) (string, []interface{}) {
-	tableName := GetTableName(val)
 	sql, values := BuildInsertColumns(val)
-	return "INSERT INTO " + tableName + sql, values
+	return "INSERT INTO " + GetTableName(val) + sql, values
 }
