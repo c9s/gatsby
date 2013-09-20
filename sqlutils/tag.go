@@ -9,27 +9,32 @@ import (
 // column name from 'json' tag.
 func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 
-	if tagStr := tag.Get("field"); tagStr != "" {
+	if tagStr := tag.Get("field"); len(tagStr) != 0 {
 		// ignore it if it starts with dash
-		if strings.HasPrefix(tagStr, "-") {
+		if tagStr[0:1] == "-" {
 			return nil
 		}
-		fieldTags := strings.SplitN(tagStr, ",", 2)
-		if fieldTags[0] != "" {
-			return &fieldTags[0]
+		if p := strings.Index(tagStr, ","); p != -1 && p > 1 {
+			str := tagStr[:p]
+			return &str
 		}
 	}
 
-	if jsonTagStr := tag.Get("json"); jsonTagStr != "" {
-		if strings.HasPrefix(jsonTagStr, "-") {
-			return nil
-		}
-		jsonTags := strings.SplitN(jsonTagStr, ",", 2)
-		if jsonTags[0] != "" {
-			return &jsonTags[0]
-		}
+	jsonTagStr := tag.Get("json")
+	if len(jsonTagStr) == 0 {
+		return nil
 	}
-	return nil
+	if jsonTagStr[0:1] == "-" {
+		return nil
+	}
+	if p := strings.Index(jsonTagStr, ","); p != -1 {
+		if p > 1 {
+			str := jsonTagStr[:p]
+			return &str
+		}
+		return nil
+	}
+	return &jsonTagStr
 }
 
 // Extract attributes from "field" tag.

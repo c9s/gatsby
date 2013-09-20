@@ -2,6 +2,13 @@ package sqlutils
 
 import "testing"
 
+func BenchmarkCheckRequired(b *testing.B) {
+	staff := Staff{Id: 4, Name: "John", Gender: "m", Phone: "0975277696"}
+	for i := 0; i < b.N; i++ {
+		CheckRequired(&staff)
+	}
+}
+
 func TestRequireChecking2(t *testing.T) {
 	staff := Staff{Id: 4, Name: "John", Gender: "m", Phone: "0975277696"}
 	err := CheckRequired(&staff)

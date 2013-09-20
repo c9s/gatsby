@@ -1,7 +1,23 @@
 package sqlutils
 
-import "testing"
-import "strings"
+import (
+	"strings"
+	"testing"
+)
+
+func BenchmarkBuildSelectColumnClauseFromStructWithAlias(b *testing.B) {
+	foo := fooRecord{}
+	for i := 0; i < b.N; i++ {
+		BuildSelectColumnClauseFromStructWithAlias(&foo, "foo")
+	}
+}
+
+func BenchmarkBuildSelectColumnClauseFromStruct(b *testing.B) {
+	foo := fooRecord{Id: 4, Name: "John"}
+	for i := 0; i < b.N; i++ {
+		BuildSelectColumnClauseFromStruct(&foo)
+	}
+}
 
 func TestBuildSelectClauseWithAlias(t *testing.T) {
 	str := BuildSelectColumnClauseFromStructWithAlias(&fooRecord{}, "foo")

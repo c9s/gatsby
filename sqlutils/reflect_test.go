@@ -42,6 +42,20 @@ func TestPrimaryKeyColumnValueFound(t *testing.T) {
 	}
 }
 
+func BenchmarkGetPrimaryKeyValue(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		GetPrimaryKeyValue(&foo)
+	}
+}
+
+func BenchmarkGetColumnValueMap(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		GetColumnValueMap(&foo)
+	}
+}
+
 func TestPrimaryKeyColumnValueFound2(t *testing.T) {
 	v := GetPrimaryKeyValue(&fooRecord{})
 	if v == nil {

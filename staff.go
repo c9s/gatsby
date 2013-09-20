@@ -3,8 +3,8 @@ package gatsby
 import "time"
 
 type Staff struct {
-	Id        int64      `json:"id" field:",primary,serial"`
-	Name      string     `json:"name" field:",required"`
+	Id        int64      `json:"id" field:"id,primary,serial"`
+	Name      string     `json:"name" field:"name,required"`
 	Gender    string     `json:"gender" field:"gender"`
 	StaffType string     `json:"staff_type"` // valid types: doctor, nurse, ...etc
 	Phone     string     `json:"phone"`
