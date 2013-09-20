@@ -68,6 +68,7 @@ func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
 	}
 	var sqlstring = sqlutils.BuildSelectClause(val) + " WHERE " + *pName + " = $1" +
 		sqlutils.BuildLimitClause(1)
+
 	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 

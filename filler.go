@@ -67,7 +67,6 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 
 	for i, arg := range args {
 		var fieldIdx int = fieldNums[i]
-
 		tag = typeOfT.Field(fieldIdx).Tag
 		isRequired := sqlutils.HasColumnAttributeFromTag(&tag, "required")
 

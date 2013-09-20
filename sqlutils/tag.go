@@ -14,9 +14,13 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 		if tagStr[0:1] == "-" {
 			return nil
 		}
-		if p := strings.Index(tagStr, ","); p != -1 && p > 1 {
-			str := tagStr[:p]
-			return &str
+		if p := strings.Index(tagStr, ","); p != -1 {
+			if p > 1 {
+				str := tagStr[:p]
+				return &str
+			}
+		} else {
+			return &tagStr
 		}
 	}
 
