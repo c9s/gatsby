@@ -27,21 +27,18 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 
 	var err error
 	var args []interface{}
+	var tag reflect.StructTag
 	var fieldNums []int
-	var fieldAttrList []map[string]bool
 
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
 
-		var columnName *string = sqlutils.GetColumnNameFromTag(&tag)
-		if columnName == nil {
+		if sqlutils.GetColumnNameFromTag(&tag) == nil {
 			continue
 		}
 
 		var field reflect.Value = t.Field(i)
-		var fieldType reflect.Type = field.Type()
 		var fieldValue = field.Interface()
-		// var typeStr string = fieldType.String()
 
 		switch fieldValue.(type) {
 		case string:
@@ -56,12 +53,11 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 			args = append(args, new(pq.NullTime))
 		default:
 			// XXX: Not sure if this work
+			var fieldType reflect.Type = field.Type()
 			args = append(args, reflect.New(fieldType).Elem().Interface())
 		}
 
-		var fieldAttrs = sqlutils.GetColumnAttributesFromTag(&tag)
 		fieldNums = append(fieldNums, i)
-		fieldAttrList = append(fieldAttrList, fieldAttrs)
 	}
 
 	err = rows.Scan(args...)
@@ -71,9 +67,10 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 
 	for i, arg := range args {
 		var fieldIdx int = fieldNums[i]
-		var fieldAttrs = fieldAttrList[i]
 
-		var isRequired = fieldAttrs["required"]
+		tag = typeOfT.Field(fieldIdx).Tag
+		isRequired := sqlutils.HasColumnAttributeFromTag(&tag, "required")
+
 		var fieldValue reflect.Value = t.Field(fieldIdx)
 		var val = fieldValue.Interface()
 
@@ -89,9 +86,11 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 			} else if isRequired {
 				return errors.New("required field")
 			}
-		case int, int64:
+		case int, int16, int32, int64:
 			if arg.(*sql.NullInt64).Valid {
 				fieldValue.SetInt(arg.(*sql.NullInt64).Int64)
+			} else if isRequired {
+				return errors.New("required field")
 			}
 		case bool:
 			if arg.(*sql.NullBool).Valid {
