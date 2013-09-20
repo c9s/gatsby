@@ -11,12 +11,7 @@ func BuildSelectColumnClauseFromStruct(val interface{}) string {
 // Build SQL columns string for selecting, this function returns
 // "alias.column1, alias.column2, alias.column3"
 func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) string {
-	var columns = ReflectColumnNames(val)
-	var sql = ""
-	for _, n := range columns {
-		sql += alias + "." + n + ", "
-	}
-	return sql[:len(sql)-2]
+	return ReflectColumnNamesClauseWithAlias(val, alias)
 }
 
 // Given a struct object, return a "SELECT ... FROM {tableName}" SQL clause.

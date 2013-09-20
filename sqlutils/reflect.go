@@ -5,6 +5,7 @@ import "reflect"
 // cache maps
 var columnNameCache = map[string][]string{}
 var columnNameClauseCache = map[string]string{}
+var columnNameClauseWithAliasCache = map[string]string{}
 var tableNameCache = map[string]string{}
 
 // provide PrimaryKey interface for faster column name accessing
@@ -81,13 +82,33 @@ func GetColumnValueMap(val interface{}) map[string]interface{} {
 
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
-			continue
+		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+			columns[*columnName] = t.Field(i).Interface()
 		}
-		columns[*columnName] = t.Field(i).Interface()
 	}
 	return columns
+}
+
+func ReflectColumnNamesClauseWithAlias(val interface{}, alias string) string {
+	t := reflect.ValueOf(val).Elem()
+	typeOfT := t.Type()
+
+	var structName string = typeOfT.String()
+	if cache, ok := columnNameClauseWithAliasCache[structName]; ok {
+		return cache
+	}
+
+	var sql string = ""
+	for i := 0; i < t.NumField(); i++ {
+		var tag reflect.StructTag = typeOfT.Field(i).Tag
+		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+			sql += alias + "." + *columnName + ", "
+		}
+	}
+
+	sql = sql[:len(sql)-2]
+	columnNameClauseWithAliasCache[structName] = sql
+	return sql
 }
 
 func ReflectColumnNamesClause(val interface{}) string {
@@ -102,11 +123,9 @@ func ReflectColumnNamesClause(val interface{}) string {
 	var sql string = ""
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
-			continue
+		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+			sql += *columnName + ", "
 		}
-		sql += *columnName + ", "
 	}
 
 	sql = sql[:len(sql)-2]
@@ -127,11 +146,9 @@ func ReflectColumnNames(val interface{}) []string {
 	var columns []string
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
-			continue
+		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+			columns = append(columns, *columnName)
 		}
-		columns = append(columns, *columnName)
 	}
 	columnNameCache[structName] = columns
 	return columns
