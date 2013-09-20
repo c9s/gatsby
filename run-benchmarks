@@ -1,0 +1,2 @@
+go test -i
+GOGC=off go test -benchtime=1s -test.benchmem=true -bench=. >| new.txt && go-benchcmp old.txt new.txt

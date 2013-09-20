@@ -45,8 +45,7 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 		}
 		return NewResult(sqlstring)
 	}
-	err = rows.Err()
-	if err != nil {
+	if err = rows.Err(); err != nil {
 		return NewErrorResult(err, sqlstring)
 	}
 
@@ -56,8 +55,8 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 }
 
 func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) *Result {
-	var sqlstring = sqlutils.BuildSelectClause(val) + " " + postQuery
-	sqlstring += sqlutils.BuildLimitClause(1)
+	var sqlstring = sqlutils.BuildSelectClause(val) + " " + postQuery +
+		sqlutils.BuildLimitClause(1)
 	return LoadFromQueryRow(db, val, sqlstring, args...)
 }
 
@@ -78,9 +77,6 @@ Load record from a where condition map
 func LoadByCols(db *sql.DB, val PtrRecord, cols WhereMap) *Result {
 	var sqlstring = sqlutils.BuildSelectClause(val)
 	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
-	sqlstring += whereSql
-
-	// we should only query one record
-	sqlstring += sqlutils.BuildLimitClause(1)
+	sqlstring += whereSql + sqlutils.BuildLimitClause(1)
 	return LoadFromQueryRow(db, val, sqlstring, args...)
 }
