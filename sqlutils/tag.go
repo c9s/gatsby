@@ -5,6 +5,17 @@ import (
 	"strings"
 )
 
+func IndexOfChar(s string, sep string) int {
+	var l = len(s)
+	var c = sep[0]
+	for i := 0; i < l; i++ {
+		if s[i] == c {
+			return i
+		}
+	}
+	return -1
+}
+
 // Extract column name attribute from struct tag (the first element) of the 'field' tag or
 // column name from 'json' tag.
 func GetColumnNameFromTag(tag *reflect.StructTag) *string {
@@ -12,10 +23,10 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 	var tagStr string
 	if tagStr = tag.Get("field"); len(tagStr) != 0 {
 		// ignore it if it starts with dash
-		if tagStr[0:1] == "-" {
+		if tagStr[0] == "-"[0] {
 			return nil
 		}
-		if p = strings.Index(tagStr, ","); p != -1 {
+		if p = IndexOfChar(tagStr, ","); p != -1 {
 			if p > 1 {
 				str := tagStr[:p]
 				return &str
@@ -25,14 +36,13 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 		}
 	}
 
-	tagStr = tag.Get("json")
-	if len(tagStr) == 0 {
+	if tagStr = tag.Get("json"); len(tagStr) == 0 {
 		return nil
 	}
-	if tagStr[0:1] == "-" {
+	if tagStr[0] == "-"[0] {
 		return nil
 	}
-	if p = strings.Index(tagStr, ","); p != -1 {
+	if p = IndexOfChar(tagStr, ","); p != -1 {
 		if p > 1 {
 			str := tagStr[:p]
 			return &str
