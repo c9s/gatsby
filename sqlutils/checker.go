@@ -36,7 +36,7 @@ func CheckRequired(structVal interface{}) error {
 					fieldType = typeOfT.Field(i)
 					return errors.New(fieldType.Name + " field is required.")
 				}
-			case int, int16, int32, int64:
+			case int, int8, int16, int32, int64:
 				if t == 0 {
 					fieldType = typeOfT.Field(i)
 					return errors.New(fieldType.Name + " field is required.")
