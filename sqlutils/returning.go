@@ -8,8 +8,7 @@ func GetPgReturningIdFromRows(rows *sql.Rows) (int64, error) {
 	var id int64
 	var err error
 	if rows.Next() {
-		err = rows.Scan(&id)
-		if err != nil {
+		if err = rows.Scan(&id); err != nil {
 			return -1, err
 		}
 		return id, err
