@@ -8,13 +8,14 @@ import (
 // Extract column name attribute from struct tag (the first element) of the 'field' tag or
 // column name from 'json' tag.
 func GetColumnNameFromTag(tag *reflect.StructTag) *string {
-
-	if tagStr := tag.Get("field"); len(tagStr) != 0 {
+	var p int
+	var tagStr string
+	if tagStr = tag.Get("field"); len(tagStr) != 0 {
 		// ignore it if it starts with dash
 		if tagStr[0:1] == "-" {
 			return nil
 		}
-		if p := strings.Index(tagStr, ","); p != -1 {
+		if p = strings.Index(tagStr, ","); p != -1 {
 			if p > 1 {
 				str := tagStr[:p]
 				return &str
@@ -24,21 +25,21 @@ func GetColumnNameFromTag(tag *reflect.StructTag) *string {
 		}
 	}
 
-	jsonTagStr := tag.Get("json")
-	if len(jsonTagStr) == 0 {
+	tagStr = tag.Get("json")
+	if len(tagStr) == 0 {
 		return nil
 	}
-	if jsonTagStr[0:1] == "-" {
+	if tagStr[0:1] == "-" {
 		return nil
 	}
-	if p := strings.Index(jsonTagStr, ","); p != -1 {
+	if p = strings.Index(tagStr, ","); p != -1 {
 		if p > 1 {
-			str := jsonTagStr[:p]
+			str := tagStr[:p]
 			return &str
 		}
 		return nil
 	}
-	return &jsonTagStr
+	return &tagStr
 }
 
 func HasColumnAttributeFromTag(tag *reflect.StructTag, aName string) bool {
