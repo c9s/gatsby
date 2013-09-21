@@ -43,7 +43,6 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
 			continue
 		}
-
 		if HasColumnAttributeFromTag(&tag, "serial") {
 			continue
 		}

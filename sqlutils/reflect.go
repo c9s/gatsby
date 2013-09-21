@@ -8,6 +8,7 @@ var columnNameClauseCache = map[string]string{}
 var columnNameClauseWithAliasCache = map[string]string{}
 var tableNameCache = map[string]string{}
 var primaryKeyColumnCache = map[string]string{}
+var primaryKeyIdxCache = map[string]int{}
 
 // provide PrimaryKey interface for faster column name accessing
 type PrimaryKey interface {
@@ -16,34 +17,40 @@ type PrimaryKey interface {
 }
 
 func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
+	if idx := GetPrimaryKeyIdx(val); idx != -1 {
+		t := reflect.ValueOf(val).Elem()
+		t.Field(idx).SetInt(keyValue)
+		return true
+	}
+	return false
+}
+
+func GetPrimaryKeyIdx(val interface{}) int {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
-
+	var name string = typeOfT.String()
+	if cache, ok := primaryKeyIdxCache[name]; ok {
+		return cache
+	}
 	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
 		tag = typeOfT.Field(i).Tag
 		if HasColumnAttributeFromTag(&tag, "primary") {
-			t.Field(i).SetInt(keyValue)
-			return true
+			primaryKeyIdxCache[name] = i
+			return i
 		}
 	}
-	return false
+	primaryKeyIdxCache[name] = -1
+	return -1
 }
 
 // Find the primary key column and return the value of primary key.
 // Return nil if primary key is not found.
 func GetPrimaryKeyValue(val interface{}) *int64 {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
-
-	var tag reflect.StructTag
-	for i := 0; i < t.NumField(); i++ {
-		tag = typeOfT.Field(i).Tag
-		if HasColumnAttributeFromTag(&tag, "primary") {
-			if val, ok := t.Field(i).Interface().(int64); ok {
-				return &val
-			}
-			panic("Can not convert primary key value to int64")
+	if idx := GetPrimaryKeyIdx(val); idx != -1 {
+		t := reflect.ValueOf(val).Elem()
+		if val, ok := t.Field(idx).Interface().(int64); ok {
+			return &val
 		}
 	}
 	return nil
@@ -56,18 +63,15 @@ func GetPrimaryKeyColumnName(val interface{}) *string {
 
 	var columnName *string
 	var structName string = typeOfT.String()
+	var tag reflect.StructTag
 
 	if cache, ok := primaryKeyColumnCache[structName]; ok {
 		return &cache
 	}
 
-	var tag reflect.StructTag
-	for i := 0; i < t.NumField(); i++ {
-		tag = typeOfT.Field(i).Tag
-		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
-			continue
-		}
-		if HasColumnAttributeFromTag(&tag, "primary") {
+	if idx := GetPrimaryKeyIdx(val); idx != -1 {
+		tag = typeOfT.Field(idx).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
 			primaryKeyColumnCache[structName] = *columnName
 			return columnName
 		}
