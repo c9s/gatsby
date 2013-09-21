@@ -2,13 +2,6 @@ package sqlutils
 
 import "testing"
 
-func BenchmarkBuildInsertClause(b *testing.B) {
-	foo := fooRecord{Id: 3, Name: "Mary"}
-	for i := 0; i < b.N; i++ {
-		BuildInsertClause(&foo)
-	}
-}
-
 func TestBuildInsertClause(t *testing.T) {
 	foo := fooRecord{Id: 3, Name: "Mary"}
 	sql, args := BuildInsertClause(&foo)
@@ -18,5 +11,12 @@ func TestBuildInsertClause(t *testing.T) {
 	}
 	if len(args) == 0 {
 		t.Fatal("Empty argument")
+	}
+}
+
+func BenchmarkBuildInsertClause(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		BuildInsertClause(&foo)
 	}
 }

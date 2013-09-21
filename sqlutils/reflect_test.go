@@ -3,13 +3,6 @@ package sqlutils
 import "testing"
 import "sort"
 
-type fooRecord struct {
-	Id       int64  `json:"id" field:"id,primary"`
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	Internal int    `json:-`
-}
-
 func TestTableName(t *testing.T) {
 	n := GetTableName(&fooRecord{})
 	if n != "foo_records" {
@@ -39,20 +32,6 @@ func TestPrimaryKeyColumnValueFound(t *testing.T) {
 	v = GetPrimaryKeyValue(&foo)
 	if *v != 2 {
 		t.Fatal("Primary key value is not updated.")
-	}
-}
-
-func BenchmarkGetPrimaryKeyValue(b *testing.B) {
-	foo := fooRecord{Id: 3, Name: "Mary"}
-	for i := 0; i < b.N; i++ {
-		GetPrimaryKeyValue(&foo)
-	}
-}
-
-func BenchmarkGetColumnValueMap(b *testing.B) {
-	foo := fooRecord{Id: 3, Name: "Mary"}
-	for i := 0; i < b.N; i++ {
-		GetColumnValueMap(&foo)
 	}
 }
 
@@ -91,5 +70,25 @@ func TestColumnNamesParsing(t *testing.T) {
 	t.Log(columns)
 	if len(columns) != 3 {
 		t.Fail()
+	}
+}
+
+func BenchmarkGetPrimaryKeyValue(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		GetPrimaryKeyValue(&foo)
+	}
+}
+
+func BenchmarkPrimaryKeyColumnName(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GetPrimaryKeyColumnName(&fooRecord{})
+	}
+}
+
+func BenchmarkGetColumnValueMap(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		GetColumnValueMap(&foo)
 	}
 }

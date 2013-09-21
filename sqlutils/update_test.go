@@ -12,3 +12,10 @@ func TestBuildUpdateClause(t *testing.T) {
 		t.Fatal("Value length error")
 	}
 }
+
+func BenchmarkBuildUpdateClause(b *testing.B) {
+	foo := fooRecord{Id: 3, Name: "Mary"}
+	for i := 0; i < b.N; i++ {
+		BuildUpdateClause(&foo)
+	}
+}

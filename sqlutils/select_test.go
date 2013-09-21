@@ -51,3 +51,10 @@ func chkResult(t *testing.T, res *Result) {
 		t.Fatal(res.Error, res.Sql)
 	}
 }
+
+func BenchmarkBuildSelectClause(b *testing.B) {
+	staff := Staff{Id: 4, Name: "John", Gender: "m", Phone: "0975277696"}
+	for i := 0; i < b.N; i++ {
+		BuildSelectClause(&staff)
+	}
+}

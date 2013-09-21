@@ -1,2 +1,3 @@
+#!/bin/bash
 go test -i
-GOGC=off go test -benchtime=1s -test.benchmem=true -bench=. >| new.txt && go-benchcmp old.txt new.txt
+GOGC=off go test -benchtime=1s -test.benchmem=true -bench $1 >| new.txt && go-benchcmp old.txt new.txt

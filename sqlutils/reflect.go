@@ -19,13 +19,10 @@ func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if GetColumnNameFromTag(&tag) == nil {
-			continue
-		}
-		var columnAttributes = GetColumnAttributesFromTag(&tag)
-		if _, ok := columnAttributes["primary"]; ok {
+		tag = typeOfT.Field(i).Tag
+		if HasColumnAttributeFromTag(&tag, "primary") {
 			t.Field(i).SetInt(keyValue)
 			return true
 		}
@@ -39,11 +36,9 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if GetColumnNameFromTag(&tag) == nil {
-			continue
-		}
+		tag = typeOfT.Field(i).Tag
 		if HasColumnAttributeFromTag(&tag, "primary") {
 			if val, ok := t.Field(i).Interface().(int64); ok {
 				return &val
@@ -59,14 +54,16 @@ func GetPrimaryKeyColumnName(val interface{}) *string {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
+	var columnName *string
 	var structName string = typeOfT.String()
+
 	if cache, ok := primaryKeyColumnCache[structName]; ok {
 		return &cache
 	}
 
-	var columnName *string
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
+		tag = typeOfT.Field(i).Tag
 		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
 			continue
 		}
