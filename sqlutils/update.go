@@ -30,25 +30,29 @@ func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface
 
 // This function generate update columns from a struct object.
 func BuildUpdateColumns(val interface{}) (string, []interface{}) {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
-	var setFields []string
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	var values []interface{}
+	var tag reflect.StructTag
+	var field reflect.Value
+	var columnName *string
+	var clauseSQL string = ""
+	var value interface{}
 
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var field reflect.Value = t.Field(i)
-
-		if field.Interface() == nil {
+		field = t.Field(i)
+		if value = field.Interface(); value == nil {
 			continue
 		}
 
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
+		tag = typeOfT.Field(i).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
 			continue
 		}
-		setFields = append(setFields, *columnName+" = $"+strconv.Itoa(len(values)+1))
-		values = append(values, field.Interface())
+
+		clauseSQL += *columnName + " = $" + strconv.Itoa(len(values)+1) + ", "
+		// setFields = append(setFields, *columnName+" = $"+strconv.Itoa(len(values)+1))
+		values = append(values, value)
 	}
-	return strings.Join(setFields, ", "), values
+	return clauseSQL[:len(clauseSQL)-2], values
 }

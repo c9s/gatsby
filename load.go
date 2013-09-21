@@ -29,25 +29,17 @@ func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...inter
 Fill a record object by executing a SQL query.
 */
 func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
-	rows, err := db.Query(sqlstring, args...)
-	if err != nil {
-		return NewErrorResult(err, sqlstring)
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		if err = FillFromRows(val, rows); err != nil {
-			return NewErrorResult(err, sqlstring)
+	var err error
+	row := db.QueryRow(sqlstring, args...)
+	if err = FillFromRows(val, row); err != nil {
+		if err == sql.ErrNoRows {
+			res := NewResult(sqlstring)
+			res.IsEmpty = true
+			return res
 		}
-		return NewResult(sqlstring)
-	}
-	if err = rows.Err(); err != nil {
 		return NewErrorResult(err, sqlstring)
 	}
-
-	res := NewResult(sqlstring)
-	res.IsEmpty = true
-	return res
+	return NewResult(sqlstring)
 }
 
 func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) *Result {
