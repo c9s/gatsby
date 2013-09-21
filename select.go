@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-const SliceCap = 200
+const DefaultSliceCap = 200
 
 /*
 Scan data from sql.Rows and returns a map slice.
@@ -17,7 +17,7 @@ func CreateStructSliceFromRows(val PtrRecord, rows *sql.Rows) (interface{}, erro
 	var value = reflect.Indirect(reflect.ValueOf(val))
 	var typeOfVal = value.Type()
 	var sliceOfVal = reflect.SliceOf(typeOfVal)
-	var slice = reflect.MakeSlice(sliceOfVal, 0, SliceCap)
+	var slice = reflect.MakeSlice(sliceOfVal, 0, DefaultSliceCap)
 	var err error
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)

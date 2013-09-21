@@ -31,13 +31,16 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 
 	var values []interface{}
 	var fieldId int = 1
+	var tag reflect.StructTag
+	var columnName *string
+	var field reflect.Value
+	var fieldType reflect.StructField
 
 	for i := 0; i < t.NumField(); i++ {
-		var fieldType = typeOfT.Field(i)
-		var tag reflect.StructTag = fieldType.Tag
+		fieldType = typeOfT.Field(i)
+		tag = fieldType.Tag
 
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
+		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
 			continue
 		}
 
@@ -45,7 +48,8 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 			continue
 		}
 
-		var field reflect.Value = t.Field(i)
+		field = t.Field(i)
+
 		var val interface{} = field.Interface()
 
 		// if time is null or with zero value, just skip it.

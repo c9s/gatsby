@@ -12,8 +12,9 @@ Fill a record object by executing QueryRow from sql.DB object,
 this method is faster than the DB.Query method.
 */
 func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
+	var err error
 	var row = db.QueryRow(sqlstring, args...)
-	if err := FillFromRows(val, row); err != nil {
+	if err = FillFromRows(val, row); err != nil {
 		if err == sql.ErrNoRows {
 			res := NewResult(sqlstring)
 			res.IsEmpty = true
@@ -35,8 +36,7 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 	defer rows.Close()
 
 	if rows.Next() {
-		err = FillFromRows(val, rows)
-		if err != nil {
+		if err = FillFromRows(val, rows); err != nil {
 			return NewErrorResult(err, sqlstring)
 		}
 		return NewResult(sqlstring)
