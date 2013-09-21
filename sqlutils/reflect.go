@@ -64,10 +64,10 @@ func GetPrimaryKeyColumnName(val interface{}) *string {
 		return &cache
 	}
 
+	var columnName *string
 	for i := 0; i < t.NumField(); i++ {
 		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var columnName *string = GetColumnNameFromTag(&tag)
-		if columnName == nil {
+		if columnName = GetColumnNameFromTag(&tag); columnName == nil {
 			continue
 		}
 		if HasColumnAttributeFromTag(&tag, "primary") {
@@ -86,10 +86,11 @@ func GetColumnValueMap(val interface{}) map[string]interface{} {
 
 	// var structName string = typeOfT.String()
 	var columns = map[string]interface{}{}
-
+	var tag reflect.StructTag
+	var columnName *string
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+		tag = typeOfT.Field(i).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
 			columns[*columnName] = t.Field(i).Interface()
 		}
 	}
@@ -106,9 +107,11 @@ func ReflectColumnNamesClauseWithAlias(val interface{}, alias string) string {
 	}
 
 	var sql string = ""
+	var columnName *string
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+		tag = typeOfT.Field(i).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
 			sql += alias + "." + *columnName + ", "
 		}
 	}
@@ -128,9 +131,11 @@ func ReflectColumnNamesClause(val interface{}) string {
 	}
 
 	var sql string = ""
+	var columnName *string
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+		tag = typeOfT.Field(i).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
 			sql += *columnName + ", "
 		}
 	}
@@ -151,9 +156,11 @@ func ReflectColumnNames(val interface{}) []string {
 	}
 
 	var columns []string
+	var columnName *string
+	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		if columnName := GetColumnNameFromTag(&tag); columnName != nil {
+		tag = typeOfT.Field(i).Tag
+		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
 			columns = append(columns, *columnName)
 		}
 	}
