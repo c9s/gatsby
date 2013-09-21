@@ -6,7 +6,7 @@ import (
 	"reflect"
 )
 
-const SliceCap = 200
+const DefaultSliceCap = 200
 
 /*
 Scan data from sql.Rows and returns a map slice.
@@ -17,17 +17,16 @@ func CreateStructSliceFromRows(val PtrRecord, rows *sql.Rows) (interface{}, erro
 	var value = reflect.Indirect(reflect.ValueOf(val))
 	var typeOfVal = value.Type()
 	var sliceOfVal = reflect.SliceOf(typeOfVal)
-	var slice = reflect.MakeSlice(sliceOfVal, 0, SliceCap)
+	var slice = reflect.MakeSlice(sliceOfVal, 0, DefaultSliceCap)
+	var err error
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
-		var err = FillFromRows(newValue.Interface(), rows)
-		if err != nil {
+		if err = FillFromRows(newValue.Interface(), rows); err != nil {
 			return slice.Interface(), err
 		}
 		slice = reflect.Append(slice, reflect.Indirect(newValue))
 	}
-	var err = rows.Err()
-	if err != nil {
+	if err = rows.Err(); err != nil {
 		return slice, err
 	}
 	return slice.Interface(), nil
@@ -55,13 +54,11 @@ func Select(db *sql.DB, val PtrRecord) (interface{}, *Result) {
 Execute a select query to the database connection.
 */
 func QuerySelect(db *sql.DB, val PtrRecord) (*sql.Rows, error) {
-	sql := sqlutils.BuildSelectClause(val)
-	return db.Query(sql)
+	return db.Query(sqlutils.BuildSelectClause(val))
 }
 
 func QuerySelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) (*sql.Rows, error) {
-	sql := sqlutils.BuildSelectClause(val) + " " + postSql
-	return db.Query(sql, args...)
+	return db.Query(sqlutils.BuildSelectClause(val)+" "+postSql, args...)
 }
 
 // Select a table and returns objects

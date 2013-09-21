@@ -10,8 +10,7 @@ import (
 func Create(executor Executor, val interface{}, driver int) *Result {
 	var err error
 
-	err = sqlutils.CheckRequired(val)
-	if err != nil {
+	if err = sqlutils.CheckRequired(val); err != nil {
 		return NewErrorResult(err, "")
 	}
 
