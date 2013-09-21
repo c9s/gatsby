@@ -51,8 +51,7 @@ func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interfac
 }
 
 func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) *Result {
-	var sqlstring = sqlutils.BuildSelectClause(val) + " " + postQuery +
-		sqlutils.BuildLimitClause(1)
+	var sqlstring = sqlutils.BuildSelectClause(val) + " " + postQuery + sqlutils.BuildLimitClause(1)
 	return LoadFromQueryRow(db, val, sqlstring, args...)
 }
 
