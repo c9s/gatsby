@@ -7,6 +7,9 @@ import (
 
 type WhereMap map[string]interface{}
 
+// Load record by primary key value.
+var loadQueryCache = map[string]string{}
+
 /*
 Fill a record object by executing QueryRow from sql.DB object,
 this method is faster than the DB.Query method.
@@ -47,15 +50,8 @@ func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) 
 	return LoadFromQueryRow(db, val, sqlstring, args...)
 }
 
-// Load record by primary key value.
 func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
-	var pName = sqlutils.GetPrimaryKeyColumnName(val)
-	if pName == nil {
-		panic("primary key is required.")
-	}
-	var sqlstring = sqlutils.BuildSelectClause(val) + " WHERE " + *pName + " = $1" +
-		sqlutils.BuildLimitClause(1)
-
+	var sqlstring = sqlutils.BuildLoadClause(val)
 	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 

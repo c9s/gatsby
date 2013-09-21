@@ -1,5 +1,7 @@
 package sqlutils
 
+var selectQueryCache = map[string]string{}
+
 // import "errors"
 
 // Build SQL columns string for selecting,
@@ -16,7 +18,14 @@ func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) s
 
 // Given a struct object, return a "SELECT ... FROM {tableName}" SQL clause.
 func BuildSelectClause(val interface{}) string {
-	return "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + GetTableName(val)
+	n := GetTableName(val)
+	if sql, ok := selectQueryCache[n]; ok {
+		return sql
+	} else {
+		sql := "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + GetTableName(val)
+		selectQueryCache[n] = sql
+		return sql
+	}
 }
 
 // Given a struct object and an alias string,
