@@ -8,20 +8,27 @@ import (
 )
 
 // struct pointer
-func CheckRequired(val interface{}) error {
-	t := reflect.ValueOf(val).Elem()
+func CheckRequired(structVal interface{}) error {
+	t := reflect.ValueOf(structVal).Elem()
 	typeOfT := t.Type()
 
+	var tag reflect.StructTag
+	var tagStr string
+	var p int
+
+	var fieldValue reflect.Value
+	var fieldType reflect.StructField
+	var val interface{}
 	for i := 0; i < t.NumField(); i++ {
-		var tag reflect.StructTag = typeOfT.Field(i).Tag
-		var tagStr = tag.Get("field")
+		tag = typeOfT.Field(i).Tag
+		tagStr = tag.Get("field")
 
 		// var attributes map[string]bool = GetColumnAttributesFromTag(&tag)
 		// if _, ok := attributes["required"]; ok {
-		if p := strings.Index(tagStr, "required"); p != -1 {
-			var fieldValue reflect.Value = t.Field(i)
-			var fieldType = typeOfT.Field(i)
-			var val = fieldValue.Interface()
+		if p = strings.Index(tagStr, "required"); p != -1 {
+			fieldValue = t.Field(i)
+			fieldType = typeOfT.Field(i)
+			val = fieldValue.Interface()
 
 			switch t := val.(type) {
 			default:
