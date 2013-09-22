@@ -5,8 +5,7 @@ import (
 )
 
 // import "fmt"
-
-func SetPrimaryKey(val interface{}, id int64) {
+func setPrimaryKey(val interface{}, id int64) {
 	if _, ok := val.(sqlutils.PrimaryKey); ok {
 		val.(sqlutils.PrimaryKey).SetPkId(id)
 	} else {
@@ -38,7 +37,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 
 		// if the struct supports the primary key interface, we can set the value faster.
 		result.Id = id
-		SetPrimaryKey(val, result.Id)
+		setPrimaryKey(val, result.Id)
 	} else if driver == DriverMysql {
 		res, err := executor.Exec(sqlStr, args...)
 		if err != nil {
@@ -48,7 +47,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
-		SetPrimaryKey(val, result.Id)
+		setPrimaryKey(val, result.Id)
 	} else {
 		panic("Unsupported driver type")
 	}
