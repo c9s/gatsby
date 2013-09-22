@@ -6,6 +6,14 @@ import (
 
 // import "fmt"
 
+func SetPrimaryKey(val interface{}, id int64) {
+	if _, ok := val.(sqlutils.PrimaryKey); ok {
+		val.(sqlutils.PrimaryKey).SetPkId(id)
+	} else {
+		sqlutils.SetPrimaryKeyValue(val, id)
+	}
+}
+
 // id, err := Create(db pointer, struct pointer)
 func Create(executor Executor, val interface{}, driver int) *Result {
 	var err error
@@ -22,25 +30,15 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 		if col := sqlutils.GetPrimaryKeyColumnName(val); col != nil {
 			sqlStr = sqlStr + " RETURNING " + *col
 		}
-		rows, err := executor.Query(sqlStr, args...)
-
-		if err != nil {
-			return NewErrorResult(err, sqlStr)
-		}
-		defer rows.Close()
-
-		id, err := sqlutils.GetPgReturningIdFromRows(rows)
+		row := executor.QueryRow(sqlStr, args...)
+		id, err := GetPgReturningIdFromRows(row)
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
 
 		// if the struct supports the primary key interface, we can set the value faster.
 		result.Id = id
-		if _, ok := val.(sqlutils.PrimaryKey); ok {
-			val.(sqlutils.PrimaryKey).SetPkId(id)
-		} else {
-			sqlutils.SetPrimaryKeyValue(val, id)
-		}
+		SetPrimaryKey(val, result.Id)
 	} else if driver == DriverMysql {
 		res, err := executor.Exec(sqlStr, args...)
 		if err != nil {
@@ -50,12 +48,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
 		}
-
-		if _, ok := val.(sqlutils.PrimaryKey); ok {
-			val.(sqlutils.PrimaryKey).SetPkId(result.Id)
-		} else {
-			sqlutils.SetPrimaryKeyValue(val, result.Id)
-		}
+		SetPrimaryKey(val, result.Id)
 	} else {
 		panic("Unsupported driver type")
 	}
