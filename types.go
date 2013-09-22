@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// NullInt32 represents an int64 that may be null.
+// NullInt32 represents an int32 that may be null.
 // NullInt32 implements the Scanner interface so
 // it can be used as a scan destination, similar to NullString.
 type NullInt32 struct {
