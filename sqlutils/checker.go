@@ -30,7 +30,7 @@ func CheckRequired(structVal interface{}) error {
 
 			switch t := val.(type) {
 			default:
-				fmt.Printf("unexpected type %T", t) // %T prints whatever type t has
+				fmt.Printf("unsuppported type for required attribute: %T\n", t) // %T prints whatever type t has
 			case string:
 				if t == "" {
 					fieldType = typeOfT.Field(i)
