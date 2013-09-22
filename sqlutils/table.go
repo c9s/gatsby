@@ -5,13 +5,16 @@ import "github.com/c9s/inflect"
 
 // (struct pointer)
 func GetTypeName(val interface{}) string {
-	return reflect.ValueOf(val).Elem().Type().Name()
+	var v = reflect.ValueOf(val)
+	if v.Kind() == reflect.Ptr {
+		return v.Elem().Type().Name()
+	}
+	return v.Type().Name()
 }
 
 // (struct pointer)
 func GetTableName(val interface{}) string {
-	typeName := reflect.ValueOf(val).Elem().Type().Name()
-	return GetTableNameFromTypeName(typeName)
+	return GetTableNameFromTypeName(GetTypeName(val))
 }
 
 // Convert type name to table name with underscore and plurize.

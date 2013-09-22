@@ -3,8 +3,8 @@ package sqlutils
 var loadQueryCache = map[string]string{}
 
 func BuildLoadClause(val interface{}) string {
-	n := GetTableName(val)
-	if cache, ok := loadQueryCache[n]; ok {
+	k := GetTypeName(val)
+	if cache, ok := loadQueryCache[k]; ok {
 		return cache
 	} else {
 		var pName = GetPrimaryKeyColumnName(val)
@@ -12,7 +12,7 @@ func BuildLoadClause(val interface{}) string {
 			panic("primary key is required.")
 		}
 		var sqlstring = BuildSelectClause(val) + " WHERE " + *pName + " = $1" + BuildLimitClause(1)
-		loadQueryCache[n] = sqlstring
+		loadQueryCache[k] = sqlstring
 		return sqlstring
 	}
 }

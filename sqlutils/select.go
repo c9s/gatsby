@@ -18,12 +18,12 @@ func BuildSelectColumnClauseFromStructWithAlias(val interface{}, alias string) s
 
 // Given a struct object, return a "SELECT ... FROM {tableName}" SQL clause.
 func BuildSelectClause(val interface{}) string {
-	n := GetTableName(val)
-	if sql, ok := selectQueryCache[n]; ok {
+	k := GetTypeName(val)
+	if sql, ok := selectQueryCache[k]; ok {
 		return sql
 	} else {
 		sql := "SELECT " + BuildSelectColumnClauseFromStruct(val) + " FROM " + GetTableName(val)
-		selectQueryCache[n] = sql
+		selectQueryCache[k] = sql
 		return sql
 	}
 }

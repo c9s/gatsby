@@ -26,21 +26,21 @@ func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
 }
 
 func GetPrimaryKeyIdx(val interface{}) int {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
-	var name string = typeOfT.String()
-	if cache, ok := primaryKeyIdxCache[name]; ok {
+	var cacheKey string = GetTypeName(val)
+	if cache, ok := primaryKeyIdxCache[cacheKey]; ok {
 		return cache
 	}
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	var tag reflect.StructTag
 	for i := 0; i < t.NumField(); i++ {
 		tag = typeOfT.Field(i).Tag
 		if HasColumnAttributeFromTag(&tag, "primary") {
-			primaryKeyIdxCache[name] = i
+			primaryKeyIdxCache[cacheKey] = i
 			return i
 		}
 	}
-	primaryKeyIdxCache[name] = -1
+	primaryKeyIdxCache[cacheKey] = -1
 	return -1
 }
 
@@ -58,21 +58,20 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 
 // Return the primary key column name, return nil if not found.
 func GetPrimaryKeyColumnName(val interface{}) *string {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
-
 	var columnName *string
-	var structName string = typeOfT.String()
+	var cacheKey string = GetTypeName(val)
 	var tag reflect.StructTag
 
-	if cache, ok := primaryKeyColumnCache[structName]; ok {
+	if cache, ok := primaryKeyColumnCache[cacheKey]; ok {
 		return &cache
 	}
 
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	if idx := GetPrimaryKeyIdx(val); idx != -1 {
 		tag = typeOfT.Field(idx).Tag
 		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
-			primaryKeyColumnCache[structName] = *columnName
+			primaryKeyColumnCache[cacheKey] = *columnName
 			return columnName
 		}
 	}
@@ -99,14 +98,13 @@ func GetColumnValueMap(val interface{}) map[string]interface{} {
 }
 
 func ReflectColumnNamesClauseWithAlias(val interface{}, alias string) string {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
-
-	var structName string = typeOfT.String()
-	if cache, ok := columnNameClauseWithAliasCache[structName]; ok {
+	var cacheKey string = GetTypeName(val)
+	if cache, ok := columnNameClauseWithAliasCache[cacheKey]; ok {
 		return cache
 	}
 
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	var sql string = ""
 	var columnName *string
 	var tag reflect.StructTag
@@ -118,19 +116,19 @@ func ReflectColumnNamesClauseWithAlias(val interface{}, alias string) string {
 	}
 
 	sql = sql[:len(sql)-2]
-	columnNameClauseWithAliasCache[structName] = sql
+	columnNameClauseWithAliasCache[cacheKey] = sql
 	return sql
 }
 
 func ReflectColumnNamesClause(val interface{}) string {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
 
-	var structName string = typeOfT.String()
-	if cache, ok := columnNameClauseCache[structName]; ok {
+	var cacheKey string = GetTypeName(val)
+	if cache, ok := columnNameClauseCache[cacheKey]; ok {
 		return cache
 	}
 
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	var sql string = ""
 	var columnName *string
 	var tag reflect.StructTag
@@ -142,20 +140,20 @@ func ReflectColumnNamesClause(val interface{}) string {
 	}
 
 	sql = sql[:len(sql)-2]
-	columnNameClauseCache[structName] = sql
+	columnNameClauseCache[cacheKey] = sql
 	return sql
 }
 
 // Iterate struct names and return a slice that contains column names.
 func ReflectColumnNames(val interface{}) []string {
-	t := reflect.ValueOf(val).Elem()
-	typeOfT := t.Type()
 
-	var structName string = typeOfT.String()
-	if cache, ok := columnNameCache[structName]; ok {
+	var cacheKey string = GetTypeName(val)
+	if cache, ok := columnNameCache[cacheKey]; ok {
 		return cache
 	}
 
+	var t = reflect.ValueOf(val).Elem()
+	var typeOfT = t.Type()
 	var columns []string
 	var columnName *string
 	var tag reflect.StructTag
@@ -165,6 +163,6 @@ func ReflectColumnNames(val interface{}) []string {
 			columns = append(columns, *columnName)
 		}
 	}
-	columnNameCache[structName] = columns
+	columnNameCache[cacheKey] = columns
 	return columns
 }

@@ -8,9 +8,8 @@ import (
 )
 
 func CheckRequired(structVal interface{}) error {
-	t := reflect.ValueOf(structVal).Elem()
-	typeOfT := t.Type()
-
+	var t = reflect.ValueOf(structVal).Elem()
+	var typeOfT = t.Type()
 	var tag reflect.StructTag
 	var tagStr string
 	var p int
