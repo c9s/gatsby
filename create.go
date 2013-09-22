@@ -19,8 +19,9 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 
 	// get the autoincrement id from result
 	if driver == DriverPg {
-		col := sqlutils.GetPrimaryKeyColumnName(val)
-		sqlStr = sqlStr + " RETURNING " + *col
+		if col := sqlutils.GetPrimaryKeyColumnName(val); col != nil {
+			sqlStr = sqlStr + " RETURNING " + *col
+		}
 		rows, err := executor.Query(sqlStr, args...)
 
 		if err != nil {
