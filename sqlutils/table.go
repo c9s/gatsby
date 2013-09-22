@@ -3,6 +3,12 @@ package sqlutils
 import "reflect"
 import "github.com/c9s/inflect"
 
+// (struct pointer)
+func GetTypeName(val interface{}) string {
+	return reflect.ValueOf(val).Elem().Type().Name()
+}
+
+// (struct pointer)
 func GetTableName(val interface{}) string {
 	typeName := reflect.ValueOf(val).Elem().Type().Name()
 	return GetTableNameFromTypeName(typeName)
