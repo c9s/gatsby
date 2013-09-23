@@ -25,3 +25,7 @@ func (self *Staff) GetPrimaryKeyValue() int64 {
 func (self *Staff) SetPrimaryKeyValue(id int64) {
 	self.Id = id
 }
+
+func (self *Staff) GetTableName() string {
+	return "staffs"
+}
