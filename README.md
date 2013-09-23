@@ -109,13 +109,3 @@ if res.Error != nil {
 
 }
 ```
-
-
-WIP
-----
-
-- Support uint64 for primary key.
-- Support more NullInt types.
-- Move pq.NullTime to support time.Time conversion.
-
-
