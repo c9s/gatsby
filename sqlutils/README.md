@@ -44,7 +44,7 @@ PrimaryKey interface
 Implement the PrimaryKey interface
 
 ```go
-func (self *Staff) GetPkId() int64 {
+func (self *Staff) GetPrimaryKeyValue() int64 {
     return self.Id
 }
 

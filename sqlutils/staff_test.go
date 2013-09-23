@@ -12,8 +12,8 @@ type Staff struct {
 	CreatedOn *time.Time `json:"created_on" field:"created_on"`
 }
 
-// Implement the GetPkId interface
-func (self *Staff) GetPkId() int64 {
+// Implement the GetPrimaryKeyValue interface
+func (self *Staff) GetPrimaryKeyValue() int64 {
 	return self.Id
 }
 

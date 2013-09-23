@@ -17,8 +17,8 @@ func (self *Staff) Init() {
 	self.SetTarget(self)
 }
 
-// Implement the GetPkId interface
-func (self *Staff) GetPkId() int64 {
+// Implement the GetPrimaryKeyValue interface
+func (self *Staff) GetPrimaryKeyValue() int64 {
 	return self.Id
 }
 

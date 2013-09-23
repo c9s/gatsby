@@ -18,7 +18,7 @@ func Delete(executor Executor, val PtrRecord) *Result {
 
 	var id int64
 	if _, ok := val.(sqlutils.PrimaryKey); ok {
-		id = val.(sqlutils.PrimaryKey).GetPkId()
+		id = val.(sqlutils.PrimaryKey).GetPrimaryKeyValue()
 	} else {
 		id = *sqlutils.GetPrimaryKeyValue(val)
 	}
