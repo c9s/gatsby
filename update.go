@@ -2,7 +2,6 @@ package gatsby
 
 import "gatsby/sqlutils"
 import "strconv"
-import "errors"
 
 func Update(executor Executor, val interface{}) *Result {
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
@@ -12,16 +11,8 @@ func Update(executor Executor, val interface{}) *Result {
 
 	sql, values := sqlutils.BuildUpdateClause(val)
 
-	if _, ok := val.(sqlutils.PrimaryKey); ok {
-		var id = val.(sqlutils.PrimaryKey).GetPrimaryKeyValue()
-		values = append(values, id)
-	} else {
-		var id = sqlutils.GetPrimaryKeyValue(val)
-		if id == nil {
-			return NewErrorResult(errors.New("primary key field is required."), "")
-		}
-		values = append(values, *id)
-	}
+	var id = sqlutils.GetPrimaryKeyValue(val)
+	values = append(values, id)
 
 	// sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
 	sql += " WHERE " + *pkName + " = $" + strconv.Itoa(len(values))

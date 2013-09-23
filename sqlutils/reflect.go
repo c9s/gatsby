@@ -44,19 +44,19 @@ func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
 
 // Find the primary key column and return the value of primary key.
 // Return nil if primary key is not found.
-func GetPrimaryKeyValue(val interface{}) *int64 {
+func GetPrimaryKeyValue(val interface{}) int64 {
 	if o, ok := val.(PrimaryKeyValueGetter); ok {
 		i64 := o.GetPrimaryKeyValue()
-		return &i64
+		return i64
 	}
 
 	if idx := FindPrimaryKeyIdx(val); idx != -1 {
 		t := reflect.ValueOf(val).Elem()
 		if val, ok := t.Field(idx).Interface().(int64); ok {
-			return &val
+			return val
 		}
 	}
-	return nil
+	panic("PrimaryKeyValueGetter interface is not defined.")
 }
 
 func FindPrimaryKeyIdx(val interface{}) int {
