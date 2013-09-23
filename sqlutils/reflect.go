@@ -16,6 +16,10 @@ type PrimaryKey interface {
 	SetPkId(int64)
 }
 
+type PrimaryKeyValue interface {
+	GetPrimaryKeyValue() int64
+}
+
 type PrimaryKeyColumnName interface {
 	GetPrimaryKeyColumnName() string
 }
@@ -51,6 +55,11 @@ func GetPrimaryKeyIdx(val interface{}) int {
 // Find the primary key column and return the value of primary key.
 // Return nil if primary key is not found.
 func GetPrimaryKeyValue(val interface{}) *int64 {
+	if o, ok := val.(PrimaryKeyValue); ok {
+		i64 := o.GetPrimaryKeyValue()
+		return &i64
+	}
+
 	if idx := GetPrimaryKeyIdx(val); idx != -1 {
 		t := reflect.ValueOf(val).Elem()
 		if val, ok := t.Field(idx).Interface().(int64); ok {
