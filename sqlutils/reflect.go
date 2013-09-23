@@ -13,7 +13,7 @@ var primaryKeyIdxCache = map[string]int{}
 // provide PrimaryKey interface for faster column name accessing
 type PrimaryKey interface {
 	GetPrimaryKeyValue() int64
-	SetPkId(int64)
+	SetPrimaryKeyValue(int64)
 }
 
 type PrimaryKeyValue interface {

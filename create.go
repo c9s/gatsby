@@ -7,7 +7,7 @@ import (
 // import "fmt"
 func setPrimaryKey(val interface{}, id int64) {
 	if _, ok := val.(sqlutils.PrimaryKey); ok {
-		val.(sqlutils.PrimaryKey).SetPkId(id)
+		val.(sqlutils.PrimaryKey).SetPrimaryKeyValue(id)
 	} else {
 		sqlutils.SetPrimaryKeyValue(val, id)
 	}

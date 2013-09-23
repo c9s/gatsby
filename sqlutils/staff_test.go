@@ -17,6 +17,6 @@ func (self *Staff) GetPrimaryKeyValue() int64 {
 	return self.Id
 }
 
-func (self *Staff) SetPkId(id int64) {
+func (self *Staff) SetPrimaryKeyValue(id int64) {
 	self.Id = id
 }
