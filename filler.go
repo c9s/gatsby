@@ -46,13 +46,7 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 		switch rval.(type) {
 		case string:
 			args = append(args, new(sql.NullString))
-		case int8:
-			args = append(args, new(NullInt8))
-		case int16:
-			args = append(args, new(NullInt16))
-		case int32:
-			args = append(args, new(NullInt32))
-		case int64, int:
+		case int64, int32, int16, int8, int:
 			args = append(args, new(sql.NullInt64))
 		case bool:
 			args = append(args, new(sql.NullBool))
