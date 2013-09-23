@@ -10,14 +10,18 @@ var tableNameCache = map[string]string{}
 var primaryKeyColumnCache = map[string]string{}
 var primaryKeyIdxCache = map[string]int{}
 
-// provide PrimaryKey interface for faster column name accessing
-type PrimaryKey interface {
+type PrimaryKeyValueGetter interface {
 	GetPrimaryKeyValue() int64
+}
+
+type PrimaryKeyValueSetter interface {
 	SetPrimaryKeyValue(int64)
 }
 
-type PrimaryKeyValue interface {
-	GetPrimaryKeyValue() int64
+// provide PrimaryKey interface for faster column name accessing
+type PrimaryKey interface {
+	PrimaryKeyValueSetter
+	PrimaryKeyValueGetter
 }
 
 type PrimaryKeyColumnName interface {
@@ -25,12 +29,34 @@ type PrimaryKeyColumnName interface {
 }
 
 func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
+	if o, ok := val.(PrimaryKeyValueSetter); ok {
+		o.SetPrimaryKeyValue(keyValue)
+		return true
+	}
+
 	if idx := FindPrimaryKeyIdx(val); idx != -1 {
 		t := reflect.ValueOf(val).Elem()
 		t.Field(idx).SetInt(keyValue)
 		return true
 	}
 	return false
+}
+
+// Find the primary key column and return the value of primary key.
+// Return nil if primary key is not found.
+func GetPrimaryKeyValue(val interface{}) *int64 {
+	if o, ok := val.(PrimaryKeyValueGetter); ok {
+		i64 := o.GetPrimaryKeyValue()
+		return &i64
+	}
+
+	if idx := FindPrimaryKeyIdx(val); idx != -1 {
+		t := reflect.ValueOf(val).Elem()
+		if val, ok := t.Field(idx).Interface().(int64); ok {
+			return &val
+		}
+	}
+	return nil
 }
 
 func FindPrimaryKeyIdx(val interface{}) int {
@@ -50,23 +76,6 @@ func FindPrimaryKeyIdx(val interface{}) int {
 	}
 	primaryKeyIdxCache[cacheKey] = -1
 	return -1
-}
-
-// Find the primary key column and return the value of primary key.
-// Return nil if primary key is not found.
-func GetPrimaryKeyValue(val interface{}) *int64 {
-	if o, ok := val.(PrimaryKeyValue); ok {
-		i64 := o.GetPrimaryKeyValue()
-		return &i64
-	}
-
-	if idx := FindPrimaryKeyIdx(val); idx != -1 {
-		t := reflect.ValueOf(val).Elem()
-		if val, ok := t.Field(idx).Interface().(int64); ok {
-			return &val
-		}
-	}
-	return nil
 }
 
 // Return the primary key column name, return nil if not found.
