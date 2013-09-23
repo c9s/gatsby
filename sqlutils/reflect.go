@@ -16,6 +16,10 @@ type PrimaryKey interface {
 	SetPkId(int64)
 }
 
+type PrimaryKeyColumnName interface {
+	GetPrimaryKeyColumnName() string
+}
+
 func SetPrimaryKeyValue(val interface{}, keyValue int64) bool {
 	if idx := GetPrimaryKeyIdx(val); idx != -1 {
 		t := reflect.ValueOf(val).Elem()
@@ -60,19 +64,24 @@ func GetPrimaryKeyValue(val interface{}) *int64 {
 func GetPrimaryKeyColumnName(val interface{}) *string {
 	var columnName *string
 	var cacheKey string = GetTypeName(val)
-	var tag reflect.StructTag
-
 	if cache, ok := primaryKeyColumnCache[cacheKey]; ok {
 		return &cache
 	}
 
-	var t = reflect.ValueOf(val).Elem()
-	var typeOfT = t.Type()
-	if idx := GetPrimaryKeyIdx(val); idx != -1 {
-		tag = typeOfT.Field(idx).Tag
-		if columnName = GetColumnNameFromTag(&tag); columnName != nil {
-			primaryKeyColumnCache[cacheKey] = *columnName
-			return columnName
+	if o, ok := val.(PrimaryKeyColumnName); ok {
+		name := o.GetPrimaryKeyColumnName()
+		primaryKeyColumnCache[cacheKey] = name
+		return &name
+	} else {
+		var tag reflect.StructTag
+		var t = reflect.ValueOf(val).Elem()
+		var typeOfT = t.Type()
+		if idx := GetPrimaryKeyIdx(val); idx != -1 {
+			tag = typeOfT.Field(idx).Tag
+			if columnName = GetColumnNameFromTag(&tag); columnName != nil {
+				primaryKeyColumnCache[cacheKey] = *columnName
+				return columnName
+			}
 		}
 	}
 	return nil
