@@ -29,7 +29,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 		// if the struct supports the primary key interface, we can set the value faster.
 		result.Id = id
 		sqlutils.SetPrimaryKeyValue(val, result.Id)
-	} else if driver == DriverMysql {
+	} else if driver == DriverMysql || driver == DriverSqlite {
 		res, err := executor.Exec(sqlStr, args...)
 		if err != nil {
 			return NewErrorResult(err, sqlStr)
