@@ -21,6 +21,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 	}
 
 	var sqlStr, args = sqlutils.BuildInsertClause(val, GetHolderTypeByDriver(driver))
+
 	result := NewResult(sqlStr)
 
 	// get the autoincrement id from result

@@ -11,9 +11,9 @@ const (
 var conn *sql.DB
 var driverType int
 
-func SetupConnection(c *sql.DB, driverType int) {
+func SetupConnection(c *sql.DB, t int) {
 	conn = c
-	driverType = driverType
+	driverType = t
 }
 
 func CloseConnection() {
