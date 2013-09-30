@@ -1,7 +1,7 @@
 package gatsby
 
-import "gatsby/sqlfragments"
-import "gatsby/sqlutils"
+import "github.com/c9s/gatsby/sqlfragments"
+import "github.com/c9s/gatsby/sqlutils"
 import "strings"
 import "fmt"
 

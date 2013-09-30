@@ -1,6 +1,6 @@
 package gatsby
 
-import "gatsby/sqlutils"
+import "github.com/c9s/gatsby/sqlutils"
 import "testing"
 import _ "github.com/c9s/pq"
 import "time"

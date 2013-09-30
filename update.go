@@ -1,6 +1,6 @@
 package gatsby
 
-import "gatsby/sqlutils"
+import "github.com/c9s/gatsby/sqlutils"
 import "strconv"
 
 func Update(executor Executor, val interface{}) *Result {

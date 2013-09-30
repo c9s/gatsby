@@ -1,7 +1,7 @@
 package gatsby
 
 import "testing"
-import "gatsby/sqlutils"
+import "github.com/c9s/gatsby/sqlutils"
 
 func chkResult(t *testing.T, res *Result) {
 	if res.Error != nil {
