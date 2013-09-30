@@ -81,7 +81,7 @@ func (m *Query) String() string {
 
 		var sql string = "SELECT " + strings.Join(m.selectColumns, ", ") + " FROM " + m.tableName
 		if m.whereMap != nil {
-			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
+			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND", m.holderType)
 			sql += " WHERE " + whereSql
 			m.arguments = append(m.arguments, args...)
 		}
@@ -98,7 +98,7 @@ func (m *Query) String() string {
 		var sql = "DELETE FROM " + m.tableName
 
 		if m.whereMap != nil {
-			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
+			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND", m.holderType)
 			sql += " WHERE " + whereSql
 			m.arguments = append(m.arguments, args...)
 		}
@@ -110,7 +110,7 @@ func (m *Query) String() string {
 		sql += updateSql
 		m.arguments = append(m.arguments, args...)
 		if m.whereMap != nil {
-			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND")
+			whereSql, args := sqlutils.BuildWhereInnerClause(*m.whereMap, "AND", m.holderType)
 			sql += " WHERE " + whereSql
 			m.arguments = append(m.arguments, args...)
 		}

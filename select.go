@@ -78,7 +78,7 @@ func SelectWith(db *sql.DB, val PtrRecord, postSql string, args ...interface{}) 
 }
 
 func SelectWhere(db *sql.DB, val PtrRecord, conds WhereMap) (interface{}, *Result) {
-	var whereSql, args = sqlutils.BuildWhereClauseWithAndOp(conds)
+	var whereSql, args = sqlutils.BuildWhereClauseWithAndOp(conds, GetHolderTypeByDriver(driverType))
 	var sql = sqlutils.BuildSelectClause(val) + whereSql
 	var rows, err = db.Query(sql, args...)
 	if err != nil {

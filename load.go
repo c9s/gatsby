@@ -60,7 +60,7 @@ Load record from a where condition map
 */
 func LoadByCols(db *sql.DB, val PtrRecord, cols WhereMap) *Result {
 	var sqlstring = sqlutils.BuildSelectClause(val)
-	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols)
+	whereSql, args := sqlutils.BuildWhereClauseWithAndOp(cols, GetHolderTypeByDriver(driverType))
 	sqlstring += whereSql + sqlutils.BuildLimitClause(1)
 	return LoadFromQueryRow(db, val, sqlstring, args...)
 }
