@@ -1,7 +1,7 @@
 package gatsby
 
 import (
-	"gatsby/sqlutils"
+	"github.com/c9s/gatsby/sqlutils"
 )
 
 // id, err := Create(db pointer, struct pointer)

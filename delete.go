@@ -3,7 +3,7 @@ package gatsby
 import (
 	"database/sql"
 	"errors"
-	"gatsby/sqlutils"
+	"github.com/c9s/gatsby/sqlutils"
 )
 
 // Delete from DB connection object or a transaction object (pointer)

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"gatsby/sqlutils"
+	"github.com/c9s/gatsby/sqlutils"
 	"github.com/c9s/pq"
 	"reflect"
 	"time"

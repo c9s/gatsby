@@ -2,7 +2,7 @@ package gatsby
 
 import (
 	"database/sql"
-	"gatsby/sqlutils"
+	"github.com/c9s/gatsby/sqlutils"
 	"reflect"
 )
 
