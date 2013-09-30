@@ -1,11 +1,18 @@
 package sqlutils
 
-import "reflect"
-import "strings"
-import "strconv"
-import "time"
+import (
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
+)
 
-func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
+const (
+	NUMBER_HOLDER = iota
+	QMARK_HOLDER
+)
+
+func BuildInsertColumnsFromMap(cols map[string]interface{}, placeholder int) (string, []interface{}) {
 	var columnNames []string
 	var valueFields []string
 	var values []interface{}
@@ -13,7 +20,11 @@ func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface
 
 	for col, arg := range cols {
 		columnNames = append(columnNames, col)
-		valueFields = append(valueFields, "$"+strconv.Itoa(i))
+		if placeholder == QMARK_HOLDER {
+			valueFields = append(valueFields, "?")
+		} else {
+			valueFields = append(valueFields, "$"+strconv.Itoa(i))
+		}
 		values = append(values, arg)
 		i++
 	}
@@ -22,7 +33,7 @@ func BuildInsertColumnsFromMap(cols map[string]interface{}) (string, []interface
 }
 
 // Build Insert Column Clause from a struct type.
-func BuildInsertColumns(val interface{}) (string, []interface{}) {
+func BuildInsertColumns(val interface{}, placeholder int) (string, []interface{}) {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
@@ -68,7 +79,12 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		}
 
 		columnNamesSql += *columnName + ", "
-		valueFieldsSql += "$" + strconv.Itoa(fieldId) + ", "
+
+		if placeholder == QMARK_HOLDER {
+			valueFieldsSql += "?, "
+		} else {
+			valueFieldsSql += "$" + strconv.Itoa(fieldId) + ", "
+		}
 		values = append(values, val)
 		fieldId++
 	}
@@ -76,7 +92,7 @@ func BuildInsertColumns(val interface{}) (string, []interface{}) {
 		"VALUES ( " + valueFieldsSql[:len(valueFieldsSql)-2] + " )", values
 }
 
-func BuildInsertClause(val interface{}) (string, []interface{}) {
-	sql, values := BuildInsertColumns(val)
+func BuildInsertClause(val interface{}, placeholder int) (string, []interface{}) {
+	sql, values := BuildInsertColumns(val, placeholder)
 	return "INSERT INTO " + GetTableName(val) + sql, values
 }

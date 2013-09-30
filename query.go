@@ -16,6 +16,7 @@ type ArgMap map[string]interface{}
 
 type Query struct {
 	tableName     string
+	holderType    int
 	mode          int
 	selectColumns []string
 	whereMap      *ArgMap
@@ -36,6 +37,7 @@ func NewFragment() *sqlfragments.SQLFragments {
 func NewQuery(tableName string) *Query {
 	query := new(Query)
 	query.tableName = tableName
+	query.holderType = sqlutils.QMARK_HOLDER
 	return query
 }
 
@@ -117,7 +119,7 @@ func (m *Query) String() string {
 	case MODE_INSERT:
 
 		var sql string = "INSERT INTO " + m.tableName
-		var insertSql, args = sqlutils.BuildInsertColumnsFromMap(*m.insertMap)
+		var insertSql, args = sqlutils.BuildInsertColumnsFromMap(*m.insertMap, m.holderType)
 		sql += " " + insertSql
 		m.arguments = append(m.arguments, args...)
 		return sql

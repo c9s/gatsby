@@ -4,6 +4,14 @@ import (
 	"github.com/c9s/gatsby/sqlutils"
 )
 
+func GetHolderTypeByDriver(driver int) int {
+	if driver == DriverSqlite {
+		return sqlutils.QMARK_HOLDER
+	} else {
+		return sqlutils.NUMBER_HOLDER
+	}
+}
+
 // id, err := Create(db pointer, struct pointer)
 func Create(executor Executor, val interface{}, driver int) *Result {
 	var err error
@@ -12,7 +20,7 @@ func Create(executor Executor, val interface{}, driver int) *Result {
 		return NewErrorResult(err, "")
 	}
 
-	var sqlStr, args = sqlutils.BuildInsertClause(val)
+	var sqlStr, args = sqlutils.BuildInsertClause(val, GetHolderTypeByDriver(driver))
 	result := NewResult(sqlStr)
 
 	// get the autoincrement id from result
