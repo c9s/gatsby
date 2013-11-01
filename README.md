@@ -72,7 +72,7 @@ To define your model with Gatsby BaseRecord:
 
 ```go
 package app
-import "gatsby"
+import "github.com/c9s/gatsby"
 
 type Staff struct {
 	Id        int64     `json:"id" field:"id,primary,serial"`
@@ -87,6 +87,13 @@ type Staff struct {
 Then you can do CRUD operations on the struct object:
 
 ```go
+import "github.com/c9s/gatsby"
+import _ "github.com/mattn/go-sqlite3"
+import "database/sql"
+
+db, err := sql.Open("sqlite3", "./foo.db")
+gatsby.SetupConnection(db, gatsby.DriverSqlite)
+
 staff := gatsby.NewRecord(&Staff{}).(*Staff)
 
 res := staff.Load(10)   // load the record where primary key = 10
