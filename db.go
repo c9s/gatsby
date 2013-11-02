@@ -43,8 +43,8 @@ func (self *ConnectionHandle) Create(val PtrRecord, driver int) *Result {
 	return Create(self.conn, val, driver)
 }
 
-func (self *ConnectionHandle) Update(val PtrRecord) *Result {
-	return Update(self.conn, val)
+func (self *ConnectionHandle) Update(val PtrRecord, driver int) *Result {
+	return Update(self.conn, val, driver)
 }
 
 func (self *ConnectionHandle) Delete(val PtrRecord) *Result {

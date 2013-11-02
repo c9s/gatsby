@@ -3,7 +3,7 @@ package gatsby
 import "github.com/c9s/gatsby/sqlutils"
 import "strconv"
 
-func Update(executor Executor, val interface{}) *Result {
+func Update(executor Executor, val interface{}, driver int) *Result {
 	pkName := sqlutils.GetPrimaryKeyColumnName(val)
 	if pkName == nil {
 		panic("primary key column is not defined.")
@@ -15,7 +15,11 @@ func Update(executor Executor, val interface{}) *Result {
 	values = append(values, id)
 
 	// sql += fmt.Sprintf(" WHERE %s = $%d", *pkName, len(values))
-	sql += " WHERE " + *pkName + " = $" + strconv.Itoa(len(values))
+	if driver == DriverPg {
+		sql += " WHERE " + *pkName + " = $" + strconv.Itoa(len(values))
+	} else {
+		sql += " WHERE " + *pkName + " = ?"
+	}
 
 	stmt, err := executor.Prepare(sql)
 	if err != nil {

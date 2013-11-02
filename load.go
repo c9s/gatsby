@@ -51,7 +51,7 @@ func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) 
 }
 
 func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
-	var sqlstring = sqlutils.BuildLoadClause(val)
+	var sqlstring = sqlutils.BuildLoadClause(val, driverType)
 	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 

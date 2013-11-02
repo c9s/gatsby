@@ -94,9 +94,9 @@ func (self *BaseRecord) CreateWithInstance(o PtrRecord) *Result {
 
 func (self *BaseRecord) Update() *Result {
 	if self.Txn != nil {
-		return Update(self.Txn, self.Target)
+		return Update(self.Txn, self.Target, driverType)
 	}
-	return Update(conn, self.Target)
+	return Update(conn, self.Target, driverType)
 }
 
 func (self *BaseRecord) Load(id int64) *Result {
@@ -139,9 +139,9 @@ func (self *BaseRecord) DeleteWithInstance(o PtrRecord) *Result {
 
 func (self *BaseRecord) UpdateWithInstance(o PtrRecord) *Result {
 	if self.Txn != nil {
-		return Update(self.Txn, o)
+		return Update(self.Txn, o, driverType)
 	}
-	return Update(conn, o)
+	return Update(conn, o, driverType)
 }
 
 func (self *BaseRecord) LoadWithInstance(o PtrRecord, id int64) *Result {
