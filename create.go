@@ -5,7 +5,7 @@ import (
 )
 
 func GetHolderTypeByDriver(driver int) int {
-	if driver == DriverSqlite {
+	if driver == DriverSqlite || driver == DriverMysql {
 		return sqlutils.QMARK_HOLDER
 	} else {
 		return sqlutils.NUMBER_HOLDER
