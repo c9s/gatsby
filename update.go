@@ -9,7 +9,7 @@ func Update(executor Executor, val interface{}, driver int) *Result {
 		panic("primary key column is not defined.")
 	}
 
-	sql, values := sqlutils.BuildUpdateClause(val)
+	sql, values := sqlutils.BuildUpdateClause(val, GetHolderTypeByDriver(driver))
 
 	var id = sqlutils.GetPrimaryKeyValue(val)
 	values = append(values, id)

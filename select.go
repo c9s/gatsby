@@ -21,7 +21,7 @@ func CreateStructSliceFromRows(val PtrRecord, rows *sql.Rows) (interface{}, erro
 	var err error
 	for rows.Next() {
 		var newValue = reflect.New(typeOfVal)
-		if err = FillFromRows(newValue.Interface(), rows); err != nil {
+		if err = FillFromRows(newValue.Interface(), rows, driverType); err != nil {
 			return slice.Interface(), err
 		}
 		slice = reflect.Append(slice, reflect.Indirect(newValue))

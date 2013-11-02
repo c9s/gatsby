@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/c9s/gatsby/sqlutils"
 	"github.com/c9s/pq"
+	"github.com/go-sql-driver/mysql"
 	"reflect"
 	"time"
 )
@@ -21,7 +22,7 @@ type RecordMapList []RecordMap
 // Fill the struct data from a result rows
 // This function iterates the struct by reflection, and creates types from sql
 // package for filling result.
-func FillFromRows(val PtrRecord, rows RowScanner) error {
+func FillFromRows(val PtrRecord, rows RowScanner, driver int) error {
 	t := reflect.ValueOf(val).Elem()
 	typeOfT := t.Type()
 
@@ -53,7 +54,12 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 		case float64:
 			args = append(args, new(sql.NullFloat64))
 		case *time.Time:
-			args = append(args, new(pq.NullTime))
+			// XXX: see if we can use single NullTime to replace them
+			if driver == DriverPg {
+				args = append(args, new(pq.NullTime))
+			} else {
+				args = append(args, new(mysql.NullTime))
+			}
 		default:
 			// XXX: Not sure if this work
 			var fieldType reflect.Type = fieldValue.Type()
@@ -100,6 +106,10 @@ func FillFromRows(val PtrRecord, rows RowScanner) error {
 				fieldValue.SetFloat(argVal.Float64)
 			}
 		case *pq.NullTime:
+			if argVal.Valid {
+				fieldValue.Set(reflect.ValueOf(&argVal.Time))
+			}
+		case *mysql.NullTime:
 			if argVal.Valid {
 				fieldValue.Set(reflect.ValueOf(&argVal.Time))
 			}

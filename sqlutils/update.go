@@ -8,20 +8,24 @@ import (
 )
 
 // This function generates "UPDATE {table} SET name = $1, name2 = $2"
-func BuildUpdateClause(val interface{}) (string, []interface{}) {
+func BuildUpdateClause(val interface{}, placeholder int) (string, []interface{}) {
 	tableName := GetTableName(val)
-	sql, values := BuildUpdateColumns(val)
+	sql, values := BuildUpdateColumns(val, placeholder)
 	return "UPDATE " + tableName + " SET " + sql, values
 }
 
 // This function builds update columns from a map
 // which generates SQL like "name = $1, phone = $2".
-func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface{}) {
+func BuildUpdateColumnsFromMap(cols map[string]interface{}, placeholder int) (string, []interface{}) {
 	var setFields []string
 	var values []interface{}
 	var i int = 1
 	for col, arg := range cols {
-		setFields = append(setFields, fmt.Sprintf("%s = $%d", col, i))
+		if placeholder == QMARK_HOLDER {
+			setFields = append(setFields, fmt.Sprintf("%s = ?"))
+		} else {
+			setFields = append(setFields, fmt.Sprintf("%s = $%d", col, i))
+		}
 		values = append(values, arg)
 		i++
 	}
@@ -29,7 +33,7 @@ func BuildUpdateColumnsFromMap(cols map[string]interface{}) (string, []interface
 }
 
 // This function generate update columns from a struct object.
-func BuildUpdateColumns(val interface{}) (string, []interface{}) {
+func BuildUpdateColumns(val interface{}, placeholder int) (string, []interface{}) {
 	var t = reflect.ValueOf(val).Elem()
 	var typeOfT = t.Type()
 	var values []interface{}
@@ -50,7 +54,11 @@ func BuildUpdateColumns(val interface{}) (string, []interface{}) {
 			continue
 		}
 
-		clauseSQL += *columnName + " = $" + strconv.Itoa(len(values)+1) + ", "
+		if placeholder == QMARK_HOLDER {
+			clauseSQL += *columnName + " = ?" + ", "
+		} else {
+			clauseSQL += *columnName + " = $" + strconv.Itoa(len(values)+1) + ", "
+		}
 		// setFields = append(setFields, *columnName+" = $"+strconv.Itoa(len(values)+1))
 		values = append(values, value)
 	}

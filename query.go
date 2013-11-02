@@ -106,7 +106,7 @@ func (m *Query) String() string {
 
 	case MODE_UPDATE:
 		var sql = "UPDATE " + m.tableName + " SET "
-		var updateSql, args = sqlutils.BuildUpdateColumnsFromMap(*m.updateMap)
+		var updateSql, args = sqlutils.BuildUpdateColumnsFromMap(*m.updateMap, m.holderType)
 		sql += updateSql
 		m.arguments = append(m.arguments, args...)
 		if m.whereMap != nil {

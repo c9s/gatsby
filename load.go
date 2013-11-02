@@ -17,7 +17,7 @@ this method is faster than the DB.Query method.
 func LoadFromQueryRow(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
 	var err error
 	var row = db.QueryRow(sqlstring, args...)
-	if err = FillFromRows(val, row); err != nil {
+	if err = FillFromRows(val, row, driverType); err != nil {
 		if err == sql.ErrNoRows {
 			res := NewResult(sqlstring)
 			res.IsEmpty = true
@@ -34,7 +34,7 @@ Fill a record object by executing a SQL query.
 func LoadFromQuery(db *sql.DB, val PtrRecord, sqlstring string, args ...interface{}) *Result {
 	var err error
 	row := db.QueryRow(sqlstring, args...)
-	if err = FillFromRows(val, row); err != nil {
+	if err = FillFromRows(val, row, driverType); err != nil {
 		if err == sql.ErrNoRows {
 			res := NewResult(sqlstring)
 			res.IsEmpty = true
@@ -51,7 +51,7 @@ func LoadWith(db *sql.DB, val PtrRecord, postQuery string, args ...interface{}) 
 }
 
 func Load(db *sql.DB, val PtrRecord, pkId int64) *Result {
-	var sqlstring = sqlutils.BuildLoadClause(val, driverType)
+	var sqlstring = sqlutils.BuildLoadClause(val, GetHolderTypeByDriver(driverType))
 	return LoadFromQueryRow(db, val, sqlstring, pkId)
 }
 
