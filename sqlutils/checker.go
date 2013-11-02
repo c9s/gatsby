@@ -8,6 +8,10 @@ import (
 )
 
 func CheckRequired(structVal interface{}) error {
+	if structVal == nil {
+		return errors.New("Given struct value is nil.")
+	}
+
 	var t = reflect.ValueOf(structVal).Elem()
 	var typeOfT = t.Type()
 	var tag reflect.StructTag
